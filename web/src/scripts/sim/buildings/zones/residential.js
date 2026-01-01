@@ -1,0 +1,168 @@
+import * as THREE from 'three';
+import { City } from '../../city.js';
+import { Zone } from './zone.js';
+import { ResidentsModule } from '../modules/residents.js';
+import { BuildingType } from '../buildingType.js';
+import { WasteModule } from '../modules/waste.js';
+
+export class ResidentialZone extends Zone {
+  /**
+   * @type {ResidentsModule}
+   */
+  residents = new ResidentsModule(this);
+  
+  /**
+   * @type {WasteModule}
+   */
+  waste = new WasteModule(this);
+
+  constructor(x, y) {
+    super(x, y);
+    this.name = generateBuildingName();
+    this.type = BuildingType.residential;
+    
+    // Set style for residential (A, B, C, D, E, or F)
+    this.style = ['A', 'B', 'C', 'D', 'E', 'F'][Math.floor(6 * Math.random())];
+    
+    // Initialize waste module for residential (low waste production)
+    this.waste.productionRate = 0.1; // Very low waste from residents
+    this.waste.wasteType = 'organic-waste';
+    this.waste.productionInterval = 10; // Produce every 10 ticks
+  }
+
+  /**
+   * Steps the state of the zone forward in time by one simulation step
+   * @param {City} city 
+   * @param {number} currentTick 
+   */
+  simulate(city, currentTick = 0) {
+    super.simulate(city);
+    this.residents.simulate(city);
+    
+    // Update waste module
+    if (this.waste) {
+      this.waste.simulate(city, currentTick);
+    }
+    
+    // Development simulation is handled in Zone.simulate
+    // Development module will check for isPlayerHouse and skip auto-leveling
+  }
+
+  /**
+   * Handles any clean up needed before a building is removed
+   */
+  dispose() {
+    this.residents.dispose();
+    super.dispose();
+  }
+
+  /**
+   * Override refreshView to add special visual for player house
+   */
+  refreshView() {
+    // For player house, use development level to show different models
+    if (this.isPlayerHouse) {
+      let modelName;
+      const level = this.development?.level || 1;
+      
+      // Player house models based on level
+      // Use A, B, C styles for player house (not D, E, F)
+      const playerHouseStyle = ['A', 'B', 'C'][Math.floor(3 * Math.random())];
+      switch (level) {
+        case 1:
+          modelName = `${this.type}-${playerHouseStyle}1`;
+          break;
+        case 2:
+          modelName = `${this.type}-${playerHouseStyle}2`;
+          break;
+        case 3:
+          modelName = `${this.type}-${playerHouseStyle}3`;
+          break;
+        default:
+          modelName = `${this.type}-${playerHouseStyle}${level}`;
+      }
+
+      let mesh = window.assetManager.getModel(modelName, this);
+      
+      // Tint building if abandoned or no power
+      if (this.development?.state === 'abandoned') {
+        mesh.traverse((obj) => {
+          if (obj.material) {
+            obj.material.color = new THREE.Color(0x707070);
+          }
+        });
+      }
+      
+      // Add special visual effect for player house
+      if (mesh) {
+        mesh.traverse((obj) => {
+          if (obj.material) {
+            // Add a golden/yellow tint to make it stand out
+            obj.material.color = new THREE.Color(0xffdd88); // Light golden color
+            // Add emissive glow for special effect
+            obj.material.emissive = new THREE.Color(0x332200);
+            obj.material.emissiveIntensity = 0.3;
+          }
+        });
+      }
+      
+      this.setMesh(mesh);
+    } else {
+      // Normal residential zone behavior
+      super.refreshView();
+    }
+  }
+
+  /**
+   * Returns an HTML representation of this object
+   * @returns {string}
+   */
+  toHTML() {
+    let html = super.toHTML();
+    
+    // Add special section for player house with management options
+    if (this.isPlayerHouse) {
+      html += `
+        <div class="info-heading">🏠 Oyuncu Evi (HQ)</div>
+        <div style="padding: 8px; color: #ffdd88; font-size: 0.9em; margin-bottom: 8px;">
+          Şehir yönetim merkezi. Kaldırılamaz.
+        </div>
+        <div style="padding: 8px;">
+          <button class="action-button" onclick="ui.openSettingsPanel()" style="width: 100%; margin-bottom: 4px;">
+            ⚙️ Şehir Politikaları
+          </button>
+          <button class="action-button" onclick="ui.openEnergyManagementPanel()" style="width: 100%; margin-bottom: 4px;">
+            ⚡ Enerji Yönetimi
+          </button>
+          <button class="action-button" onclick="ui.openStatisticsPanel()" style="width: 100%; margin-bottom: 4px;">
+            📊 Şehir İstatistikleri
+          </button>
+          <button class="action-button" onclick="ui.openTradePanel()" style="width: 100%; margin-bottom: 4px;">
+            💱 Takas & Pazar
+          </button>
+          <button class="action-button" onclick="ui.openResearchPanel()" style="width: 100%; margin-bottom: 4px;">
+            🧠 Araştırma & Teknoloji
+          </button>
+          <button class="action-button" onclick="ui.openInventoryPanel()" style="width: 100%;">
+            📦 Envanter
+          </button>
+        </div>
+      `;
+    }
+    
+    html += this.residents.toHTML();
+    return html;
+  }
+}
+
+// Arrays of different name components
+const prefixes = ['Emerald', 'Ivory', 'Crimson', 'Opulent', 'Celestial', 'Enchanted', 'Serene', 'Whispering', 'Stellar', 'Tranquil'];
+const suffixes = ['Tower', 'Residence', 'Manor', 'Court', 'Plaza', 'House', 'Mansion', 'Place', 'Villa', 'Gardens'];
+
+// Function to generate a random building name
+function generateBuildingName() {
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+  
+  return prefix + ' ' + suffix;
+}
