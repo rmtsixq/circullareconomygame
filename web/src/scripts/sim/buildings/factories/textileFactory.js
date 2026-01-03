@@ -10,7 +10,8 @@ export class TextileFactory extends Factory {
   constructor(x = 0, y = 0) {
     super(x, y);
     this.energyConsumption = 5;
-    this.baseWasteProduction = 1;
+    this.baseWasteProduction = 3; // Increased from 1
+    this.requiredWorkers = 10; // Minimum 10 workers needed
     
     // Define recipes
     this.recipes = [

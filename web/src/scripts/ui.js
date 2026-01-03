@@ -44,6 +44,19 @@ export class GameUI {
       return;
     }
     
+    // Check tutorial restrictions
+    if (window.tutorialState && window.tutorialState.isActive) {
+      const toolType = button.getAttribute('data-type');
+      if (toolType && !window.tutorialState.isActionAllowed(toolType)) {
+        this.showNotification(
+          '🔒 Kilitli',
+          'Bu aksiyon tutorial sırasında kilitli.',
+          'warning'
+        );
+        return;
+      }
+    }
+    
     // Deselect previously selected button and selected this one
     if (this.selectedControl) {
       this.selectedControl.classList.remove('selected');
@@ -160,13 +173,37 @@ export class GameUI {
     const xpElement = document.getElementById('xp-display');
     if (xpElement) {
       const progress = gameState.getXPProgress();
-      xpElement.innerHTML = `XP: ${gameState.xp} (${progress.toFixed(0)}%)`;
+      const displayXP = gameState.getDisplayXP();
+      xpElement.innerHTML = `XP: ${displayXP} (${progress.toFixed(0)}%)`;
     }
     
-    // Update Circular Score display
-    const scoreElement = document.getElementById('circular-score-display');
-    if (scoreElement) {
-      scoreElement.innerHTML = `♻️ ${gameState.circularScore.toLocaleString()}`;
+    // Update Circular Score display with progress bar
+    const scoreBar = document.getElementById('circular-score-bar');
+    const scoreText = document.getElementById('circular-score-text');
+    
+    if (scoreBar && scoreText) {
+      const score = gameState.circularScore || 0;
+      const maxScore = 100;
+      const percentage = Math.min(100, (score / maxScore) * 100);
+      
+      // Update progress bar width
+      scoreBar.style.width = `${percentage}%`;
+      
+      // Update text
+      scoreText.textContent = `${score}/${maxScore}`;
+      
+      // Update bar color based on score
+      if (percentage >= 80) {
+        scoreBar.style.background = 'linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%)'; // Green
+      } else if (percentage >= 60) {
+        scoreBar.style.background = 'linear-gradient(90deg, #8BC34A 0%, #FFC107 100%)'; // Yellow-Green
+      } else if (percentage >= 40) {
+        scoreBar.style.background = 'linear-gradient(90deg, #FFC107 0%, #FF9800 100%)'; // Yellow-Orange
+      } else if (percentage >= 20) {
+        scoreBar.style.background = 'linear-gradient(90deg, #FF9800 0%, #FF5722 100%)'; // Orange-Red
+      } else {
+        scoreBar.style.background = 'linear-gradient(90deg, #FF5722 0%, #f44336 100%)'; // Red
+      }
     }
   }
 
@@ -329,11 +366,10 @@ export class GameUI {
     
     if (!panel || !header) return;
     
-    // Set initial state - panel visible, button selected
-    if (panel.style.display !== 'none') {
-      if (button) {
-        button.classList.add('selected');
-      }
+    // Set initial state - panel hidden, button not selected
+    panel.style.display = 'none';
+    if (button) {
+      button.classList.remove('selected');
     }
 
     let isDragging = false;
@@ -802,9 +838,13 @@ export class GameUI {
       this.updateResources(window.resourceManager);
       this.updateGameState(window.gameState);
       const price = window.market.getMaterialPrice(material);
-      this.showNotification('🛒 Satın Alındı', `${amount} ${material} satın alındı: ${(amount * price).toFixed(0)} 💰`, 'success');
+      this.showNotification('Satın Alındı', `${amount} ${material} satın alındı: ${(amount * price).toFixed(0)} 💰`, 'success');
+      // Refresh material shop if open
+      if (document.getElementById('material-shop-panel')?.style.display === 'block') {
+        this.openMaterialShop();
+      }
     } else {
-      this.showNotification('❌ Hata', 'Yetersiz para veya geçersiz işlem', 'error');
+      this.showNotification('Hata', 'Yetersiz para veya geçersiz işlem', 'error');
     }
   }
 
@@ -841,6 +881,74 @@ export class GameUI {
               <option value="green" ${policies.energyPolicy === 'green' ? 'selected' : ''}>Yeşil Öncelikli (+10% tüketim, +çevre)</option>
             </select>
           </div>
+          
+          ${window.gameState && window.levelUnlocks && window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level) ? `
+          <div class="resource-section-title" style="margin-top: 12px;">🏭 Üretim Öncelik Politikası</div>
+          <div style="padding: 8px;">
+            <select id="production-mode" style="width: 100%; padding: 4px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;"
+              onchange="ui.updateProductionMode(this.value)">
+              <option value="balanced" ${policies.productionMode === 'balanced' ? 'selected' : ''}>🟢 Dengeli (Normal üretim, normal atık)</option>
+              <option value="economy" ${policies.productionMode === 'economy' ? 'selected' : ''}>🟡 Ekonomi Odaklı (+20% üretim, +25% atık, -10% Circular Score)</option>
+              <option value="environment" ${policies.productionMode === 'environment' ? 'selected' : ''}>🔵 Çevre Odaklı (-15% üretim, -30% atık, +10% Circular Score)</option>
+            </select>
+          </div>
+          
+          <div class="resource-section-title" style="margin-top: 12px;">💱 Otomatik Satış Politikası</div>
+          <div style="padding: 8px;">
+            <select id="sales-policy" style="width: 100%; padding: 4px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;"
+              onchange="ui.updateSalesPolicy(this.value)">
+              <option value="auto" ${policies.salesPolicy === 'auto' ? 'selected' : ''}>🔁 Otomatik Sat (Eco Shop varsa premium, yoksa market)</option>
+              <option value="store" ${policies.salesPolicy === 'store' ? 'selected' : ''}>📦 Depola (Hiç satma, manuel kontrol)</option>
+              <option value="smart" ${policies.salesPolicy === 'smart' ? 'selected' : ''}>⚖️ Akıllı Satış (Stok %70+ ise sat, enerji fazlaysa üret&sat)</option>
+            </select>
+          </div>
+          
+          <div class="resource-section-title" style="margin-top: 12px;">💰 Vergi & Ticaret Politikası</div>
+          <div style="padding: 8px;">
+            <select id="tax-policy" style="width: 100%; padding: 4px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;"
+              onchange="ui.updateTaxPolicy(this.value)">
+              <option value="low" ${policies.taxPolicy === 'low' ? 'selected' : ''}>🟢 Düşük (Normal para, +nüfus artışı)</option>
+              <option value="medium" ${policies.taxPolicy === 'medium' ? 'selected' : ''}>🟡 Orta (Normal para, stabil nüfus)</option>
+              <option value="high" ${policies.taxPolicy === 'high' ? 'selected' : ''}>🔴 Yüksek (+25% para, nüfus artmaz, +atık)</option>
+            </select>
+          </div>
+          
+          <div class="resource-section-title" style="margin-top: 12px;">👷 İş Gücü Dağıtımı</div>
+          <div style="padding: 8px;">
+            <div style="margin-bottom: 8px;">
+              <label style="color: white; font-size: 0.9em;">🏭 Fabrikalar</label>
+              <input type="range" id="workforce-factories" min="0" max="100" value="${policies.workforceDistribution?.factories || 60}" 
+                style="width: 100%;" oninput="ui.updateWorkforceDistribution()">
+              <span id="workforce-factories-value" style="color: #aaa; font-size: 0.85em;">${policies.workforceDistribution?.factories || 60}%</span>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <label style="color: white; font-size: 0.9em;">♻️ Geri Dönüşüm</label>
+              <input type="range" id="workforce-recycling" min="0" max="100" value="${policies.workforceDistribution?.recycling || 20}" 
+                style="width: 100%;" oninput="ui.updateWorkforceDistribution()">
+              <span id="workforce-recycling-value" style="color: #aaa; font-size: 0.85em;">${policies.workforceDistribution?.recycling || 20}%</span>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <label style="color: white; font-size: 0.9em;">🏪 Ticaret</label>
+              <input type="range" id="workforce-commercial" min="0" max="100" value="${policies.workforceDistribution?.commercial || 20}" 
+                style="width: 100%;" oninput="ui.updateWorkforceDistribution()">
+              <span id="workforce-commercial-value" style="color: #aaa; font-size: 0.85em;">${policies.workforceDistribution?.commercial || 20}%</span>
+            </div>
+            <div style="margin-top: 8px; padding: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; font-size: 0.85em; color: #aaa;">
+              <strong style="color: white;">Toplam:</strong> <span id="workforce-total">${(policies.workforceDistribution?.factories || 60) + (policies.workforceDistribution?.recycling || 20) + (policies.workforceDistribution?.commercial || 20)}%</span>
+              <div style="margin-top: 4px; font-size: 0.8em; color: #ff9800;">⚠️ Toplam 100% olmalı. Bir slider değiştiğinde diğerleri otomatik ayarlanır.</div>
+            </div>
+          </div>
+          
+          <div class="resource-section-title" style="margin-top: 12px;">⚡ Enerji Ticaret Modu</div>
+          <div style="padding: 8px;">
+            <select id="energy-trade-mode" style="width: 100%; padding: 4px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;"
+              onchange="ui.updateEnergyTradeMode(this.value)">
+              <option value="none" ${policies.energyTradeMode === 'none' ? 'selected' : ''}>❌ Satma (Enerji fazlası kullanılmaz)</option>
+              <option value="sell" ${policies.energyTradeMode === 'sell' ? 'selected' : ''}>💰 Sat (Fazla enerjiyi düşük fiyata sat)</option>
+              <option value="store" ${policies.energyTradeMode === 'store' ? 'selected' : ''}>🔋 Depola (Gelecek feature)</option>
+            </select>
+          </div>
+          ` : ''}
           
           <div class="resource-section-title" style="margin-top: 12px;">🏭 Üretim vs Çevre Dengesi</div>
           <div style="padding: 8px;">
@@ -936,10 +1044,214 @@ export class GameUI {
   }
 
   /**
+   * Update production mode
+   */
+  updateProductionMode(value) {
+    if (window.cityPolicies) {
+      window.cityPolicies.productionMode = value;
+    }
+  }
+
+  /**
+   * Update sales policy
+   */
+  updateSalesPolicy(value) {
+    if (window.cityPolicies) {
+      window.cityPolicies.salesPolicy = value;
+    }
+  }
+
+  /**
+   * Update tax policy
+   */
+  updateTaxPolicy(value) {
+    if (window.cityPolicies) {
+      window.cityPolicies.taxPolicy = value;
+    }
+  }
+
+  /**
+   * Update energy trade mode
+   */
+  updateEnergyTradeMode(value) {
+    if (window.cityPolicies) {
+      window.cityPolicies.energyTradeMode = value;
+    }
+  }
+
+  /**
+   * Update workforce distribution (ensures total = 100)
+   */
+  updateWorkforceDistribution() {
+    if (!window.cityPolicies) return;
+
+    const factoriesEl = document.getElementById('workforce-factories');
+    const recyclingEl = document.getElementById('workforce-recycling');
+    const commercialEl = document.getElementById('workforce-commercial');
+
+    if (!factoriesEl || !recyclingEl || !commercialEl) return;
+
+    let factories = parseInt(factoriesEl.value) || 0;
+    let recycling = parseInt(recyclingEl.value) || 0;
+    let commercial = parseInt(commercialEl.value) || 0;
+
+    const total = factories + recycling + commercial;
+
+    // If total exceeds 100, normalize to 100
+    if (total > 100) {
+      const ratio = 100 / total;
+      factories = Math.round(factories * ratio);
+      recycling = Math.round(recycling * ratio);
+      commercial = Math.round(commercial * ratio);
+      
+      // Ensure total is exactly 100 (adjust for rounding)
+      const newTotal = factories + recycling + commercial;
+      const diff = 100 - newTotal;
+      if (diff !== 0) {
+        // Add difference to largest value
+        if (factories >= recycling && factories >= commercial) {
+          factories += diff;
+        } else if (recycling >= commercial) {
+          recycling += diff;
+        } else {
+          commercial += diff;
+        }
+      }
+
+      factoriesEl.value = factories;
+      recyclingEl.value = recycling;
+      commercialEl.value = commercial;
+    }
+
+    // Update city policies
+    window.cityPolicies.workforceDistribution = {
+      factories: factories,
+      recycling: recycling,
+      commercial: commercial
+    };
+
+    // Update display values
+    const factoriesValueEl = document.getElementById('workforce-factories-value');
+    const recyclingValueEl = document.getElementById('workforce-recycling-value');
+    const commercialValueEl = document.getElementById('workforce-commercial-value');
+    const totalValueEl = document.getElementById('workforce-total');
+
+    if (factoriesValueEl) factoriesValueEl.textContent = factories + '%';
+    if (recyclingValueEl) recyclingValueEl.textContent = recycling + '%';
+    if (commercialValueEl) commercialValueEl.textContent = commercial + '%';
+    if (totalValueEl) totalValueEl.textContent = (factories + recycling + commercial) + '%';
+  }
+
+  /**
    * Open inventory panel (kaynak panelini göster)
    */
   openInventoryPanel() {
     this.toggleResourcePanel();
+  }
+
+  /**
+   * Open material shop panel (ham madde satın alma)
+   */
+  openMaterialShop() {
+    this.closeAllPanels();
+    const panel = this.getOrCreatePanel('material-shop-panel', 'Ham Madde Satın Al');
+    panel.style.width = '400px';
+    const content = panel.querySelector('.panel-content') || document.createElement('div');
+    content.className = 'panel-content';
+    
+    if (!window.market || !window.resourceManager || !window.gameState) {
+      const missing = [];
+      if (!window.market) missing.push('Market');
+      if (!window.resourceManager) missing.push('ResourceManager');
+      if (!window.gameState) missing.push('GameState');
+      content.innerHTML = `<div style="padding: 8px; color: #ff9800;">⚠️ Sistem yükleniyor... (Eksik: ${missing.join(', ')})</div>`;
+      if (!panel.querySelector('.panel-content')) {
+        panel.appendChild(content);
+      }
+      panel.style.display = 'block';
+      return;
+    }
+
+    // Check if getMaterialPrice method exists
+    if (typeof window.market.getMaterialPrice !== 'function') {
+      content.innerHTML = '<div style="padding: 8px; color: #f44336;">❌ Market sistemi hatası: getMaterialPrice metodu bulunamadı</div>';
+      if (!panel.querySelector('.panel-content')) {
+        panel.appendChild(content);
+      }
+      panel.style.display = 'block';
+      return;
+    }
+
+    const rawMaterials = {
+      'raw-fabric': 'Ham Kumaş',
+      'raw-plastic': 'Ham Plastik',
+      'raw-metal': 'Ham Metal',
+      'raw-electronics': 'Elektronik',
+      'raw-glass': 'Ham Cam'
+    };
+
+    let materialsHTML = '';
+    Object.entries(rawMaterials).forEach(([type, name]) => {
+      let price = 0;
+      try {
+        price = window.market.getMaterialPrice(type);
+      } catch (error) {
+        console.error(`Error getting price for ${type}:`, error);
+        price = window.market.rawMaterialPrices?.[type] || 0;
+      }
+      const current = window.resourceManager.getResource(type) || 0;
+      const canAfford1 = window.gameState.money >= price;
+      const canAfford10 = window.gameState.money >= (price * 10);
+      const canAfford50 = window.gameState.money >= (price * 50);
+      
+      materialsHTML += `
+        <div style="padding: 8px; margin-bottom: 8px; background: #1e2331; border-radius: 4px; border: 1px solid #333;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: bold;">${name}</span>
+            <span style="color: #aaa; font-size: 0.9em;">Mevcut: ${current.toFixed(0)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="color: #4CAF50;">Fiyat: ${price.toFixed(0)} 💰</span>
+          </div>
+          <div style="display: flex; gap: 4px;">
+            <button class="action-button" onclick="ui.buyMaterial('${type}', 1)" 
+              style="flex: 1; padding: 4px; font-size: 0.85em; ${!canAfford1 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" 
+              ${!canAfford1 ? 'disabled' : ''}>
+              1 Adet (${price.toFixed(0)} 💰)
+            </button>
+            <button class="action-button" onclick="ui.buyMaterial('${type}', 10)" 
+              style="flex: 1; padding: 4px; font-size: 0.85em; ${!canAfford10 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" 
+              ${!canAfford10 ? 'disabled' : ''}>
+              10 Adet (${(price * 10).toFixed(0)} 💰)
+            </button>
+            <button class="action-button" onclick="ui.buyMaterial('${type}', 50)" 
+              style="flex: 1; padding: 4px; font-size: 0.85em; ${!canAfford50 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" 
+              ${!canAfford50 ? 'disabled' : ''}>
+              50 Adet (${(price * 50).toFixed(0)} 💰)
+            </button>
+          </div>
+        </div>
+      `;
+    });
+
+    content.innerHTML = `
+      <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
+        <div style="padding: 8px; margin-bottom: 12px; background: #2d3561; border-radius: 4px; border-left: 3px solid #4a90e2;">
+          <div style="color: #4a90e2; font-weight: bold; margin-bottom: 4px;">Bilgi</div>
+          <div style="color: #ccc; font-size: 0.9em;">
+            Ham maddeleri buradan manuel olarak satın alabilirsiniz. Otomatik satın alma da aktif.
+          </div>
+        </div>
+        ${materialsHTML}
+      </div>
+    `;
+    
+    if (!panel.querySelector('.panel-content')) {
+      panel.appendChild(content);
+    } else {
+      panel.replaceChild(content, panel.querySelector('.panel-content'));
+    }
+    panel.style.display = 'block';
   }
 
   /**
@@ -1438,7 +1750,7 @@ export class GameUI {
    * Close all floating panels
    */
   closeAllPanels() {
-    const panels = ['trade-panel', 'market-panel', 'settings-panel'];
+    const panels = ['trade-panel', 'market-panel', 'settings-panel', 'material-shop-panel', 'energy-panel', 'statistics-panel', 'research-panel'];
     panels.forEach(id => this.closePanel(id));
   }
 
@@ -1516,6 +1828,12 @@ export class GameUI {
     [selectFrom, selectTo].forEach(select => {
       select.innerHTML = '<option value="">Kaynak seçin...</option>';
       Object.entries(resources).forEach(([type, amount]) => {
+        // Don't allow trading waste or recycled materials (they should be used in production/recycling)
+        if (type.includes('waste') || type.includes('recycled')) {
+          return;
+        }
+        
+        // Only show resources that exist or are raw materials
         if (amount > 0 || type.startsWith('raw-')) {
           const option = document.createElement('option');
           option.value = type;
@@ -1551,11 +1869,19 @@ export class GameUI {
       return;
     }
 
+    // Prevent trading waste or recycled materials (they should be used in production/recycling)
+    if (fromType.includes('waste') || fromType.includes('recycled') || 
+        toType.includes('waste') || toType.includes('recycled')) {
+      alert('Atık ve geri dönüşümlü malzemeler takas edilemez! Bunları üretim ve geri dönüşümde kullanın.');
+      return;
+    }
+
     // Execute trade (for now, just swap - later will be with NPCs or other players)
     window.resourceManager.removeResource(fromType, fromAmount);
     window.resourceManager.addResource(toType, toAmount);
     
-    alert(`Takas tamamlandı: ${fromAmount} ${fromType} → ${toAmount} ${toType}`);
+    this.updateResources(window.resourceManager);
+    this.showNotification('✅ Takas Tamamlandı', `${fromAmount} ${fromType} → ${toAmount} ${toType}`, 'success');
     this.closePanel('trade-panel');
   }
 
@@ -1563,16 +1889,43 @@ export class GameUI {
    * Save game
    */
   saveGame() {
-    // TODO: Implement save functionality
-    alert('Oyun kaydedildi! (Yakında eklenecek)');
+    if (!window.saveSystem) {
+      this.showNotification('Hata', 'Kayıt sistemi yüklenemedi', 'error');
+      return;
+    }
+
+    const success = window.saveSystem.saveGame();
+    if (success) {
+      this.showNotification('✅ Oyun Kaydedildi', 'Oyununuz başarıyla kaydedildi', 'success');
+    } else {
+      this.showNotification('❌ Hata', 'Oyun kaydedilemedi', 'error');
+    }
   }
 
   /**
    * Load game
    */
   loadGame() {
-    // TODO: Implement load functionality
-    alert('Oyun yüklendi! (Yakında eklenecek)');
+    if (!window.saveSystem) {
+      this.showNotification('Hata', 'Kayıt sistemi yüklenemedi', 'error');
+      return;
+    }
+
+    if (!window.saveSystem.hasSaveData()) {
+      this.showNotification('Bilgi', 'Kayıtlı oyun bulunamadı', 'info');
+      return;
+    }
+
+    // Confirm load
+    if (confirm('Kayıtlı oyunu yüklemek istediğinize emin misiniz? Mevcut oyun kaybolacak.')) {
+      const saveData = window.saveSystem.loadGame();
+      if (saveData) {
+        // Reload page to reconstruct city
+        location.reload();
+      } else {
+        this.showNotification('❌ Hata', 'Oyun yüklenemedi', 'error');
+      }
+    }
   }
   /**
    * Show a notification
@@ -1630,37 +1983,91 @@ export class GameUI {
     // Update toolbar visibility
     this.updateToolbarVisibility();
     
-    // Show level up notification
-    if (window.levelUnlocks) {
-      const newFeatures = window.levelUnlocks.getFeaturesAtLevel(newLevel);
-      if (newFeatures.length > 0) {
-        const featureNames = {
-          'production-queue': '📋 Üretim Kuyruğu',
-          'auto-sell': '💰 Otomatik Satış',
-          'auto-buy': '🛒 Otomatik Satın Alma',
-          'local-waste': '🗑️ Atık Sistemi',
-          'recycling-center': '♻️ Geri Dönüşüm Merkezi',
-          'eco-shop': '🏪 Eco Shop',
-          'technology-factory': '💻 Teknoloji Fabrikası',
-          'global-pollution': '🌍 Global Kirlilik',
-          'hq-policy-panel': '⚙️ Şehir Politikaları',
-          'steel-factory': '⚙️ Çelik Fabrikası',
-          'automotive-factory': '🚗 Otomotiv Fabrikası'
-        };
-        
-        const featureList = newFeatures
-          .map(f => featureNames[f] || f)
-          .filter(f => f)
-          .join(', ');
-        
-        if (featureList) {
-          this.showNotification(
-            `🎉 Seviye ${newLevel}!`,
-            `Yeni özellikler: ${featureList}`,
-            'success'
-          );
-        }
+    // Show level up modal
+    this.showLevelUpModal(newLevel);
+  }
+
+  /**
+   * Show level up modal
+   * @param {number} level 
+   */
+  showLevelUpModal(level) {
+    if (!window.levelUnlocks) return;
+
+    const levelInfo = window.levelUnlocks.getLevelInfo(level);
+    
+    // Create or get modal container
+    let modal = document.getElementById('level-up-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'level-up-modal';
+      modal.className = 'level-up-modal-overlay';
+      document.body.appendChild(modal);
+    }
+
+    // Build features HTML
+    const featuresHTML = levelInfo.features.map(feature => 
+      `<li>${feature}</li>`
+    ).join('');
+
+    // Build tips HTML
+    const tipsHTML = levelInfo.tips.map(tip => 
+      `<li>${tip}</li>`
+    ).join('');
+
+    // Set modal content
+    modal.innerHTML = `
+      <div class="level-up-modal">
+        <div class="level-up-modal-header">
+          <h2>Level ${level}!</h2>
+          <button class="level-up-modal-close" onclick="window.ui.closeLevelUpModal()">×</button>
+        </div>
+        <div class="level-up-modal-content">
+          <div class="level-up-title">${levelInfo.title}</div>
+          <div class="level-up-description">${levelInfo.description}</div>
+          
+          <div class="level-up-section">
+            <h3>Yeni Özellikler</h3>
+            <ul class="level-up-features">
+              ${featuresHTML}
+            </ul>
+          </div>
+          
+          <div class="level-up-section">
+            <h3>Yapılması Gerekenler</h3>
+            <ul class="level-up-tips">
+              ${tipsHTML}
+            </ul>
+          </div>
+        </div>
+        <div class="level-up-modal-footer">
+          <button class="level-up-modal-button" onclick="window.ui.closeLevelUpModal()">Devam Et</button>
+        </div>
+      </div>
+    `;
+
+    // Show modal
+    modal.style.display = 'flex';
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+
+    // Close on overlay click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.closeLevelUpModal();
       }
+    });
+  }
+
+  /**
+   * Close level up modal
+   */
+  closeLevelUpModal() {
+    const modal = document.getElementById('level-up-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
     }
   }
 
@@ -1681,9 +2088,10 @@ export class GameUI {
       'button-technology-factory': 'technology-factory', // Level 6
       'button-steel-factory': 'steel-factory', // Level 8
       'button-automotive-factory': 'automotive-factory', // Level 9
-      'button-recycling-center': 'recycling-center', // Level 4
+      'button-recycling-center': 'recycling-center', // Level 3
       'button-wind-turbine': 'wind-turbine', // Level 5
-      'button-hydro-plant': 'hydro-plant' // Level 7
+      'button-hydro-plant': 'hydro-plant', // Level 7
+      'button-waste-to-energy': 'waste-to-energy' // Level 5
     };
 
     // Update each button
@@ -1748,6 +2156,106 @@ export class GameUI {
         this._lastPollutionAlarm = Date.now();
       }
     }
+  }
+
+  /**
+   * Tutorial Panel Functions
+   */
+  showTutorialPanel() {
+    const panel = document.getElementById('tutorial-panel');
+    if (panel) {
+      panel.style.display = 'block';
+    }
+  }
+
+  hideTutorialPanel() {
+    const panel = document.getElementById('tutorial-panel');
+    if (panel) {
+      panel.style.display = 'none';
+    }
+  }
+
+  updateTutorialPanel(step) {
+    if (!step) return;
+
+    const titleEl = document.getElementById('tutorial-title');
+    const textEl = document.getElementById('tutorial-text');
+    const nextBtn = document.getElementById('tutorial-next-btn');
+
+    if (titleEl) {
+      titleEl.textContent = step.title || '';
+    }
+
+    if (textEl) {
+      // Convert line breaks to <br> tags
+      textEl.innerHTML = step.content.replace(/\n/g, '<br>');
+    }
+
+    if (nextBtn) {
+      // Hide next button if step has auto-completion
+      if (step.checkCompletion) {
+        nextBtn.style.display = 'none';
+      } else {
+        nextBtn.style.display = 'block';
+        // Change button text for last step
+        if (step.id === 9) {
+          nextBtn.textContent = "Tutorial'ı Bitir";
+        } else {
+          nextBtn.textContent = 'Sonraki ➜';
+        }
+      }
+    }
+
+    this.showTutorialPanel();
+  }
+
+  nextTutorialStep() {
+    if (window.tutorialState && window.tutorialState.isActive) {
+      window.tutorialState.completeStep();
+    }
+  }
+
+  /**
+   * Lock toolbar buttons (only allow specified actions)
+   */
+  lockToolbar(allowedActions) {
+    const toolbarButtons = document.querySelectorAll('#ui-toolbar .ui-button');
+    
+    toolbarButtons.forEach(button => {
+      const toolType = button.getAttribute('data-type');
+      if (!toolType) {
+        // Special handling for pause button - always allow
+        if (button.id === 'button-pause' || button.id === 'button-resources') {
+          button.disabled = false;
+          button.style.opacity = '1';
+          button.style.cursor = 'pointer';
+        }
+        return;
+      }
+      
+      if (allowedActions.includes(toolType)) {
+        button.disabled = false;
+        button.style.opacity = '1';
+        button.style.cursor = 'pointer';
+      } else {
+        button.disabled = true;
+        button.style.opacity = '0.3';
+        button.style.cursor = 'not-allowed';
+      }
+    });
+  }
+
+  /**
+   * Unlock all toolbar buttons
+   */
+  unlockToolbar() {
+    const toolbarButtons = document.querySelectorAll('#ui-toolbar .ui-button');
+    
+    toolbarButtons.forEach(button => {
+      button.disabled = false;
+      button.style.opacity = '1';
+      button.style.cursor = 'pointer';
+    });
   }
 }
 

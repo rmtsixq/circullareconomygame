@@ -404,5 +404,26 @@ export default {
     "format": "gltf",
     "scale": 1.02,
     "preserveMaterials": true
+  },
+  "waste-to-energy-1": {
+    "type": "zone",
+    "filename": "waste-to-energy/scene.gltf",
+    "format": "gltf",
+    "scale": 0.3,
+    "preserveMaterials": true
+  },
+  "waste-to-energy-2": {
+    "type": "zone",
+    "filename": "waste-to-energy/scene.gltf",
+    "format": "gltf",
+    "scale": 0.3,
+    "preserveMaterials": true
+  },
+  "waste-to-energy-3": {
+    "type": "zone",
+    "filename": "waste-to-energy/scene.gltf",
+    "format": "gltf",
+    "scale": 0.3,
+    "preserveMaterials": true
   }
 }

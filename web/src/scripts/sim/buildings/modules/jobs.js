@@ -7,18 +7,18 @@ import { SimModule } from './simModule.js';
 
 export class JobsModule extends SimModule {
   /**
-   * @type {Zone}
+   * @type {Zone | Building}
    */
-  #zone;
+  #building;
 
   /**
    * @type {Citizen[]}
    */
   workers = [];
 
-  constructor(zone) {
+  constructor(building) {
     super();
-    this.#zone = zone;
+    this.#building = building;
   }
 
   /**
@@ -26,12 +26,23 @@ export class JobsModule extends SimModule {
    * @returns {number}
    */
   get maxWorkers() {
-    // If building is not developed, there are no available jobs
-    if (this.#zone.development.state !== DevelopmentState.developed) {
-      return 0;
-    } else {
-      return Math.pow(config.modules.jobs.maxWorkers, this.#zone.development.level);
+    // If building is a Factory, use factory's maxWorkers
+    if (this.#building.maxWorkers !== undefined) {
+      return this.#building.maxWorkers;
     }
+    
+    // For Zone buildings, check development state
+    if (this.#building.development) {
+      // If building is not developed, there are no available jobs
+      if (this.#building.development.state !== DevelopmentState.developed) {
+        return 0;
+      } else {
+        return Math.pow(config.modules.jobs.maxWorkers, this.#building.development.level);
+      }
+    }
+    
+    // Default: no workers if building doesn't support jobs
+    return 0;
   }
 
   /**
@@ -51,15 +62,20 @@ export class JobsModule extends SimModule {
   }
 
   /**
-   * Steps the state of the zone forward in time by one simulation step
+   * Steps the state of the building forward in time by one simulation step
    * @param {City} city 
    */
   simulate(city) {
-    // If building is abandoned, all workers are laid off and no
-    // more workers are allowed to work here
-    if (this.#zone.development.state === DevelopmentState.abandoned) {
-      this.#layOffWorkers();
+    // For Zone buildings, check if abandoned
+    if (this.#building.development) {
+      // If building is abandoned, all workers are laid off and no
+      // more workers are allowed to work here
+      if (this.#building.development.state === DevelopmentState.abandoned) {
+        this.#layOffWorkers();
+      }
     }
+    // For Factory buildings, no special simulation needed
+    // Workers are managed by the city's job assignment system
   }
 
   /**
@@ -67,7 +83,9 @@ export class JobsModule extends SimModule {
    */
   #layOffWorkers() {
     for (const worker of this.workers) {
-      worker.setWorkplace(null);
+      worker.workplace = null; // Directly set to null
+      worker.state = 'unemployed'; // Also update state
+      worker.stateCounter = 0; // Reset counter
     }
     this.workers = [];
   }

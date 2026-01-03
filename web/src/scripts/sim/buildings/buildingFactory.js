@@ -13,6 +13,7 @@ import { RecyclingCenter } from './recyclingCenter.js';
 import { SolarPanel } from './energy/solarPanel.js';
 import { WindTurbine } from './energy/windTurbine.js';
 import { HydroPlant } from './energy/hydroPlant.js';
+import { WasteToEnergyPlant } from './energy/wasteToEnergy.js';
 
 /**
  * Creates a new building object
@@ -65,6 +66,9 @@ export function createBuilding(x, y, type) {
     case BuildingType.hydroPlant:
     case 'hydro-plant':
       return new HydroPlant(x, y);
+    case BuildingType.wasteToEnergy:
+    case 'waste-to-energy':
+      return new WasteToEnergyPlant(x, y);
     default:
       console.error(`${type} (${typeStr}) is not a recognized building type. Available types:`, Object.values(BuildingType));
       return null;

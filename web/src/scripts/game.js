@@ -38,8 +38,11 @@ export class Game {
    */
   currentTick = 0;
 
-  constructor(city) {
-    this.city = city;
+  constructor(city, cityName = 'My City') {
+    this.cityName = cityName;
+    if (city) {
+      this.city = city;
+    }
 
     this.renderer = new THREE.WebGLRenderer({ 
       antialias: true
@@ -72,31 +75,88 @@ export class Game {
       
       window.ui.hideLoadingText();
 
-      // Initialize game state and resources (already initialized as globals)
-      // But ensure they're reset for new game
-      if (window.gameState) {
-        window.gameState.reset();
-      }
-      if (window.resourceManager) {
-        window.resourceManager.reset();
-      }
-      if (window.cityPolicies) {
-        window.cityPolicies.reset();
+      // Check if there's a saved game
+      let saveData = null;
+      if (window.saveSystem && window.saveSystem.hasSaveData()) {
+        // Load saved game data
+        saveData = window.saveSystem.loadGame();
       }
 
-      this.city = new City(16);
+      // Initialize game state and resources
+      if (!saveData) {
+        // New game - reset everything
+        if (window.gameState) {
+          window.gameState.reset();
+        }
+        if (window.resourceManager) {
+          window.resourceManager.reset();
+        }
+        if (window.cityPolicies) {
+          window.cityPolicies.reset();
+        }
+      }
+      // If saveData exists, gameState and resources are already loaded by loadGame()
+
+      // Initialize market with current level
+      if (window.market && window.gameState) {
+        window.market.initialize(window.gameState.level);
+      }
+
+      // Create city if not already created
+      if (!this.city) {
+        const cityName = saveData && saveData.city ? saveData.city.name : (this.cityName || 'My City');
+        this.city = new City(16, cityName);
+        this.cityName = cityName;
+      }
       this.initialize(this.city);
       
-      // Place player house automatically at the center of the city
-      const centerX = Math.floor(this.city.size / 2);
-      const centerY = Math.floor(this.city.size / 2);
-      this.city.placeBuilding(centerX, centerY, 'residential');
-      
-      // Mark it as player house
-      const playerHouseTile = this.city.getTile(centerX, centerY);
-      if (playerHouseTile && playerHouseTile.building) {
-        playerHouseTile.building.name = "Oyuncu Evi";
-        playerHouseTile.building.isPlayerHouse = true;
+      // Reconstruct city from save data if available
+      if (saveData && window.saveSystem) {
+        window.saveSystem.reconstructCity(saveData, this.city);
+        // Update city name in title bar from save
+        if (saveData.city && saveData.city.name) {
+          this.cityName = saveData.city.name;
+          const cityNameElement = document.getElementById('city-name');
+          if (cityNameElement) {
+            cityNameElement.innerHTML = saveData.city.name;
+          }
+        }
+        
+        // Ensure tutorial state is correct after reconstruction
+        // (loadGame already handles this, but UI might not be ready then)
+        if (window.tutorialState && window.gameState) {
+          const level = window.gameState.level || 1;
+          if (level > 1) {
+            // Level > 1: Tutorial should be inactive
+            window.tutorialState.isActive = false;
+            window.tutorialState.currentStep = -1;
+            window.tutorialState.allowedActions.clear();
+            if (window.ui && typeof window.ui.hideTutorialPanel === 'function') {
+              window.ui.hideTutorialPanel();
+            }
+            if (window.ui && typeof window.ui.unlockToolbar === 'function') {
+              window.ui.unlockToolbar();
+            }
+          }
+        }
+      } else {
+        // New game - place player house automatically at the center
+        // Skip tutorial check for initial player house placement
+        const centerX = Math.floor(this.city.size / 2);
+        const centerY = Math.floor(this.city.size / 2);
+        this.city.placeBuilding(centerX, centerY, 'residential', true);
+        
+        // Mark it as player house
+        const playerHouseTile = this.city.getTile(centerX, centerY);
+        if (playerHouseTile && playerHouseTile.building) {
+          playerHouseTile.building.name = "Oyuncu Evi";
+          playerHouseTile.building.isPlayerHouse = true;
+        }
+      }
+
+      // Initialize tutorial if Level 1 and not loading from save (after player house is placed)
+      if (!saveData && window.tutorialState && window.gameState && window.gameState.level === 1) {
+        window.tutorialState.initializeStep(0);
       }
       
       this.start();
@@ -114,6 +174,17 @@ export class Game {
 
       // Simulation runs every 2.5 seconds (slower pace)
       setInterval(this.simulate.bind(this), 2500);
+      
+      // Auto-save mechanism
+      if (window.cityPolicies && window.cityPolicies.autoSave) {
+        const autoSaveInterval = (window.cityPolicies.autoSaveInterval || 30) * 1000; // Convert to milliseconds
+        setInterval(() => {
+          if (window.cityPolicies && window.cityPolicies.autoSave && window.saveSystem) {
+            window.saveSystem.saveGame();
+            console.log('Auto-save completed');
+          }
+        }, autoSaveInterval);
+      }
     });
 
     window.addEventListener('resize', this.onResize.bind(this), false);
@@ -222,6 +293,22 @@ export class Game {
       window.globalPollution.applyPenalties(this.currentTick);
     }
     
+    // Apply production mode effects to Circular Score (Level 6+)
+    if (window.cityPolicies && window.gameState && window.levelUnlocks &&
+        window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
+      const modeEffects = window.cityPolicies.getProductionModeEffects();
+      if (modeEffects.circularScore !== 0) {
+        // Apply Circular Score change (positive or negative)
+        const change = modeEffects.circularScore * 10; // Scale to meaningful values
+        window.gameState.updateCircularScore(change);
+      }
+    }
+    
+    // Check tutorial step completion
+    if (window.tutorialState && window.tutorialState.isActive) {
+      window.tutorialState.checkStepCompletion();
+    }
+    
     // Update the city data model first, then update the scene
     this.city.simulate(1, this.currentTick);
     
@@ -233,13 +320,18 @@ export class Game {
         // Silent auto-sell, no notification spam
       }
       
-      // Auto-buy materials (Level 3+)
-      if (window.gameState.level >= 3 && window.levelUnlocks && 
+      // Auto-buy materials (Level 2+)
+      if (window.gameState.level >= 2 && window.levelUnlocks && 
           window.levelUnlocks.isUnlocked('auto-buy', window.gameState.level)) {
         window.market.autoBuyMaterials(window.resourceManager, window.gameState);
       }
     }
 
+    // Calculate circular score every tick (comprehensive calculation)
+    if (window.gameState && window.gameState.level >= 3) {
+      window.gameState.calculateCircularScore();
+    }
+    
     window.ui.updateTitleBar(this);
     window.ui.updateInfoPanel(this.selectedObject);
     
@@ -303,6 +395,20 @@ export class Game {
   upgradeFactory(x, y) {
     const tile = this.city.getTile(x, y);
     if (tile && tile.building && tile.building.upgrade) {
+      // Check tutorial restrictions
+      if (window.tutorialState && window.tutorialState.isActive) {
+        if (!window.tutorialState.isActionAllowed('upgrade')) {
+          if (window.ui) {
+            window.ui.showNotification(
+              '🔒 Kilitli',
+              'Bu aksiyon tutorial sırasında kilitli.',
+              'warning'
+            );
+          }
+          return;
+        }
+      }
+      
       if (tile.building.upgrade()) {
         // Refresh view
         tile.building.refreshView();
@@ -324,17 +430,27 @@ export class Game {
    */
   processRecycling(x, y) {
     const tile = this.city.getTile(x, y);
-    if (tile && tile.building && tile.building.startRecycling) {
-      if (tile.building.startRecycling()) {
-        // Update UI
-        if (this.selectedObject === tile.building) {
-          window.ui.updateInfoPanel(this.selectedObject);
+    if (tile && tile.building) {
+      // Check if it's a recycling center and has startRecycling method
+      if (tile.building.startRecycling && typeof tile.building.startRecycling === 'function') {
+        // Call startRecycling which handles energy check and calls processRecycling
+        const success = tile.building.startRecycling();
+        
+        if (success) {
+          // Update UI
+          if (this.selectedObject === tile.building) {
+            window.ui.updateInfoPanel(this.selectedObject);
+          }
+          window.ui.updateGameState(window.gameState);
+          window.ui.updateResources(window.resourceManager);
+        } else {
+          console.warn("Geri dönüşüm başarısız! (Enerji yetersiz veya başka bir sorun)");
         }
-        window.ui.updateGameState(window.gameState);
-        window.ui.updateResources(window.resourceManager);
       } else {
-        console.warn("Geri dönüşüm başarısız!");
+        console.warn("Geri dönüşüm metodu bulunamadı!");
       }
+    } else {
+      console.warn("Geri dönüşüm merkezi bulunamadı!");
     }
   }
 
@@ -383,7 +499,84 @@ export class Game {
   }
 }
 
+// Welcome screen handler
+function initWelcomeScreen() {
+  const welcomeScreen = document.getElementById('welcome-screen');
+  const cityNameInput = document.getElementById('city-name-input');
+  const okButton = document.getElementById('welcome-ok-button');
+  const rootWindow = document.getElementById('root-window');
+
+  function startGame() {
+    const cityName = cityNameInput.value.trim() || 'My City';
+    
+    // Hide welcome screen
+    welcomeScreen.style.display = 'none';
+    
+    // Show game window
+    rootWindow.style.display = 'block';
+    
+    // Initialize game with city name
+    window.game = new Game(null, cityName);
+    
+    // Update city name in title bar
+    const cityNameElement = document.getElementById('city-name');
+    if (cityNameElement) {
+      cityNameElement.innerHTML = cityName;
+    }
+  }
+
+  // Check for saved game after a short delay (to ensure saveSystem is loaded)
+  setTimeout(() => {
+    if (window.saveSystem && window.saveSystem.hasSaveData()) {
+      // Add load game button
+      const welcomeForm = document.querySelector('.welcome-form');
+      if (welcomeForm && !document.getElementById('load-game-button')) {
+        const loadButton = document.createElement('button');
+        loadButton.id = 'load-game-button';
+        loadButton.className = 'welcome-button';
+        loadButton.textContent = '📂 Kayıtlı Oyunu Yükle';
+        loadButton.style.marginTop = '12px';
+        loadButton.style.background = 'linear-gradient(135deg, #4a90e2 0%, #357abd 100%)';
+        loadButton.onclick = () => {
+          if (confirm('Kayıtlı oyunu yüklemek istediğinize emin misiniz?')) {
+            welcomeScreen.style.display = 'none';
+            rootWindow.style.display = 'block';
+            window.game = new Game(null, 'My City'); // City name will be loaded from save
+          }
+        };
+        welcomeForm.appendChild(loadButton);
+      }
+    }
+  }, 500);
+
+  // OK button click handler
+  okButton.addEventListener('click', () => {
+    const cityName = cityNameInput.value.trim();
+    if (cityName) {
+      startGame();
+    } else {
+      // Show error or focus input
+      cityNameInput.focus();
+      cityNameInput.style.borderColor = '#f44336';
+      setTimeout(() => {
+        cityNameInput.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+      }, 1000);
+    }
+  });
+
+  // Enter key handler
+  cityNameInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && cityNameInput.value.trim()) {
+      startGame();
+    }
+  });
+
+  // Focus input on load
+  cityNameInput.focus();
+}
+
 // Create a new game when the window is loaded
 window.onload = () => {
-  window.game = new Game();
+  // Initialize welcome screen first
+  initWelcomeScreen();
 }

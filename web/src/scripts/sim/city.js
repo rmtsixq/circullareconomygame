@@ -139,11 +139,25 @@ export class City extends THREE.Group {
    * @param {number} y 
    * @param {string} buildingType 
    */
-  placeBuilding(x, y, buildingType) {
+  placeBuilding(x, y, buildingType, skipTutorialCheck = false) {
     const tile = this.getTile(x, y);
 
     // If the tile doesnt' already have a building, place one there
     if (tile && !tile.building) {
+      // Check tutorial restrictions (skip for player house placement)
+      if (!skipTutorialCheck && window.tutorialState && window.tutorialState.isActive) {
+        if (!window.tutorialState.isActionAllowed(buildingType)) {
+          if (window.ui) {
+            window.ui.showNotification(
+              '🔒 Kilitli',
+              'Bu aksiyon tutorial sırasında kilitli.',
+              'warning'
+            );
+          }
+          return;
+        }
+      }
+      
       // Check if building type is unlocked
       if (window.gameState && window.levelUnlocks) {
         const level = window.gameState.level;
@@ -154,10 +168,11 @@ export class City extends THREE.Group {
           'technology-factory': 'technology-factory', // Level 6
           'steel-factory': 'steel-factory', // Level 8
           'automotive-factory': 'automotive-factory', // Level 9
-          'recycling-center': 'recycling-center', // Level 4
+          'recycling-center': 'recycling-center', // Level 3
           'solar-panel': 'solar-panel', // Level 1 (always unlocked)
           'wind-turbine': 'wind-turbine', // Level 5
-          'hydro-plant': 'hydro-plant' // Level 7
+          'hydro-plant': 'hydro-plant', // Level 7
+          'waste-to-energy': 'waste-to-energy' // Level 5
         };
         
         const feature = buildingUnlocks[buildingType];
@@ -185,13 +200,39 @@ export class City extends THREE.Group {
       if (building.getBaseCost && window.gameState) {
         const cost = building.getBaseCost();
         if (!window.gameState.spendMoney(cost)) {
-          console.warn(`Yetersiz para! Gerekli: ${cost.toLocaleString()} 💰`);
+          if (window.ui) {
+            window.ui.showNotification(
+              '💰 Yetersiz Para',
+              `Bu binayı inşa etmek için ${cost.toLocaleString()} 💰 gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()} 💰`,
+              'error'
+            );
+          }
           return;
         }
       }
       
       tile.setBuilding(building);
       tile.refreshView(this);
+      
+      // Give XP for building construction (except roads)
+      if (window.gameState && buildingType !== 'road') {
+        // Different XP for different building types
+        const xpRewards = {
+          'residential': 2,
+          'commercial': 3,
+          'textile-factory': 5,
+          'technology-factory': 8,
+          'steel-factory': 10,
+          'automotive-factory': 15,
+          'recycling-center': 5,
+          'solar-panel': 3,
+          'wind-turbine': 4,
+          'hydro-plant': 6,
+          'farming': 4
+        };
+        const xp = xpRewards[buildingType] || 1;
+        window.gameState.addXP(xp);
+      }
       
       // Update buildings on adjacent tile in case they need to
       // change their mesh (e.g. roads)

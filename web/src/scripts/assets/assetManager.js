@@ -21,7 +21,8 @@ export class AssetManager {
   statusIcons = {
     'no-power': this.#loadTexture(`${baseUrl}statusIcons/no-power.png`, true),
     'no-road-access': this.#loadTexture(`${baseUrl}statusIcons/no-road-access.png`, true),
-    'critical-waste': this.#createWarningIcon() // Create warning icon dynamically
+    'critical-waste': this.#createWarningIcon(), // Create warning icon dynamically
+    'missing-resources': this.#createMaterialShortageIcon() // Create material shortage icon dynamically
   }
   
   /**
@@ -49,6 +50,63 @@ export class AssetManager {
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText('!', 32, 32);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+  }
+
+  /**
+   * Create a material shortage icon texture dynamically
+   * @returns {THREE.Texture}
+   */
+  #createMaterialShortageIcon() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const context = canvas.getContext('2d');
+    
+    // Draw red warning circle background
+    context.fillStyle = '#f44336';
+    context.beginPath();
+    context.arc(32, 32, 28, 0, Math.PI * 2);
+    context.fill();
+    
+    // Draw white border
+    context.strokeStyle = '#FFFFFF';
+    context.lineWidth = 3;
+    context.stroke();
+    
+    // Draw material/box icon (simplified)
+    context.fillStyle = '#FFFFFF';
+    // Draw a box/cube shape
+    context.fillRect(18, 20, 28, 20);
+    context.strokeStyle = '#FFFFFF';
+    context.lineWidth = 2;
+    // Draw box outline
+    context.strokeRect(18, 20, 28, 20);
+    // Draw diagonal lines for 3D effect
+    context.beginPath();
+    context.moveTo(46, 20);
+    context.lineTo(50, 16);
+    context.lineTo(50, 36);
+    context.lineTo(46, 40);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(18, 20);
+    context.lineTo(22, 16);
+    context.lineTo(50, 16);
+    context.stroke();
+    
+    // Draw X mark to indicate shortage
+    context.strokeStyle = '#f44336';
+    context.lineWidth = 4;
+    context.beginPath();
+    context.moveTo(24, 28);
+    context.lineTo(40, 44);
+    context.moveTo(40, 28);
+    context.lineTo(24, 44);
+    context.stroke();
     
     const texture = new THREE.CanvasTexture(canvas);
     texture.needsUpdate = true;

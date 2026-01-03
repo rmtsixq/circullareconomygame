@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -13,11 +13,26 @@
     <script type="module" src="./scripts/visualEffects.js"></script>
     <script type="module" src="./scripts/levelUnlocks.js"></script>
     <script type="module" src="./scripts/market.js"></script>
+    <script type="module" src="./scripts/tutorialState.js"></script>
+    <script type="module" src="./scripts/saveSystem.js"></script>
     <script type="module" src="./scripts/ui.js"></script>
     <script type="module" src="./scripts/game.js"></script>
   </head>
   <body>
-    <div id="root-window">
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="welcome-screen">
+      <div class="welcome-content">
+        <h1 class="welcome-title">CIRCULAR ECONOMY</h1>
+        <div class="welcome-form">
+          <p class="welcome-subtitle">Hoş geldiniz! Şehrinizin ismini girin</p>
+          <div class="welcome-input-group">
+            <input type="text" id="city-name-input" class="welcome-input" placeholder="Şehir İsmi" maxlength="30" autocomplete="off">
+            <button id="welcome-ok-button" class="welcome-button">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="root-window" style="display: none;">
       <!-- Three.js adds a `canvas` element to this element-->
       <div id="render-target"></div>
       <div id="loading" class="text-overlay">
@@ -34,12 +49,19 @@
         <div id="title-bar">
           <div class="title-bar-left-items title-bar-items">
             <span id="money-display">💰 500,000</span>
-            <span style="margin: 0 10px;">|</span>
+            <span style="margin: 0 15px;">|</span>
             <span id="energy-display">⚡ 100</span>
-            <span style="margin: 0 10px;">|</span>
+            <span style="margin: 0 15px;">|</span>
             <span id="level-display">Level 1</span>
-            <span style="margin: 0 10px;">|</span>
-            <span id="circular-score-display">♻️ 0</span>
+            <span style="margin: 0 15px;">|</span>
+            <div id="circular-score-container" style="display: inline-flex; align-items: center; gap: 6px;">
+              <span style="font-size: 0.9em;">♻️</span>
+              <span style="font-size: 0.75em; white-space: nowrap;">Circular Score:</span>
+              <div style="position: relative; width: 100px; height: 18px; background: rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden;">
+                <div id="circular-score-bar" style="position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 50%, #FFC107 100%); transition: width 0.3s ease; border-radius: 8px;"></div>
+                <div id="circular-score-text" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7em; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); z-index: 1;">0/100</div>
+              </div>
+            </div>
           </div>
           <div class="title-bar-center-items title-bar-items">
             <span id="city-name">My City</span>
@@ -76,7 +98,7 @@
           </button>
           <button id='button-textile-factory' class="ui-button" data-type="textile-factory"
             onclick="ui.onToolSelected(event)" title="Tekstil Fabrikası">
-            <span style="font-size: 1.2em;">🧵</span>
+            <img class="toolbar-icon" src="/icons/textile-factory.png">
           </button>
           <button id='button-technology-factory' class="ui-button" data-type="technology-factory"
             onclick="ui.onToolSelected(event)" title="Teknoloji Fabrikası">
@@ -96,15 +118,19 @@
           </button>
           <button id='button-solar-panel' class="ui-button" data-type="solar-panel"
             onclick="ui.onToolSelected(event)" title="Güneş Paneli">
-            <span style="font-size: 1.2em;">☀️</span>
+            <img class="toolbar-icon" src="/icons/solar-panel.png">
           </button>
           <button id='button-wind-turbine' class="ui-button" data-type="wind-turbine"
             onclick="ui.onToolSelected(event)" title="Rüzgar Türbini">
-            <span style="font-size: 1.2em;">💨</span>
+            <img class="toolbar-icon" src="/icons/wind-turbine.png">
           </button>
           <button id='button-hydro-plant' class="ui-button" data-type="hydro-plant"
             onclick="ui.onToolSelected(event)" title="Hidroelektrik Santrali">
             <span style="font-size: 1.2em;">💧</span>
+          </button>
+          <button id='button-waste-to-energy' class="ui-button" data-type="waste-to-energy"
+            onclick="ui.onToolSelected(event)" title="Atıktan Enerji Tesisi">
+            <img class="toolbar-icon" src="/icons/waste-to-energy.png">
           </button>
           <button id='button-road' class="ui-button" data-type="road"
             onclick="ui.onToolSelected(event)">
@@ -152,6 +178,16 @@
         </div>
         <div id="version">
           v0.3.0
+        </div>
+        <!-- Tutorial Panel -->
+        <div id="tutorial-panel" class="tutorial-panel" style="display: none;">
+          <div class="tutorial-content">
+            <div class="tutorial-title" id="tutorial-title"></div>
+            <div class="tutorial-text" id="tutorial-text"></div>
+            <div class="tutorial-footer">
+              <button id="tutorial-next-btn" class="tutorial-next-button" onclick="ui.nextTutorialStep()">Sonraki ➜</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -25,9 +25,9 @@ export class SolarPanel extends Building {
    * @type {Object}
    */
   energyProductionByLevel = {
-    1: 5,   // 5 energy per tick
-    2: 8,   // 8 energy per tick
-    3: 12   // 12 energy per tick
+    1: 8,   // 8 energy per tick (increased from 5)
+    2: 13,  // 13 energy per tick (increased from 8)
+    3: 20   // 20 energy per tick (increased from 12)
   };
 
   constructor(x = 0, y = 0) {
@@ -58,6 +58,15 @@ export class SolarPanel extends Building {
     if (window.gameState && window.gameState.spendMoney(upgradeCost)) {
       this.level++;
       return true;
+    } else if (window.gameState) {
+      // Not enough money - show notification
+      if (window.ui) {
+        window.ui.showNotification(
+          '💰 Yetersiz Para',
+          `Yükseltme için ${upgradeCost.toLocaleString()} 💰 gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()} 💰`,
+          'error'
+        );
+      }
     }
     
     return false;

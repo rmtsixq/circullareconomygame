@@ -52,7 +52,15 @@ export class ResidentsModule extends SimModule {
       this.evictAll();
     } else if (this.#zone.development.state === DevelopmentState.developed) {
       // Move in new residents if there is room
-      if (this.#residents.length < this.maximum && Math.random() < config.modules.residents.residentMoveInChance) {
+      // Apply tax policy effects (Level 6+)
+      let moveInChance = config.modules.residents.residentMoveInChance;
+      if (window.cityPolicies && window.gameState && window.levelUnlocks &&
+          window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
+        const taxEffects = window.cityPolicies.getTaxPolicyEffects();
+        moveInChance = moveInChance * taxEffects.population;
+      }
+      
+      if (this.#residents.length < this.maximum && Math.random() < moveInChance) {
         this.#residents.push(new Citizen(this.#zone));
       }
     }

@@ -66,6 +66,17 @@ export class Building extends SimObject {
           this.#statusIcon.material.map = window.assetManager.statusIcons[BuildingStatus.CriticalWaste];
           this.#statusIcon.position.set(0, 1, 0); // Position above building for waste warning
           break;
+        case BuildingStatus.MissingResources:
+          this.#statusIcon.visible = true;
+          // Use warning icon (yellow exclamation) - create if doesn't exist
+          if (window.assetManager.statusIcons && window.assetManager.statusIcons[BuildingStatus.MissingResources]) {
+            this.#statusIcon.material.map = window.assetManager.statusIcons[BuildingStatus.MissingResources];
+          } else {
+            // Fallback: use NoPower icon or create a simple warning
+            this.#statusIcon.material.map = window.assetManager.statusIcons?.[BuildingStatus.NoPower] || null;
+          }
+          this.#statusIcon.position.set(0, 1.2, 0); // Position above building for resource warning
+          break;
         default:
           this.#statusIcon.visible = false;
       }
@@ -127,9 +138,10 @@ export class Building extends SimObject {
       <br>`;
 
     if (this.power.required > 0) {
+      const supplied = this.power.isFullyPowered ? this.power.required : 0;
       html += `
         <span class="info-label">Power (kW)</span>
-        <span class="info-value">${this.power.supplied}/${this.power.required}</span>
+        <span class="info-value">${supplied}/${this.power.required}</span>
         <br>`;
     } 
     return html;

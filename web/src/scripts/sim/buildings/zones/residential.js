@@ -25,9 +25,9 @@ export class ResidentialZone extends Zone {
     this.style = ['A', 'B', 'C', 'D', 'E', 'F'][Math.floor(6 * Math.random())];
     
     // Initialize waste module for residential (low waste production)
-    this.waste.productionRate = 0.1; // Very low waste from residents
+    this.waste.productionRate = 0.3; // Increased from 0.1
     this.waste.wasteType = 'organic-waste';
-    this.waste.productionInterval = 10; // Produce every 10 ticks
+    this.waste.productionInterval = 8; // Produce every 8 ticks (increased frequency)
   }
 
   /**
@@ -122,30 +122,58 @@ export class ResidentialZone extends Zone {
     
     // Add special section for player house with management options
     if (this.isPlayerHouse) {
+      const level = window.gameState?.level || 1;
+      const levelUnlocks = window.levelUnlocks;
+      
       html += `
-        <div class="info-heading">🏠 Oyuncu Evi (HQ)</div>
+        <div class="info-heading">Oyuncu Evi (HQ)</div>
         <div style="padding: 8px; color: #ffdd88; font-size: 0.9em; margin-bottom: 8px;">
           Şehir yönetim merkezi. Kaldırılamaz.
         </div>
         <div style="padding: 8px;">
+          ${levelUnlocks && levelUnlocks.isUnlocked('inventory-panel', level) ? `
+          <button class="action-button" onclick="ui.openInventoryPanel()" style="width: 100%; margin-bottom: 4px;">
+            Envanter
+          </button>
+          ` : ''}
+          ${levelUnlocks && levelUnlocks.isUnlocked('auto-buy', level) ? `
+          <button class="action-button" onclick="ui.openMaterialShop()" style="width: 100%; margin-bottom: 4px;">
+            Ham Madde Satın Al
+          </button>
+          ` : ''}
+          ${levelUnlocks && levelUnlocks.isUnlocked('hq-policy-panel', level) ? `
           <button class="action-button" onclick="ui.openSettingsPanel()" style="width: 100%; margin-bottom: 4px;">
-            ⚙️ Şehir Politikaları
+            Şehir Politikaları
           </button>
+          ` : ''}
+          ${levelUnlocks && levelUnlocks.isUnlocked('hq-energy-management', level) ? `
           <button class="action-button" onclick="ui.openEnergyManagementPanel()" style="width: 100%; margin-bottom: 4px;">
-            ⚡ Enerji Yönetimi
+            Enerji Yönetimi
           </button>
+          ` : ''}
+          ${levelUnlocks && levelUnlocks.isUnlocked('hq-statistics', level) ? `
           <button class="action-button" onclick="ui.openStatisticsPanel()" style="width: 100%; margin-bottom: 4px;">
-            📊 Şehir İstatistikleri
+            Şehir İstatistikleri
           </button>
+          ` : ''}
+          ${levelUnlocks && levelUnlocks.isUnlocked('hq-trade', level) ? `
           <button class="action-button" onclick="ui.openTradePanel()" style="width: 100%; margin-bottom: 4px;">
-            💱 Takas & Pazar
+            Takas & Pazar
           </button>
+          ` : ''}
+          ${levelUnlocks && levelUnlocks.isUnlocked('hq-research', level) ? `
           <button class="action-button" onclick="ui.openResearchPanel()" style="width: 100%; margin-bottom: 4px;">
-            🧠 Araştırma & Teknoloji
+            Araştırma & Teknoloji
           </button>
-          <button class="action-button" onclick="ui.openInventoryPanel()" style="width: 100%;">
-            📦 Envanter
-          </button>
+          ` : ''}
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+            <button class="action-button" onclick="ui.saveGame()" style="width: 100%; margin-bottom: 4px; background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);">
+              💾 Oyunu Kaydet
+            </button>
+            <button class="action-button" onclick="ui.loadGame()" style="width: 100%; background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);">
+              📂 Oyunu Yükle
+            </button>
+          </div>
         </div>
       `;
     }

@@ -23,6 +23,25 @@ export class CityPolicies {
     // Auto-save enabled
     this.autoSave = true;
     this.autoSaveInterval = 30; // seconds
+    
+    // 1️⃣ ÜRETİM ÖNCELİK POLİTİKASI (Level 6+)
+    this.productionMode = 'balanced'; // 'balanced', 'economy', 'environment'
+    
+    // 2️⃣ OTOMATİK SATIŞ POLİTİKASI
+    this.salesPolicy = 'auto'; // 'auto', 'store', 'smart'
+    
+    // 3️⃣ VERGİ & TİCARET AYARI
+    this.taxPolicy = 'medium'; // 'low', 'medium', 'high'
+    
+    // 4️⃣ İŞ GÜCÜ DAĞITIMI (0-100, toplam 100 olmalı)
+    this.workforceDistribution = {
+      factories: 60,      // Fabrikalar
+      recycling: 20,     // Geri Dönüşüm
+      commercial: 20     // Ticaret
+    };
+    
+    // 5️⃣ ENERJİ TİCARET MODU
+    this.energyTradeMode = 'none'; // 'none', 'sell', 'store'
   }
 
   /**
@@ -60,6 +79,62 @@ export class CityPolicies {
   }
 
   /**
+   * Get production mode multiplier
+   * @returns {Object} {speed: number, waste: number, circularScore: number}
+   */
+  getProductionModeEffects() {
+    switch (this.productionMode) {
+      case 'economy':
+        return {
+          speed: 1.2,        // +20% üretim hızı
+          waste: 1.25,       // +25% atık
+          circularScore: -0.1 // -10% Circular Score tick başına
+        };
+      case 'environment':
+        return {
+          speed: 0.85,       // -15% üretim hızı
+          waste: 0.7,        // -30% atık
+          circularScore: 0.1 // +10% Circular Score bonusu
+        };
+      case 'balanced':
+      default:
+        return {
+          speed: 1.0,
+          waste: 1.0,
+          circularScore: 0
+        };
+    }
+  }
+
+  /**
+   * Get tax policy effects
+   * @returns {Object} {money: number, population: number, waste: number}
+   */
+  getTaxPolicyEffects() {
+    switch (this.taxPolicy) {
+      case 'low':
+        return {
+          money: 0,         // Normal para
+          population: 1.1,  // +10% nüfus artışı
+          waste: 1.0        // Normal atık
+        };
+      case 'high':
+        return {
+          money: 1.25,      // +25% para
+          population: 0,    // Nüfus artmaz
+          waste: 1.15       // +15% atık
+        };
+      case 'medium':
+      default:
+        return {
+          money: 1.0,
+          population: 1.0,
+          waste: 1.0
+        };
+    }
+  }
+
+  /**
    * Reset to defaults
    */
   reset() {
@@ -69,6 +144,15 @@ export class CityPolicies {
     this.energyCrisisPriority = ['recycling', 'factories', 'residential', 'commercial'];
     this.autoSave = true;
     this.autoSaveInterval = 30;
+    this.productionMode = 'balanced';
+    this.salesPolicy = 'auto';
+    this.taxPolicy = 'medium';
+    this.workforceDistribution = {
+      factories: 60,
+      recycling: 20,
+      commercial: 20
+    };
+    this.energyTradeMode = 'none';
   }
 }
 

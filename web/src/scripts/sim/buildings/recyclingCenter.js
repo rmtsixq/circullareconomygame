@@ -155,7 +155,7 @@ export class RecyclingCenter extends Building {
             const recycledAmount = toRecycle * efficiency;
             
             // Remove from local waste
-            waste.removeWaste(toRecycle);
+            waste.remove(toRecycle);
             
             // Refresh building view if waste was removed
             if (toRecycle > 0 && typeof obj.building.refreshView === 'function') {
@@ -211,19 +211,16 @@ export class RecyclingCenter extends Building {
   }
 
   /**
-   * Process manual recycling (boosted, processes more waste)
+   * Process manual recycling (immediate, no boost)
    * Processes both global waste (resourceManager) and local waste from buildings
-   * Also activates boost for 30 seconds
    */
   processRecycling() {
     if (!window.resourceManager || !this.power.isFullyPowered) {
       return;
     }
 
-    // Activate boost
-    this.boostRemaining = this.boostDuration;
-    
-    const efficiency = this.efficiency; // Now includes boost
+    // Use base efficiency (no boost for manual recycling)
+    const efficiency = this.efficiencyByLevel[this.level] || 0.5;
     let totalRecycled = 0;
     
     // First, process global waste (from resourceManager)
@@ -231,8 +228,8 @@ export class RecyclingCenter extends Building {
       const wasteAmount = window.resourceManager.getResource(wasteType);
       
       if (wasteAmount > 0) {
-        // Calculate how much to recycle (based on efficiency)
-        const toRecycle = Math.min(wasteAmount, 5); // Max 5 per tick
+        // Calculate how much to recycle (manual = more per click)
+        const toRecycle = Math.min(wasteAmount, 20); // Max 20 per manual click (more than auto)
         const recycledAmount = toRecycle * efficiency;
         
         // Remove waste
@@ -247,21 +244,21 @@ export class RecyclingCenter extends Building {
     
     // Then, process local waste from buildings in the city
     if (window.game && window.game.city) {
-      const maxLocalWastePerTick = 20; // Max local waste to process per tick (manual = more)
+      const maxLocalWastePerClick = 50; // Max local waste per manual click (more than auto)
       let processedLocalWaste = 0;
       
       window.game.city.traverse((obj) => {
-        if (obj.building && obj.building.waste && processedLocalWaste < maxLocalWastePerTick) {
+        if (obj.building && obj.building.waste && processedLocalWaste < maxLocalWastePerClick) {
           const waste = obj.building.waste;
           
           // Check if this building has waste that we can recycle
           if (waste.amount > 0 && waste.wasteType && this.wasteRecipes[waste.wasteType]) {
             const recycledType = this.wasteRecipes[waste.wasteType];
-            const toRecycle = Math.min(waste.amount, 10); // Max 10 per building per tick (manual = more)
+            const toRecycle = Math.min(waste.amount, 20); // Max 20 per building per click (manual = more)
             const recycledAmount = toRecycle * efficiency;
             
             // Remove from local waste
-            waste.removeWaste(toRecycle);
+            waste.remove(toRecycle);
             
             // Refresh building view to update color based on new waste level
             if (obj.building && typeof obj.building.refreshView === 'function') {
@@ -331,6 +328,15 @@ export class RecyclingCenter extends Building {
       this.level++;
       this.power.required = this.energyConsumption; // Recalculate
       return true;
+    } else if (window.gameState) {
+      // Not enough money - show notification
+      if (window.ui) {
+        window.ui.showNotification(
+          '💰 Yetersiz Para',
+          `Yükseltme için ${upgradeCost.toLocaleString()} 💰 gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()} 💰`,
+          'error'
+        );
+      }
     }
     
     return false;
@@ -471,7 +477,7 @@ export class RecyclingCenter extends Building {
         <br>
       ` : ''}
       <span class="info-label">Enerji </span>
-      <span class="info-value">${this.power.supplied}/${this.power.required} ⚡</span>
+      <span class="info-value">${this.power.isFullyPowered ? this.power.required : 0}/${this.power.required} ⚡</span>
       <br>
       <span class="info-label">Otomatik Geri Dönüşüm </span>
       <span class="info-value">${this.autoRecycling ? '✅ Aktif' : '❌ Kapalı'}</span>
@@ -550,9 +556,9 @@ export class RecyclingCenter extends Building {
       <div style="padding: 8px; margin-top: 8px;">
         <button id="recycling-center-process-button" class="action-button" 
           onclick="window.game?.processRecycling(${this.x}, ${this.y})" 
-          style="width: 100%; ${!canRecycle ? 'opacity: 0.5; cursor: not-allowed;' : ''} ${boostActive ? 'background: #4CAF50; border-color: #4CAF50;' : ''}"
+          style="width: 100%; ${!canRecycle ? 'opacity: 0.5; cursor: not-allowed;' : ''}"
           ${!canRecycle ? 'disabled' : ''}>
-          ${boostActive ? '⚡ ' : ''}♻️ Manuel Geri Dönüşüm (Boost: +${(this.boostEfficiencyBonus * 100).toFixed(0)}% / 30s)
+          ♻️ Manuel Geri Dönüşüm
         </button>
       </div>
     `;

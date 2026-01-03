@@ -25,9 +25,9 @@ export class WindTurbine extends Building {
    * @type {Object}
    */
   energyProductionByLevel = {
-    1: 8,   // 8 energy per tick
-    2: 12,  // 12 energy per tick
-    3: 18   // 18 energy per tick
+    1: 12,  // 12 energy per tick (more than solar: 8)
+    2: 18,  // 18 energy per tick (more than solar: 13)
+    3: 28   // 28 energy per tick (more than solar: 20)
   };
 
   constructor(x = 0, y = 0) {
@@ -58,6 +58,15 @@ export class WindTurbine extends Building {
     if (window.gameState && window.gameState.spendMoney(upgradeCost)) {
       this.level++;
       return true;
+    } else if (window.gameState) {
+      // Not enough money - show notification
+      if (window.ui) {
+        window.ui.showNotification(
+          '💰 Yetersiz Para',
+          `Yükseltme için ${upgradeCost.toLocaleString()} 💰 gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()} 💰`,
+          'error'
+        );
+      }
     }
     
     return false;

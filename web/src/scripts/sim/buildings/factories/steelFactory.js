@@ -10,7 +10,8 @@ export class SteelFactory extends Factory {
   constructor(x = 0, y = 0) {
     super(x, y);
     this.energyConsumption = 10;
-    this.baseWasteProduction = 2;
+    this.baseWasteProduction = 5; // Increased from 2
+    this.requiredWorkers = 20; // Minimum 20 workers needed
     
     // Define recipes
     this.recipes = [

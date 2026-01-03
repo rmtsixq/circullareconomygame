@@ -6,12 +6,12 @@ export class ResourceManager {
   constructor() {
     // Starting resources
     this.resources = {
-      // Raw Materials
-      'raw-fabric': 50,
-      'raw-plastic': 30,
-      'raw-metal': 20,
-      'raw-electronics': 15,
-      'raw-glass': 10,
+      // Raw Materials (increased for better early game)
+      'raw-fabric': 100,  // Increased from 50
+      'raw-plastic': 60,  // Increased from 30
+      'raw-metal': 40,    // Increased from 20
+      'raw-electronics': 30, // Increased from 15
+      'raw-glass': 20,    // Increased from 10
       
       // Products
       'clothing': 0,

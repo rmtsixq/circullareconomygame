@@ -10,25 +10,40 @@ export class Market {
      * @type {Object}
      */
     this.productPrices = {
-      // Textile products
-      'clothing': 150,      // Increased from 50
-      'sports-gear': 250,   // Increased from 75
+      // Textile products (Grade 1)
+      'clothing': 450,      // Market price (Eco Shop: 520)
+      'sports-gear': 600,   // Market price
       
-      // Technology products
-      'smartphone': 600,    // Increased from 200
-      'laptop': 1500,       // Increased from 500
+      // Technology products (Grade 1)
+      'smartphone': 750,    // Market price (Eco Shop: 900)
+      'laptop': 1500,       // Market price (Eco Shop: 1800)
       
-      // Steel products
-      'steel-beam': 300,    // Increased from 100
-      'steel-structure': 900, // Increased from 300
+      // Steel products (Grade 1)
+      'steel-beam': 650,    // Market price (Eco Shop: 800)
+      'steel-structure': 900, // Market price (Eco Shop: 1100)
       
-      // Automotive products
-      'electric-bike': 1200, // Increased from 400
-      'electric-car': 6000,  // Increased from 2000
+      // Automotive products (Grade 1)
+      'electric-bike': 1200, // Market price (Eco Shop: 1400)
+      'electric-car': 1700,  // Market price (Eco Shop: 2000)
       
       // Farming products
-      'fertilizer': 100,    // Increased from 30
-      'compost': 60         // Increased from 20
+      'fertilizer': 100,
+      'compost': 60
+    };
+    
+    /**
+     * Eco Shop prices (15-20% premium over market)
+     * @type {Object}
+     */
+    this.ecoShopPrices = {
+      'clothing': 520,      // +15.5% premium
+      'sports-gear': 700,
+      'smartphone': 900,    // +20% premium
+      'laptop': 1800,       // +20% premium
+      'steel-beam': 800,    // +23% premium
+      'steel-structure': 1100, // +22% premium
+      'electric-bike': 1400, // +17% premium
+      'electric-car': 2000   // +18% premium
     };
     
     /**
@@ -50,7 +65,7 @@ export class Market {
     this.autoSellEnabled = true; // Always enabled
     
     /**
-     * Auto-buy enabled (unlocked at Level 3)
+     * Auto-buy enabled (unlocked at Level 2)
      * @type {boolean}
      */
     this.autoBuyEnabled = false;
@@ -100,8 +115,8 @@ export class Market {
     // Auto-sell is always enabled from Level 1
     this.autoSellEnabled = true;
     
-    // Auto-buy enabled at Level 3
-    if (level >= 3) {
+    // Auto-buy enabled at Level 2 (moved from Level 3)
+    if (level >= 2) {
       this.autoBuyEnabled = true;
     }
   }
@@ -143,8 +158,47 @@ export class Market {
       return 0;
     }
     
+    // Check sales policy
+    const salesPolicy = window.cityPolicies?.salesPolicy || 'auto';
+    
+    // If policy is 'store', don't sell anything
+    if (salesPolicy === 'store') {
+      return 0;
+    }
+    
+    // If policy is 'smart', check conditions
+    if (salesPolicy === 'smart') {
+      // Check if inventory is 70% full
+      const totalInventory = Object.values(resourceManager.resources).reduce((sum, val) => sum + val, 0);
+      const maxInventory = 1000; // Approximate max inventory
+      const inventoryPercent = (totalInventory / maxInventory) * 100;
+      
+      // Check energy surplus
+      const energySurplus = (gameState.energy || 0) > 50;
+      
+      // Check Circular Score trend (simplified - if score is decreasing)
+      const circularScore = gameState.circularScore || 0;
+      const shouldSlowDown = circularScore < 50; // If score is low, slow down sales
+      
+      // Smart selling conditions
+      if (inventoryPercent < 70 && !energySurplus && shouldSlowDown) {
+        // Don't sell if inventory is low, energy is low, and score is low
+        return 0;
+      }
+    }
+    
     let totalEarned = 0;
     const products = Object.keys(this.productPrices);
+    
+    // Check if there are Eco Shops (for premium pricing)
+    let hasEcoShop = false;
+    if (window.game && window.game.city) {
+      window.game.city.traverse((obj) => {
+        if (obj.building && obj.building.type === 'commercial') {
+          hasEcoShop = true;
+        }
+      });
+    }
     
     // Sell products based on auto-sell rate
     products.forEach(product => {
@@ -152,7 +206,12 @@ export class Market {
       if (currentAmount > 0) {
         const toSell = Math.min(this.autoSellRate, currentAmount);
         if (toSell > 0) {
-          const price = this.productPrices[product] || 0;
+          // Use Eco Shop price if available, otherwise market price
+          let price = this.productPrices[product] || 0;
+          if (hasEcoShop && this.ecoShopPrices[product]) {
+            price = this.ecoShopPrices[product];
+          }
+          
           const earnings = toSell * price;
           
           // Remove from inventory
@@ -167,6 +226,19 @@ export class Market {
     });
     
     return totalEarned;
+  }
+  
+  /**
+   * Get product price (market or eco shop)
+   * @param {string} product 
+   * @param {boolean} useEcoShop 
+   * @returns {number}
+   */
+  getProductPrice(product, useEcoShop = false) {
+    if (useEcoShop && this.ecoShopPrices[product]) {
+      return this.ecoShopPrices[product];
+    }
+    return this.productPrices[product] || 0;
   }
   
   /**

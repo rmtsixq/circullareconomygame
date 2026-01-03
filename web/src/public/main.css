@@ -1,12 +1,24 @@
+/* Import Google Fonts for Turkish character support - Must be at the top */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap');
+
 @font-face {
   font-family: Bebas-Regular;
   src: url('fonts/Bebas-Regular.otf');
+  unicode-range: U+0020-007F; /* Only ASCII characters */
 }
 
 html, body {
   height: 100%;
   margin: 0;
-  font-family: Bebas-Regular, sans-serif;
+  /* Primary font for Turkish characters, Bebas as fallback for English */
+  font-family: 'Montserrat', 'Inter', 'Roboto', 'Oswald', Bebas-Regular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+  font-feature-settings: "liga" 1, "kern" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   background: linear-gradient(0deg, #3a5177, #81b1e0);
 }
@@ -170,19 +182,40 @@ h1 {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .title-bar-items {
-  flex: 1 1 33%;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 1.5em;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.title-bar-items.title-bar-center-items {
+.title-bar-left-items {
+  flex: 2 1 45%;
+  justify-content: flex-start;
+  padding-left: 12px;
+  gap: 0;
+}
+
+.title-bar-center-items {
+  flex: 1 1 30%;
   font-size: 2em;
 }
+
+.title-bar-right-items {
+  flex: 1 1 25%;
+  justify-content: flex-end;
+  padding-right: 12px;
+  gap: 8px;
+}
+
 
 #population-icon {
   position: relative;
@@ -294,7 +327,7 @@ h1 {
 #resource-panel {
   top: 64px;
   left: 16px;
-  display: block;
+  display: none;
 }
 
 .panel-header {
@@ -426,5 +459,651 @@ h1 {
   to {
     transform: translateX(400px);
     opacity: 0;
+  }
+}
+
+/* Level Up Modal - Glassmorphism Design */
+.level-up-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeInModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.level-up-modal {
+  background: rgba(30, 35, 49, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 24px;
+  padding: 0;
+  max-width: 700px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+              0 0 80px rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideUpModal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.level-up-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(76, 175, 80, 0.6) 20%, 
+    rgba(76, 175, 80, 0.9) 50%, 
+    rgba(76, 175, 80, 0.6) 80%, 
+    transparent 100%);
+  animation: shimmerModal 3s infinite;
+  z-index: 1;
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpModal {
+  from {
+    transform: translateY(30px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmerModal {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.level-up-modal-header {
+  background: rgba(76, 175, 80, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 24px 32px;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 2;
+}
+
+.level-up-modal-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+  font-family: 'Montserrat', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.level-up-modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 28px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+  padding: 0;
+  font-weight: 300;
+}
+
+.level-up-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1) rotate(90deg);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.level-up-modal-content {
+  padding: 32px;
+  color: rgba(255, 255, 255, 0.95);
+  overflow-y: auto;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  font-family: 'Montserrat', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+}
+
+.level-up-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.level-up-modal-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.level-up-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(76, 175, 80, 0.5);
+  border-radius: 3px;
+}
+
+.level-up-modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(76, 175, 80, 0.7);
+}
+
+.level-up-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 16px;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.level-up-description {
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 32px;
+  text-align: center;
+  line-height: 1.7;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.level-up-section {
+  margin-bottom: 28px;
+}
+
+.level-up-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 16px;
+  border-bottom: 2px solid rgba(76, 175, 80, 0.5);
+  padding-bottom: 12px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.level-up-features,
+.level-up-tips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.level-up-features li,
+.level-up-tips li {
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  background: rgba(76, 175, 80, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-left: 3px solid rgba(76, 175, 80, 0.8);
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.6;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.level-up-features li:hover,
+.level-up-tips li:hover {
+  background: rgba(76, 175, 80, 0.2);
+  transform: translateX(6px);
+  border-left-color: rgba(76, 175, 80, 1);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.level-up-modal-footer {
+  padding: 24px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 2;
+}
+
+.level-up-modal-button {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.9) 0%, rgba(56, 142, 60, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 14px 40px;
+  font-size: 17px;
+  font-weight: 600;
+  font-family: 'Montserrat', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4),
+              0 0 0 0 rgba(76, 175, 80, 0.5);
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.level-up-modal-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent);
+  transition: left 0.5s;
+}
+
+.level-up-modal-button:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 1) 0%, rgba(56, 142, 60, 1) 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6),
+              0 0 0 4px rgba(76, 175, 80, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.level-up-modal-button:hover::before {
+  left: 100%;
+}
+
+.level-up-modal-button:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.4);
+}
+
+/* Tutorial Panel Styles - Glassmorphism Design */
+.tutorial-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(30, 35, 49, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  color: white;
+  padding: 24px 32px;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4), 
+              0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+              0 0 60px rgba(76, 175, 80, 0.15);
+  z-index: 1000;
+  font-family: 'Montserrat', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+  max-height: 280px;
+  overflow-y: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tutorial-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(76, 175, 80, 0.6) 20%, 
+    rgba(76, 175, 80, 0.8) 50%, 
+    rgba(76, 175, 80, 0.6) 80%, 
+    transparent 100%);
+  animation: shimmer 3s infinite;
+}
+
+.tutorial-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.tutorial-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+}
+
+.tutorial-text {
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-line;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.tutorial-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tutorial-next-button {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.9) 0%, rgba(56, 142, 60, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 12px 32px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4),
+              0 0 0 0 rgba(76, 175, 80, 0.5);
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Montserrat', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+}
+
+.tutorial-next-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent);
+  transition: left 0.5s;
+}
+
+.tutorial-next-button:hover {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 1) 0%, rgba(56, 142, 60, 1) 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6),
+              0 0 0 4px rgba(76, 175, 80, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.tutorial-next-button:hover::before {
+  left: 100%;
+}
+
+.tutorial-next-button:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.4);
+}
+
+.tutorial-next-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@keyframes slideUpFade {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Scrollbar styling for tutorial panel */
+.tutorial-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tutorial-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.tutorial-panel::-webkit-scrollbar-thumb {
+  background: rgba(76, 175, 80, 0.5);
+  border-radius: 3px;
+}
+
+.tutorial-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(76, 175, 80, 0.7);
+}
+
+/* WELCOME SCREEN */
+.welcome-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/welcome-screen.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  overflow: hidden;
+}
+
+.welcome-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 40px;
+}
+
+.welcome-title {
+  font-size: 4.5em;
+  font-weight: bold;
+  color: white;
+  font-family: 'Montserrat', 'Inter', 'Roboto', 'Oswald', Bebas-Regular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8), 0 0 20px rgba(76, 175, 80, 0.5);
+  margin-bottom: 60px;
+  letter-spacing: 0.1em;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.welcome-form {
+  background: rgba(30, 35, 49, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+.welcome-subtitle {
+  font-size: 1.5em;
+  color: #e0e0e0;
+  font-family: 'Montserrat', 'Inter', 'Roboto', 'Oswald', Bebas-Regular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.welcome-input-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-input {
+  flex: 1;
+  padding: 18px 24px;
+  font-size: 1.2em;
+  font-family: 'Montserrat', 'Inter', 'Roboto', 'Oswald', Bebas-Regular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: white;
+  outline: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.welcome-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.welcome-input:focus {
+  border-color: #4CAF50;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+}
+
+.welcome-button {
+  padding: 18px 40px;
+  font-size: 1.2em;
+  font-family: 'Montserrat', 'Inter', 'Roboto', 'Oswald', Bebas-Regular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  min-width: 100px;
+}
+
+.welcome-button:hover {
+  background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+}
+
+.welcome-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(76, 175, 80, 0.4);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design for welcome screen */
+@media (max-width: 768px) {
+  .welcome-title {
+    font-size: 3em;
+    margin-bottom: 40px;
+  }
+  
+  .welcome-form {
+    padding: 30px 20px;
+  }
+  
+  .welcome-subtitle {
+    font-size: 1.2em;
+  }
+  
+  .welcome-input-group {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .welcome-input {
+    width: 100%;
+  }
+  
+  .welcome-button {
+    width: 100%;
   }
 }

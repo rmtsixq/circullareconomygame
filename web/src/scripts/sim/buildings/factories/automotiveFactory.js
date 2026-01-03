@@ -10,7 +10,8 @@ export class AutomotiveFactory extends Factory {
   constructor(x = 0, y = 0) {
     super(x, y);
     this.energyConsumption = 12;
-    this.baseWasteProduction = 2.5;
+    this.baseWasteProduction = 6; // Increased from 2.5
+    this.requiredWorkers = 25; // Minimum 25 workers needed
     
     // Define recipes
     this.recipes = [

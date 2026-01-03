@@ -89,7 +89,7 @@ export class CommercialZone extends Zone {
    * Waste production per tick (packaging waste)
    * @type {number}
    */
-  baseWasteProduction = 0.2; // Low waste from packaging
+  baseWasteProduction = 0.5; // Increased from 0.2
   
   /**
    * Accumulated sales progress (for fractional sales)
@@ -274,6 +274,15 @@ export class CommercialZone extends Zone {
     if (window.gameState && window.gameState.spendMoney(upgradeCost)) {
       this.level++;
       return true;
+    } else if (window.gameState) {
+      // Not enough money - show notification
+      if (window.ui) {
+        window.ui.showNotification(
+          '💰 Yetersiz Para',
+          `Yükseltme için ${upgradeCost.toLocaleString()} 💰 gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()} 💰`,
+          'error'
+        );
+      }
     }
     
     return false;
