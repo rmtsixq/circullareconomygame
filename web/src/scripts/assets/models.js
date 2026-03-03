@@ -425,5 +425,26 @@ export default {
     "format": "gltf",
     "scale": 0.3,
     "preserveMaterials": true
+  },
+  "police-station-1": {
+    "type": "zone",
+    "filename": "police-station/scene.gltf",
+    "format": "gltf",
+    "scale": 1.0,
+    "preserveMaterials": true
+  },
+  "police-station-2": {
+    "type": "zone",
+    "filename": "police-station/scene.gltf",
+    "format": "gltf",
+    "scale": 1.0,
+    "preserveMaterials": true
+  },
+  "police-station-3": {
+    "type": "zone",
+    "filename": "police-station/scene.gltf",
+    "format": "gltf",
+    "scale": 1.0,
+    "preserveMaterials": true
   }
 }

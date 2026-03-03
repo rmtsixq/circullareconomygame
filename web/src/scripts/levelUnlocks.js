@@ -67,6 +67,7 @@ export class LevelUnlocks {
     'hq-trade': 4, // Moved from Level 7
     'hq-research': 4, // Moved from Level 7
     'energy-priority': 4, // Moved from Level 7
+    'police-station': 4, // Police station for city security
     
     // Level 5 - Economy Deepens
     'eco-shop': 5,
@@ -187,7 +188,7 @@ export class LevelUnlocks {
           'Circular Score\'u artırarak bonuslar kazanın'
         ]
       },
-      4: {
+      4:       {
         title: 'Gelişmiş Üretim & Şehir Yönetimi',
         description: 'Daha verimli üretim tarifeleri keşfedin ve şehri yönetmeye başlayın.',
         features: [
@@ -197,7 +198,8 @@ export class LevelUnlocks {
           'HQ Statistics',
           'HQ Trade',
           'HQ Research',
-          'Energy Priority System'
+          'Energy Priority System',
+          'Polis Merkezi'
         ],
         tips: [
           'Grade 2 tarifeler daha verimli üretim sağlar',

@@ -105,7 +105,7 @@ export class Game {
       // Create city if not already created
       if (!this.city) {
         const cityName = saveData && saveData.city ? saveData.city.name : (this.cityName || 'My City');
-        this.city = new City(16, cityName);
+        this.city = new City(20, cityName);
         this.cityName = cityName;
       }
       this.initialize(this.city);
@@ -508,6 +508,11 @@ function initWelcomeScreen() {
 
   function startGame() {
     const cityName = cityNameInput.value.trim() || 'My City';
+    
+    // Delete existing save data for new game
+    if (window.saveSystem && window.saveSystem.hasSaveData()) {
+      window.saveSystem.deleteSave();
+    }
     
     // Hide welcome screen
     welcomeScreen.style.display = 'none';
