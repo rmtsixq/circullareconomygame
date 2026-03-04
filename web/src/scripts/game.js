@@ -31,7 +31,7 @@ export class Game {
    * @type {SimObject | null}
    */
   selectedObject = null;
-  
+
   /**
    * Current simulation tick counter
    * @type {number}
@@ -44,7 +44,7 @@ export class Game {
       this.city = city;
     }
 
-    this.renderer = new THREE.WebGLRenderer({ 
+    this.renderer = new THREE.WebGLRenderer({
       antialias: true
     });
     this.scene = new THREE.Scene();
@@ -72,7 +72,7 @@ export class Game {
       if (!window.visualEffects) {
         window.visualEffects = new VisualEffectsManager(this.scene);
       }
-      
+
       window.ui.hideLoadingText();
 
       // Check if there's a saved game
@@ -109,7 +109,7 @@ export class Game {
         this.cityName = cityName;
       }
       this.initialize(this.city);
-      
+
       // Reconstruct city from save data if available
       if (saveData && window.saveSystem) {
         window.saveSystem.reconstructCity(saveData, this.city);
@@ -121,7 +121,7 @@ export class Game {
             cityNameElement.innerHTML = saveData.city.name;
           }
         }
-        
+
         // Ensure tutorial state is correct after reconstruction
         // (loadGame already handles this, but UI might not be ready then)
         if (window.tutorialState && window.gameState) {
@@ -145,7 +145,7 @@ export class Game {
         const centerX = Math.floor(this.city.size / 2);
         const centerY = Math.floor(this.city.size / 2);
         this.city.placeBuilding(centerX, centerY, 'residential', true);
-        
+
         // Mark it as player house
         const playerHouseTile = this.city.getTile(centerX, centerY);
         if (playerHouseTile && playerHouseTile.building) {
@@ -158,13 +158,13 @@ export class Game {
       if (!saveData && window.tutorialState && window.gameState && window.gameState.level === 1) {
         window.tutorialState.initializeStep(0);
       }
-      
+
       this.start();
 
       // Update UI with initial game state
       window.ui.updateGameState(window.gameState);
       window.ui.updateResources(window.resourceManager);
-      
+
       // Update resources periodically
       setInterval(() => {
         if (window.resourceManager) {
@@ -174,7 +174,7 @@ export class Game {
 
       // Simulation runs every 2.5 seconds (slower pace)
       setInterval(this.simulate.bind(this), 2500);
-      
+
       // Auto-save mechanism
       if (window.cityPolicies && window.cityPolicies.autoSave) {
         const autoSaveInterval = (window.cityPolicies.autoSaveInterval || 30) * 1000; // Convert to milliseconds
@@ -202,7 +202,7 @@ export class Game {
 
   #setupGrid(city) {
     // Add the grid
-    const gridMaterial = new THREE.MeshBasicMaterial({ 
+    const gridMaterial = new THREE.MeshBasicMaterial({
       color: 0x000000,
       map: window.assetManager.textures['grid'],
       transparent: true,
@@ -239,7 +239,7 @@ export class Game {
     this.scene.add(sun);
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
   }
-  
+
   /**
    * Starts the renderer
    */
@@ -264,7 +264,7 @@ export class Game {
     if (this.inputManager.isLeftMouseDown) {
       this.useTool();
     }
-    
+
     // Update visual effects
     if (window.visualEffects) {
       window.visualEffects.update();
@@ -281,21 +281,21 @@ export class Game {
 
     // Increment tick counter
     this.currentTick++;
-    
+
     // Update market prices
     if (window.market) {
       window.market.updatePrices(this.currentTick);
     }
-    
+
     // Update global pollution
     if (window.globalPollution) {
       window.globalPollution.decay();
       window.globalPollution.applyPenalties(this.currentTick);
     }
-    
+
     // Apply production mode effects to Circular Score (Level 6+)
     if (window.cityPolicies && window.gameState && window.levelUnlocks &&
-        window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
+      window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
       const modeEffects = window.cityPolicies.getProductionModeEffects();
       if (modeEffects.circularScore !== 0) {
         // Apply Circular Score change (positive or negative)
@@ -303,15 +303,15 @@ export class Game {
         window.gameState.updateCircularScore(change);
       }
     }
-    
+
     // Check tutorial step completion
     if (window.tutorialState && window.tutorialState.isActive) {
       window.tutorialState.checkStepCompletion();
     }
-    
+
     // Update the city data model first, then update the scene
     this.city.simulate(1, this.currentTick);
-    
+
     // Auto-sell products and auto-buy materials (if unlocked)
     if (window.market && window.resourceManager && window.gameState) {
       // Auto-sell products (always enabled from Level 1)
@@ -319,22 +319,22 @@ export class Game {
         const earned = window.market.autoSellProducts(window.resourceManager, window.gameState);
         // Silent auto-sell, no notification spam
       }
-      
+
       // Auto-buy materials (Level 2+)
-      if (window.gameState.level >= 2 && window.levelUnlocks && 
-          window.levelUnlocks.isUnlocked('auto-buy', window.gameState.level)) {
+      if (window.gameState.level >= 2 && window.levelUnlocks &&
+        window.levelUnlocks.isUnlocked('auto-buy', window.gameState.level)) {
         window.market.autoBuyMaterials(window.resourceManager, window.gameState);
       }
     }
 
-    // Calculate circular score every tick (comprehensive calculation)
-    if (window.gameState && window.gameState.level >= 3) {
+    // Calculate city scores every tick (full 5-index scoring)
+    if (window.gameState) {
       window.gameState.calculateCircularScore();
     }
-    
+
     window.ui.updateTitleBar(this);
     window.ui.updateInfoPanel(this.selectedObject);
-    
+
     // Check for waste alarms (every 5 ticks)
     if (this.currentTick % 5 === 0 && window.ui) {
       window.ui.checkWasteAlarms();
@@ -346,12 +346,12 @@ export class Game {
    */
   useTool() {
     const activeToolId = window.ui?.activeToolId;
-    
+
     // Don't proceed if no tool is selected
     if (!activeToolId) {
       return;
     }
-    
+
     switch (activeToolId) {
       case 'select':
         this.updateSelectedObject();
@@ -377,7 +377,7 @@ export class Game {
         break;
     }
   }
-  
+
   /**
    * Sets the currently selected object and highlights it
    */
@@ -408,7 +408,7 @@ export class Game {
           return;
         }
       }
-      
+
       if (tile.building.upgrade()) {
         // Refresh view
         tile.building.refreshView();
@@ -435,7 +435,7 @@ export class Game {
       if (tile.building.startRecycling && typeof tile.building.startRecycling === 'function') {
         // Call startRecycling which handles energy check and calls processRecycling
         const success = tile.building.startRecycling();
-        
+
         if (success) {
           // Update UI
           if (this.selectedObject === tile.building) {
@@ -457,7 +457,7 @@ export class Game {
   /**
    * Sets the object that is currently highlighted
    */
-  updateFocusedObject() {  
+  updateFocusedObject() {
     this.focusedObject?.setFocused(false);
     const newObject = this.#raycast();
     if (newObject !== this.focusedObject) {
@@ -508,21 +508,21 @@ function initWelcomeScreen() {
 
   function startGame() {
     const cityName = cityNameInput.value.trim() || 'My City';
-    
+
     // Delete existing save data for new game
     if (window.saveSystem && window.saveSystem.hasSaveData()) {
       window.saveSystem.deleteSave();
     }
-    
+
     // Hide welcome screen
     welcomeScreen.style.display = 'none';
-    
+
     // Show game window
     rootWindow.style.display = 'block';
-    
+
     // Initialize game with city name
     window.game = new Game(null, cityName);
-    
+
     // Update city name in title bar
     const cityNameElement = document.getElementById('city-name');
     if (cityNameElement) {

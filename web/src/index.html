@@ -1,199 +1,265 @@
 <!DOCTYPE html>
 <html lang="tr">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CircularWorld</title>
-    <link rel="stylesheet" href="/main.css">
-    <script type="module" src="./scripts/gameState.js"></script>
-    <script type="module" src="./scripts/resources.js"></script>
-    <script type="module" src="./scripts/cityPolicies.js"></script>
-    <script type="module" src="./scripts/globalPollution.js"></script>
-    <script type="module" src="./scripts/visualEffects.js"></script>
-    <script type="module" src="./scripts/levelUnlocks.js"></script>
-    <script type="module" src="./scripts/market.js"></script>
-    <script type="module" src="./scripts/tutorialState.js"></script>
-    <script type="module" src="./scripts/saveSystem.js"></script>
-    <script type="module" src="./scripts/ui.js"></script>
-    <script type="module" src="./scripts/game.js"></script>
-  </head>
-  <body>
-    <!-- Welcome Screen -->
-    <div id="welcome-screen" class="welcome-screen">
-      <div class="welcome-content">
-        <h1 class="welcome-title">CIRCULAR ECONOMY</h1>
-        <div class="welcome-form">
-          <p class="welcome-subtitle">Hoş geldiniz! Şehrinizin ismini girin</p>
-          <div class="welcome-input-group">
-            <input type="text" id="city-name-input" class="welcome-input" placeholder="Şehir İsmi" maxlength="30" autocomplete="off">
-            <button id="welcome-ok-button" class="welcome-button">OK</button>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CircularWorld</title>
+  <link rel="stylesheet" href="/main.css">
+  <script type="module" src="./scripts/gameState.js"></script>
+  <script type="module" src="./scripts/scoringSystem.js"></script>
+  <script type="module" src="./scripts/resources.js"></script>
+  <script type="module" src="./scripts/cityPolicies.js"></script>
+  <script type="module" src="./scripts/globalPollution.js"></script>
+  <script type="module" src="./scripts/visualEffects.js"></script>
+  <script type="module" src="./scripts/levelUnlocks.js"></script>
+  <script type="module" src="./scripts/market.js"></script>
+  <script type="module" src="./scripts/tutorialState.js"></script>
+  <script type="module" src="./scripts/saveSystem.js"></script>
+  <script type="module" src="./scripts/ui.js"></script>
+  <script type="module" src="./scripts/game.js"></script>
+  <script type="module" src="./scripts/adminPanel.js"></script>
+</head>
+
+<body>
+  <!-- Welcome Screen -->
+  <div id="welcome-screen" class="welcome-screen">
+    <div class="welcome-content">
+      <h1 class="welcome-title">CIRCULAR ECONOMY</h1>
+      <div class="welcome-form">
+        <p class="welcome-subtitle">Hoş geldiniz! Şehrinizin ismini girin</p>
+        <div class="welcome-input-group">
+          <input type="text" id="city-name-input" class="welcome-input" placeholder="Şehir İsmi" maxlength="30"
+            autocomplete="off">
+          <button id="welcome-ok-button" class="welcome-button">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="root-window" style="display: none;">
+    <!-- Three.js adds a `canvas` element to this element-->
+    <div id="render-target"></div>
+    <div id="loading" class="text-overlay">
+      <div>
+        LOADING...
+      </div>
+    </div>
+    <div id="paused-text" class="text-overlay" style="visibility: hidden;">
+      <div>
+        PAUSED
+      </div>
+    </div>
+    <div id="ui">
+      <div id="title-bar">
+        <div class="title-bar-left-items title-bar-items">
+          <span id="money-display">💰 500,000</span>
+          <span class="tb-sep">|</span>
+          <span id="energy-display">⚡ 100</span>
+          <span class="tb-sep">|</span>
+          <span id="level-display">Seviye 1</span>
+          <span class="tb-sep">|</span>
+          <span id="population-display">🏠 0</span>
+        </div>
+        <div class="title-bar-center-items title-bar-items">
+          <span id="city-name">My City</span>
+          <span style="cursor: pointer; opacity: 0.1;" onclick="window.adminPanel?.toggle()">⚙️</span>
+          <span>&nbsp;-&nbsp;</span>
+          <span id="sim-time">1/1/2023</span>
+        </div>
+        <div class="title-bar-right-items title-bar-items">
+          <img id="population-icon" src="/icons/person.png">
+          <span id="population-counter">0</span>
+        </div>
+      </div>
+      <!-- City Scores Bar -->
+      <div id="scores-bar">
+        <div class="score-item" title="Refah (Well-being)">
+          <span class="score-icon">🟢</span>
+          <span class="score-label">Refah</span>
+          <div class="score-bar-bg">
+            <div id="score-bar-wellbeing" class="score-bar-fill" style="width: 50%; background: #4CAF50;"></div>
+          </div>
+          <span id="score-val-wellbeing" class="score-val">50</span>
+        </div>
+        <div class="score-item" title="Eğitim (Education)">
+          <span class="score-icon">🎓</span>
+          <span class="score-label">Eğitim</span>
+          <div class="score-bar-bg">
+            <div id="score-bar-education" class="score-bar-fill" style="width: 30%; background: #2196F3;"></div>
+          </div>
+          <span id="score-val-education" class="score-val">30</span>
+        </div>
+        <div class="score-item" title="Sağlık (Health)">
+          <span class="score-icon">🏥</span>
+          <span class="score-label">Sağlık</span>
+          <div class="score-bar-bg">
+            <div id="score-bar-health" class="score-bar-fill" style="width: 70%; background: #E91E63;"></div>
+          </div>
+          <span id="score-val-health" class="score-val">70</span>
+        </div>
+        <div class="score-item" title="Sürdürülebilirlik (Sustainability)">
+          <span class="score-icon">♻️</span>
+          <span class="score-label">Sürd.</span>
+          <div class="score-bar-bg">
+            <div id="score-bar-sustainability" class="score-bar-fill" style="width: 0%; background: #8BC34A;"></div>
+          </div>
+          <span id="score-val-sustainability" class="score-val">0</span>
+        </div>
+        <div class="score-item" title="Yönetim Puanı (Management Score)">
+          <span class="score-icon">⭐</span>
+          <span class="score-label">Yönetim</span>
+          <span id="score-val-management" class="score-val" style="font-weight: bold; color: #FFD700;">0</span>
+        </div>
+      </div>
+      <div id="ui-toolbar" class="container">
+        <button id='button-select' class="ui-button selected" data-type="select" onclick="ui.onToolSelected(event)">
+          <img class="toolbar-icon" src="/icons/select-color.png">
+        </button>
+        <button id='button-bulldoze' class="ui-button" data-type="bulldoze" onclick="ui.onToolSelected(event)">
+          <img class="toolbar-icon" src="/icons/bulldozer-color.png">
+        </button>
+        <button id='button-residential' class="ui-button" data-type="residential" onclick="ui.onToolSelected(event)">
+          <img class="toolbar-icon" src="/icons/house-color.png">
+        </button>
+        <button id='button-commercial' class="ui-button" data-type="commercial" onclick="ui.onToolSelected(event)">
+          <img class="toolbar-icon" src="/icons/store-color.png">
+        </button>
+        <button id='button-farming' class="ui-button" data-type="farming" onclick="ui.onToolSelected(event)"
+          title="Tarım Alanı">
+          <span style="font-size: 1.2em;">🌾</span>
+        </button>
+        <button id='button-textile-factory' class="ui-button" data-type="textile-factory"
+          onclick="ui.onToolSelected(event)" title="Tekstil Fabrikası">
+          <img class="toolbar-icon" src="/icons/textile-factory.png">
+        </button>
+        <button id='button-technology-factory' class="ui-button" data-type="technology-factory"
+          onclick="ui.onToolSelected(event)" title="Teknoloji Fabrikası">
+          <span style="font-size: 1.2em;">💻</span>
+        </button>
+        <button id='button-steel-factory' class="ui-button" data-type="steel-factory" onclick="ui.onToolSelected(event)"
+          title="Çelik Fabrikası">
+          <span style="font-size: 1.2em;">⚙️</span>
+        </button>
+        <button id='button-automotive-factory' class="ui-button" data-type="automotive-factory"
+          onclick="ui.onToolSelected(event)" title="Otomotiv Fabrikası">
+          <span style="font-size: 1.2em;">🚗</span>
+        </button>
+        <button id='button-recycling-center' class="ui-button" data-type="recycling-center"
+          onclick="ui.onToolSelected(event)" title="Geri Dönüşüm Merkezi">
+          <span style="font-size: 1.2em;">♻️</span>
+        </button>
+        <button id='button-solar-panel' class="ui-button" data-type="solar-panel" onclick="ui.onToolSelected(event)"
+          title="Güneş Paneli">
+          <img class="toolbar-icon" src="/icons/solar-panel.png">
+        </button>
+        <button id='button-wind-turbine' class="ui-button" data-type="wind-turbine" onclick="ui.onToolSelected(event)"
+          title="Rüzgar Türbini">
+          <img class="toolbar-icon" src="/icons/wind-turbine.png">
+        </button>
+        <button id='button-hydro-plant' class="ui-button" data-type="hydro-plant" onclick="ui.onToolSelected(event)"
+          title="Hidroelektrik Santrali">
+          <span style="font-size: 1.2em;">💧</span>
+        </button>
+        <button id='button-waste-to-energy' class="ui-button" data-type="waste-to-energy"
+          onclick="ui.onToolSelected(event)" title="Atıktan Enerji Tesisi">
+          <img class="toolbar-icon" src="/icons/waste-to-energy.png">
+        </button>
+        <button id='button-police-station' class="ui-button" data-type="police-station"
+          onclick="ui.onToolSelected(event)" title="Polis Merkezi">
+          <span style="font-size: 1.2em;">🚓</span>
+        </button>
+        <button id='button-road' class="ui-button" data-type="road" onclick="ui.onToolSelected(event)">
+          <img class="toolbar-icon" src="/icons/road-color.png">
+        </button>
+        <button id='button-pause' class="ui-button" onclick="ui.togglePause()">
+          <img id='pause-button-icon' class="toolbar-icon" src="/icons/pause-color.png">
+        </button>
+        <button id='button-resources' class="ui-button" onclick="ui.toggleResourcePanel()" title="Kaynaklar">
+          <span style="font-size: 1.5em;">📦</span>
+        </button>
+      </div>
+      <div id="info-panel" class="container">
+      </div>
+      <!-- Floating Resource Panel -->
+      <div id="resource-panel" class="floating-panel">
+        <div class="panel-header">
+          <span>📦 Kaynaklar</span>
+          <button class="panel-close" onclick="ui.toggleResourcePanel()">×</button>
+        </div>
+        <div class="panel-content">
+          <div class="resource-section">
+            <div class="resource-section-title">Ham Maddeler</div>
+            <div id="raw-materials-list" class="resource-list"></div>
+          </div>
+          <div class="resource-section">
+            <div class="resource-section-title">Ürünler</div>
+            <div id="products-list" class="resource-list"></div>
+          </div>
+          <div class="resource-section">
+            <div class="resource-section-title">Atıklar</div>
+            <div id="waste-list" class="resource-list"></div>
+          </div>
+          <div class="resource-section">
+            <div class="resource-section-title">Geri Dönüşümlü</div>
+            <div id="recycled-list" class="resource-list"></div>
+          </div>
+        </div>
+      </div>
+      <div id="instructions">
+        INTERACT - Left Mouse<br>
+        ROTATE - Right Mouse<br>
+        PAN - Control + Right Mouse<br>
+        ZOOM - Scroll
+      </div>
+      <div id="version">
+        v0.3.0
+      </div>
+      <!-- Tutorial Panel -->
+      <div id="tutorial-panel" class="tutorial-panel" style="display: none;">
+        <div class="tutorial-content">
+          <div class="tutorial-title" id="tutorial-title"></div>
+          <div class="tutorial-text" id="tutorial-text"></div>
+          <div class="tutorial-footer">
+            <button id="tutorial-next-btn" class="tutorial-next-button" onclick="ui.nextTutorialStep()">Sonraki
+              ➜</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Panel -->
+      <div id="admin-panel" class="admin-panel" style="display: none;">
+        <div class="admin-header">
+          <span>Dev Admin Panel</span>
+          <button onclick="window.adminPanel.hide()">×</button>
+        </div>
+        <div class="admin-content">
+          <div class="admin-section">
+            <div class="admin-label">Ekonomi</div>
+            <div class="admin-buttons">
+              <button onclick="window.adminPanel.addMoney(50000)">+50k 💰</button>
+              <button onclick="window.adminPanel.addMoney(500000)">+500k 💰</button>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-label">Seviye & Kilitler</div>
+            <div class="admin-buttons">
+              <button onclick="window.adminPanel.setLevel(2)">Seviye 2</button>
+              <button onclick="window.adminPanel.setLevel(5)">Seviye 5</button>
+              <button onclick="window.adminPanel.unlockAll()">Her Şeyi Aç 🔓</button>
+            </div>
+          </div>
+          <div class="admin-section">
+            <div class="admin-label">Şehir Durumu</div>
+            <div class="admin-buttons">
+              <button onclick="window.adminPanel.maxScores()">Skorları Fulleyince 📊</button>
+              <button onclick="window.adminPanel.toggleTutorial()">Tutorial Toggle 🎓</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div id="root-window" style="display: none;">
-      <!-- Three.js adds a `canvas` element to this element-->
-      <div id="render-target"></div>
-      <div id="loading" class="text-overlay">
-        <div>
-          LOADING...
-        </div>
-      </div>
-      <div id="paused-text" class="text-overlay" style="visibility: hidden;">
-        <div>
-          PAUSED
-        </div>
-      </div>
-      <div id="ui">
-        <div id="title-bar">
-          <div class="title-bar-left-items title-bar-items">
-            <span id="money-display">💰 500,000</span>
-            <span style="margin: 0 15px;">|</span>
-            <span id="energy-display">⚡ 100</span>
-            <span style="margin: 0 15px;">|</span>
-            <span id="level-display">Level 1</span>
-            <span style="margin: 0 15px;">|</span>
-            <div id="circular-score-container" style="display: inline-flex; align-items: center; gap: 6px;">
-              <span style="font-size: 0.9em;">♻️</span>
-              <span style="font-size: 0.75em; white-space: nowrap;">Circular Score:</span>
-              <div style="position: relative; width: 100px; height: 18px; background: rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden;">
-                <div id="circular-score-bar" style="position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 50%, #FFC107 100%); transition: width 0.3s ease; border-radius: 8px;"></div>
-                <div id="circular-score-text" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7em; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); z-index: 1;">0/100</div>
-              </div>
-            </div>
-          </div>
-          <div class="title-bar-center-items title-bar-items">
-            <span id="city-name">My City</span>
-            <span>&nbsp;-&nbsp;</span>
-            <span id="sim-time">1/1/2023</span>
-          </div>
-          <div class="title-bar-right-items title-bar-items">
-            <img id="population-icon" src="/icons/person.png">
-            <span id="population-counter">0</span>
-            <span style="margin: 0 10px;">|</span>
-            <span id="xp-display">XP: 0 (0%)</span>
-          </div>
-        </div>
-        <div id="ui-toolbar" class="container">
-          <button id='button-select' class="ui-button selected" data-type="select"
-            onclick="ui.onToolSelected(event)">
-            <img class="toolbar-icon" src="/icons/select-color.png">
-          </button>
-          <button id='button-bulldoze' class="ui-button" data-type="bulldoze"
-            onclick="ui.onToolSelected(event)">
-            <img class="toolbar-icon" src="/icons/bulldozer-color.png">
-          </button>
-          <button id='button-residential' class="ui-button" data-type="residential"
-            onclick="ui.onToolSelected(event)">
-            <img class="toolbar-icon" src="/icons/house-color.png">
-          </button>
-          <button id='button-commercial' class="ui-button" data-type="commercial"
-            onclick="ui.onToolSelected(event)">
-            <img class="toolbar-icon" src="/icons/store-color.png">
-          </button>
-          <button id='button-farming' class="ui-button" data-type="farming"
-            onclick="ui.onToolSelected(event)" title="Tarım Alanı">
-            <span style="font-size: 1.2em;">🌾</span>
-          </button>
-          <button id='button-textile-factory' class="ui-button" data-type="textile-factory"
-            onclick="ui.onToolSelected(event)" title="Tekstil Fabrikası">
-            <img class="toolbar-icon" src="/icons/textile-factory.png">
-          </button>
-          <button id='button-technology-factory' class="ui-button" data-type="technology-factory"
-            onclick="ui.onToolSelected(event)" title="Teknoloji Fabrikası">
-            <span style="font-size: 1.2em;">💻</span>
-          </button>
-          <button id='button-steel-factory' class="ui-button" data-type="steel-factory"
-            onclick="ui.onToolSelected(event)" title="Çelik Fabrikası">
-            <span style="font-size: 1.2em;">⚙️</span>
-          </button>
-          <button id='button-automotive-factory' class="ui-button" data-type="automotive-factory"
-            onclick="ui.onToolSelected(event)" title="Otomotiv Fabrikası">
-            <span style="font-size: 1.2em;">🚗</span>
-          </button>
-          <button id='button-recycling-center' class="ui-button" data-type="recycling-center"
-            onclick="ui.onToolSelected(event)" title="Geri Dönüşüm Merkezi">
-            <span style="font-size: 1.2em;">♻️</span>
-          </button>
-          <button id='button-solar-panel' class="ui-button" data-type="solar-panel"
-            onclick="ui.onToolSelected(event)" title="Güneş Paneli">
-            <img class="toolbar-icon" src="/icons/solar-panel.png">
-          </button>
-          <button id='button-wind-turbine' class="ui-button" data-type="wind-turbine"
-            onclick="ui.onToolSelected(event)" title="Rüzgar Türbini">
-            <img class="toolbar-icon" src="/icons/wind-turbine.png">
-          </button>
-          <button id='button-hydro-plant' class="ui-button" data-type="hydro-plant"
-            onclick="ui.onToolSelected(event)" title="Hidroelektrik Santrali">
-            <span style="font-size: 1.2em;">💧</span>
-          </button>
-          <button id='button-waste-to-energy' class="ui-button" data-type="waste-to-energy"
-            onclick="ui.onToolSelected(event)" title="Atıktan Enerji Tesisi">
-            <img class="toolbar-icon" src="/icons/waste-to-energy.png">
-          </button>
-          <button id='button-police-station' class="ui-button" data-type="police-station"
-            onclick="ui.onToolSelected(event)" title="Polis Merkezi">
-            <span style="font-size: 1.2em;">🚓</span>
-          </button>
-          <button id='button-road' class="ui-button" data-type="road"
-            onclick="ui.onToolSelected(event)">
-            <img class="toolbar-icon" src="/icons/road-color.png">
-          </button>
-          <button id='button-pause' class="ui-button" onclick="ui.togglePause()">
-            <img id='pause-button-icon' class="toolbar-icon" src="/icons/pause-color.png">
-          </button>
-          <button id='button-resources' class="ui-button" onclick="ui.toggleResourcePanel()" title="Kaynaklar">
-            <span style="font-size: 1.5em;">📦</span>
-          </button>
-        </div>
-        <div id="info-panel" class="container">
-        </div>
-        <!-- Floating Resource Panel -->
-        <div id="resource-panel" class="floating-panel">
-          <div class="panel-header">
-            <span>📦 Kaynaklar</span>
-            <button class="panel-close" onclick="ui.toggleResourcePanel()">×</button>
-          </div>
-          <div class="panel-content">
-            <div class="resource-section">
-              <div class="resource-section-title">Ham Maddeler</div>
-              <div id="raw-materials-list" class="resource-list"></div>
-            </div>
-            <div class="resource-section">
-              <div class="resource-section-title">Ürünler</div>
-              <div id="products-list" class="resource-list"></div>
-            </div>
-            <div class="resource-section">
-              <div class="resource-section-title">Atıklar</div>
-              <div id="waste-list" class="resource-list"></div>
-            </div>
-            <div class="resource-section">
-              <div class="resource-section-title">Geri Dönüşümlü</div>
-              <div id="recycled-list" class="resource-list"></div>
-            </div>
-          </div>
-        </div>
-        <div id="instructions">
-          INTERACT - Left Mouse<br>
-          ROTATE - Right Mouse<br>
-          PAN - Control + Right Mouse<br>
-          ZOOM - Scroll
-        </div>
-        <div id="version">
-          v0.3.0
-        </div>
-        <!-- Tutorial Panel -->
-        <div id="tutorial-panel" class="tutorial-panel" style="display: none;">
-          <div class="tutorial-content">
-            <div class="tutorial-title" id="tutorial-title"></div>
-            <div class="tutorial-text" id="tutorial-text"></div>
-            <div class="tutorial-footer">
-              <button id="tutorial-next-btn" class="tutorial-next-button" onclick="ui.nextTutorialStep()">Sonraki ➜</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>
+  </div>
+</body>
+
 </html>

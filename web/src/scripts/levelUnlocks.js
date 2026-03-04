@@ -1,8 +1,3 @@
-/**
- * Level Unlock System - Controls what features are available at each level
- * Progressive disclosure: systems unlock gradually as player levels up
- */
-
 export class LevelUnlocks {
   /**
    * Check if a feature is unlocked at current level
@@ -13,7 +8,6 @@ export class LevelUnlocks {
   static isUnlocked(feature, currentLevel) {
     const unlockLevel = this.unlockLevels[feature];
     if (!unlockLevel) {
-      // If not defined, assume unlocked (backward compatibility)
       return true;
     }
     return currentLevel >= unlockLevel;
@@ -29,79 +23,83 @@ export class LevelUnlocks {
   }
 
   /**
-   * Unlock levels for all features
+   * Unlock levels for all features (6-level model)
    * @type {Object}
    */
   static unlockLevels = {
-    // Level 1 - Basic Survival
+    // Seviye 1 - Temel Kurulum (Başlangıç)
     'player-house': 1,
     'energy-pool': 1,
     'solar-panel': 1,
-    'textile-factory': 1,
     'residential-level-1': 1,
     'money': 1,
     'tick-system': 1,
-    'auto-sell': 1, // Auto-sell products (always enabled from Level 1)
-    
-    // Level 2 - Understanding Production
-    'production-queue': 2,
+    'auto-sell': 1,
+    'road': 1,
+    'police-station': 1,
+    'inventory-panel': 1,
+
+    // Seviye 2 - Sanayi Başlangıcı (Refah > 50)
+    'textile-factory': 2,
     'residential-level-2': 2,
-    'energy-consumption-display': 2,
-    'inventory-panel': 2,
-    'auto-buy': 2, // Auto-buy raw materials (moved from Level 3)
-    
-    // Level 3 - Waste Reality & Recycling
+    'production-queue': 2,
+    'auto-buy': 2,
+
+    // Seviye 3 - Geri Dönüşüm (Sürdürülebilirlik > 40)
+    'recycling-center': 3,
     'local-waste': 3,
     'waste-color-system': 3,
-    'waste-efficiency-penalty': 3,
     'waste-bar': 3,
-    'recycling-center': 3, // Moved from Level 4 - atıklarla birlikte tanışma
-    'recycled-material': 3, // Moved from Level 4
-    'circular-score': 3, // Moved from Level 4
-    
-    // Level 4 - Advanced Production & City Management
-    'textile-grade-2': 4,
-    'hq-policy-panel': 4, // Moved from Level 7 - earlier city management
-    'hq-energy-management': 4, // Moved from Level 7
-    'hq-statistics': 4, // Moved from Level 7
-    'hq-trade': 4, // Moved from Level 7
-    'hq-research': 4, // Moved from Level 7
-    'energy-priority': 4, // Moved from Level 7
-    'police-station': 4, // Police station for city security
-    
-    // Level 5 - Economy Deepens
-    'eco-shop': 5,
-    'product-sales': 5,
-    'wind-turbine': 5,
-    'waste-to-energy': 5, // Atıktan Enerji Tesisi
-    
-    // Level 6 - City Scale
-    'technology-factory': 6,
-    'global-pollution': 6,
-    'recycling-auto': 6,
-    'residential-level-3': 6,
-    
-    // Level 7 - Advanced Management
-    'farming-area': 7,
-    'hydro-plant': 7,
-    
-    // Level 8 - Optimization
-    'steel-factory': 8,
-    'recycling-efficiency-bonus': 8,
-    'eco-shop-upgrade': 8,
-    'global-pollution-effects': 8,
-    
-    // Level 9 - Industry
-    'automotive-factory': 9,
-    'eco-shop-prestige': 9,
-    'pollution-events': 9,
-    
-    // Level 10 - Mastery
-    'achievements': 10,
-    'waste-free-bonuses': 10,
-    'advanced-policies': 10,
-    'max-circular-multipliers': 10
+    'circular-score': 3,
+    'recycled-material': 3,
+    'hq-policy-panel': 3,
+    'hq-statistics': 3,
+
+    // Seviye 4 - Temiz Enerji & Kriz (Emisyon / Çevre Odaklı)
+    'wind-turbine': 4,
+    'waste-to-energy': 4,
+    'global-pollution': 4,
+    'energy-priority': 4,
+
+    // Seviye 5 - Teknoloji & Sembiyez (Sürdürülebilirlik > 70)
+    'technology-factory': 5,
+    'farming-area': 5,
+    'hydro-plant': 5,
+    'industrial-symbiosis': 5,
+    'residential-level-3': 5,
+
+    // Seviye 6 - Net Sıfır Şehir (Refah > 75 & Sağlık > 70)
+    'steel-factory': 6,
+    'automotive-factory': 6,
+    'net-zero-bonus': 6,
+    'achievements': 6
   };
+
+  /**
+   * Conditions required to reach each level
+   */
+  static levelConditions = {
+    2: (gs) => gs.wellbeing >= 50,
+    3: (gs) => gs.sustainability >= 40,
+    4: (gs) => (window.globalPollution?.totalPollution || 0) > 30 || gs.sustainability >= 50,
+    5: (gs) => gs.sustainability >= 70,
+    6: (gs) => gs.wellbeing >= 75 && gs.health >= 70
+  };
+
+  /**
+   * Check if a level's requirement is met
+   * @param {number} level 
+   * @param {object} gameState 
+   * @returns {boolean}
+   */
+  static isRequirementMet(level, gameState) {
+    if (level <= 1) return true;
+    const condition = this.levelConditions[level];
+    if (condition) {
+      return condition(gameState);
+    }
+    return true;
+  }
 
   /**
    * Get all features unlocked at a specific level
@@ -133,166 +131,95 @@ export class LevelUnlocks {
   static getLevelInfo(level) {
     const levelInfo = {
       1: {
-        title: 'Temel Hayatta Kalma',
-        description: 'Şehir kurulumuna başladınız! Temel sistemleri öğrenin.',
+        title: 'Temel Kurulum',
+        description: 'Şehir kurulumuna başladınız! Temel sistemleri ve vatandaş ihtiyaçlarını öğrenin.',
         features: [
-          'Oyuncu Evi (HQ)',
-          'Enerji Havuzu',
-          'Solar Panel',
-          'Textile Factory',
           'Konut (Level 1)',
-          'Para Sistemi'
+          'Solar Panel',
+          'Polis Merkezi',
+          'Para & Enerji Havuzu',
+          'Vatandaş İndeksleri'
         ],
         tips: [
-          'Solar Panel kurarak enerji üretin',
-          'Textile Factory kurarak üretime başlayın',
-          'Konutlar yerleştirerek nüfus artırın'
+          'Ev yerleştirerek nüfusu artırın',
+          'Solar panel kurarak şehrin enerji ihtiyacını karşılayın',
+          'Vatandaşların sağlık ve refah durumunu takip edin'
         ]
       },
       2: {
-        title: 'Üretimi Anlamak',
-        description: 'Üretim sistemini derinlemesine öğrenin ve ekonomiyi büyütün.',
+        title: 'Sanayi ve Refah',
+        description: 'Refah seviyesi 50\'yi geçti! Sanayiye ilk adımı atın.',
         features: [
-          'Üretim Kuyruğu (5 ürün)',
-          'Konut Level 2',
-          'Enerji Tüketim Gösterimi',
-          'Envanter Paneli',
-          'Otomatik Ham Madde Satın Alma',
-          'Manuel Ham Madde Satın Alma (HQ)'
+          'Tekstil Fabrikası',
+          'Konut (Level 2)',
+          'Üretim Kuyruğu',
+          'Otomatik Satın Alma'
         ],
         tips: [
-          'Üretim kuyruğunu kullanarak daha fazla ürün üretin',
-          'Envanter panelinden kaynaklarınızı kontrol edin',
-          'Ham maddeler otomatik satın alınır - üretim devam eder',
-          'HQ\'dan manuel olarak ham madde satın alabilirsiniz',
-          'Otomatik satış zaten aktif - ürünleriniz otomatik satılıyor'
+          'Üretim yapıp satarak gelirinizi artırın',
+          'İşsizliği azaltarak vatandaş refahını yükseltin',
+          'Sanayiyle gelen atıklara dikkat etmeye başlayın'
         ]
       },
       3: {
-        title: 'Atık Gerçeği & Geri Dönüşüm',
-        description: 'Üretimin bedeli varmış! Atık yönetimini öğrenin ve geri dönüşümle tanışın.',
+        title: 'Geri Dönüşüm ve Tasarruf',
+        description: 'Sürdürülebilirlik 40\'ı geçti! Atık yönetimini profesyonelleştirin.',
         features: [
-          'Local Waste (Bina Bazlı)',
-          'Atık Renk Sistemi',
-          'Verimlilik Ceza Sistemi',
-          'Atık Barı',
-          'Recycling Center',
-          'Recycled Material',
-          'Circular Score'
+          'Geri Dönüşüm Tesisi',
+          'Geri Dönüştürülmüş Hammadde',
+          'Şehir Politikaları (HQ)',
+          'Atık Takip Sistemi'
         ],
         tips: [
-          'Binaların atık seviyesini kontrol edin',
-          'Yüksek atık seviyesi üretimi yavaşlatır',
-          'Atık seviyesi 100\'e ulaşırsa bina durur',
-          'Recycling Center kurarak atıkları geri dönüştürün',
-          'Circular Score\'u artırarak bonuslar kazanın'
+          'Atıkları geri dönüştürerek hammadde tasarrufu yapın',
+          'Circular Score değerini yükselterek bonuslar kazanın',
+          'Şehir politikalarıyla verimliliği optimize edin'
         ]
       },
-      4:       {
-        title: 'Gelişmiş Üretim & Şehir Yönetimi',
-        description: 'Daha verimli üretim tarifeleri keşfedin ve şehri yönetmeye başlayın.',
+      4: {
+        title: 'Temiz Enerji ve Kriz',
+        description: 'Çevresel baskılar artıyor. Rüzgar gücünü kullanın.',
         features: [
-          'Textile Grade 2 Tarifeler',
-          'HQ Policy Panel (Şehir Politikaları)',
-          'HQ Energy Management',
-          'HQ Statistics',
-          'HQ Trade',
-          'HQ Research',
-          'Energy Priority System',
-          'Polis Merkezi'
+          'Rüzgar Türbini',
+          'Atıktan Enerji Tesisi',
+          'Global Kirlilik Takibi',
+          'Enerji Öncelik Sistemi'
         ],
         tips: [
-          'Grade 2 tarifeler daha verimli üretim sağlar',
-          'HQ\'dan şehir politikalarını ayarlayın',
-          'Enerji öncelik sistemini kullanın',
-          'İstatistikleri takip edin'
+          'Rüzgar gücüyle temiz enerji kapasitenizi artırın',
+          'Kirlilik sağlık indeksini düşürmeden önlem alın',
+          'Atıkları enerjiye çevirerek çifte avantaj sağlayın'
         ]
       },
       5: {
-        title: 'Ekonomi Derinleşiyor',
-        description: 'Ekonomi sistemini genişletin ve yeni binalar keşfedin.',
+        title: 'İleri Teknoloji ve Simbiyoz',
+        description: 'Sürdürülebilirlik 70\'i geçti! Şehri teknolojiyle donatın.',
         features: [
-          'Eco Shop',
-          'Ürün Bazlı Satış',
-          'Wind Turbine',
-          'Atıktan Enerji Tesisi'
+          'Teknoloji Fabrikası',
+          'Tarımsal Alanlar',
+          'Hidroelektrik Santrali',
+          'Endüstriyel Simbiyoz',
+          'Konut (Level 3)'
         ],
         tips: [
-          'Eco Shop kurarak ürünlerinizi satın',
-          'Wind Turbine ile daha fazla enerji üretin',
-          'Atıktan Enerji Tesisi ile atıkları enerjiye çevirin (pahalı ama etkili)',
-          'Ürün satışından para kazanın'
+          'Endüstriyel simbiyoz ile kaynak paylaşımını aktifleştirin',
+          'Tarımsal alanlarla gıda/organik ihtiyacı karşılayın',
+          'İleri teknoloji ürünleriyle yüksek kar elde edin'
         ]
       },
       6: {
-        title: 'Şehir Ölçeği',
-        description: 'Şehir büyüyor! Global sistemleri yönetin.',
+        title: 'Net Sıfır Şehir',
+        description: 'Ustalık seviyesindesiniz! Dünyanın en yaşanabilir şehrini kurdunuz.',
         features: [
-          'Technology Factory',
-          'Global Pollution',
-          'Otomatik Geri Dönüşüm',
-          'Konut Level 3'
+          'Çelik Fabrikası',
+          'Otomotiv Fabrikası',
+          'Net Sıfır Bonusları',
+          'Başarımlar'
         ],
         tips: [
-          'Technology Factory ile teknoloji ürünleri üretin',
-          'Global pollution\'u kontrol altında tutun',
-          'Otomatik geri dönüşüm verimliliği artırır'
-        ]
-      },
-      7: {
-        title: 'Gelişmiş Kaynaklar',
-        description: 'Yeni kaynaklar ve enerji üretim yöntemleri keşfedin.',
-        features: [
-          'Farming Area',
-          'Hydro Plant'
-        ],
-        tips: [
-          'Farming Area ile organik ürünler üretin',
-          'Hydro Plant ile güçlü enerji üretin'
-        ]
-      },
-      8: {
-        title: 'Optimizasyon',
-        description: 'Şehrinizi optimize edin ve verimliliği artırın.',
-        features: [
-          'Steel Factory',
-          'Recycling Verimlilik Bonusları',
-          'Eco Shop Upgrade (2 slot)',
-          'Global Pollution Etkileri'
-        ],
-        tips: [
-          'Steel Factory ile çelik ürünleri üretin',
-          'Recycling bonusları ile daha fazla kaynak kazanın',
-          'Eco Shop\'u yükselterek daha fazla ürün satın'
-        ]
-      },
-      9: {
-        title: 'Endüstri',
-        description: 'Büyük güç = büyük sorumluluk!',
-        features: [
-          'Automotive Factory',
-          'Eco Shop Prestige Mode',
-          'Pollution Events'
-        ],
-        tips: [
-          'Automotive Factory ile araç üretin',
-          'Prestige mode ile daha fazla gelir kazanın',
-          'Pollution event\'lerine hazır olun'
-        ]
-      },
-      10: {
-        title: 'Ustalık',
-        description: 'Sistemi çözdünüz! Mastery seviyesine ulaştınız.',
-        features: [
-          'Achievement Sistemi',
-          'Waste-free Bonusları',
-          'Advanced Policies',
-          'Max Circular Multipliers'
-        ],
-        tips: [
-          'Achievement\'ları tamamlayın',
-          'Waste-free binalar için bonuslar kazanın',
-          'Advanced policies ile şehri optimize edin'
+          'Karbon ayak izinizi sıfırlamaya çalışın',
+          'En gelişmiş sanayi ürünlerini ihraç edin',
+          'Vatandaş mutluluğunu maksimumda tutun'
         ]
       }
     };

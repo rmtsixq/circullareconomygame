@@ -7,10 +7,12 @@
 @font-face {
   font-family: Bebas-Regular;
   src: url('fonts/Bebas-Regular.otf');
-  unicode-range: U+0020-007F; /* Only ASCII characters */
+  unicode-range: U+0020-007F;
+  /* Only ASCII characters */
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   /* Primary font for Turkish characters, Bebas as fallback for English */
@@ -81,7 +83,7 @@ h1 {
 
 #ui-toolbar {
   position: absolute;
-  top: 64px;
+  top: 96px;
   left: 0px;
   width: 120px;
   min-width: 120px;
@@ -100,7 +102,7 @@ h1 {
   padding: 4px;
   overflow-y: auto;
   overflow-x: hidden;
-  
+
   /* Scrollbar styling */
   scrollbar-width: thin;
   scrollbar-color: #3a3f50d3 #1e2331cd;
@@ -131,7 +133,7 @@ h1 {
   margin: 0;
 
   transition: background-color 0.1s ease-in-out;
-  
+
   background-color: #1e2331cd;
   border: none;
   border-radius: 6px;
@@ -228,15 +230,81 @@ h1 {
   margin-left: 8px;
 }
 
+.tb-sep {
+  margin: 0 12px;
+  opacity: 0.4;
+}
+
+/* CITY SCORES BAR */
+#scores-bar {
+  position: fixed;
+  top: 48px;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.3) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 16px;
+  z-index: 999;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: white;
+  font-size: 0.78em;
+  white-space: nowrap;
+}
+
+.score-icon {
+  font-size: 0.9em;
+}
+
+.score-label {
+  font-weight: 600;
+  opacity: 0.85;
+  min-width: 38px;
+  font-size: 0.85em;
+  letter-spacing: 0.3px;
+}
+
+.score-bar-bg {
+  width: 70px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease, background 0.3s ease;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
+}
+
+.score-val {
+  font-weight: 700;
+  min-width: 22px;
+  text-align: right;
+  font-size: 0.9em;
+}
+
 /* INFO PANEL */
 
 #info-panel {
   visibility: hidden;
   display: none;
   position: fixed;
-  top: 64px;
+  top: 96px;
   right: 0px;
-  padding: 0; 
+  padding: 0;
   padding-bottom: 16px;
   width: 300px;
   max-height: calc(100vh - 80px);
@@ -325,7 +393,7 @@ h1 {
 }
 
 #resource-panel {
-  top: 64px;
+  top: 96px;
   left: 16px;
   display: none;
 }
@@ -445,6 +513,7 @@ h1 {
     transform: translateX(400px);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -456,6 +525,7 @@ h1 {
     transform: translateX(0);
     opacity: 1;
   }
+
   to {
     transform: translateX(400px);
     opacity: 0;
@@ -490,8 +560,8 @@ h1 {
   max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
-              0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-              0 0 80px rgba(76, 175, 80, 0.2);
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 0 80px rgba(76, 175, 80, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.2);
   animation: slideUpModal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
@@ -505,12 +575,12 @@ h1 {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(76, 175, 80, 0.6) 20%, 
-    rgba(76, 175, 80, 0.9) 50%, 
-    rgba(76, 175, 80, 0.6) 80%, 
-    transparent 100%);
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(76, 175, 80, 0.6) 20%,
+      rgba(76, 175, 80, 0.9) 50%,
+      rgba(76, 175, 80, 0.6) 80%,
+      transparent 100%);
   animation: shimmerModal 3s infinite;
   z-index: 1;
 }
@@ -519,6 +589,7 @@ h1 {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -529,6 +600,7 @@ h1 {
     transform: translateY(30px) scale(0.95);
     opacity: 0;
   }
+
   to {
     transform: translateY(0) scale(1);
     opacity: 1;
@@ -536,9 +608,12 @@ h1 {
 }
 
 @keyframes shimmerModal {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.6;
   }
+
   50% {
     opacity: 1;
   }
@@ -722,7 +797,7 @@ h1 {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4),
-              0 0 0 0 rgba(76, 175, 80, 0.5);
+    0 0 0 0 rgba(76, 175, 80, 0.5);
   letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
@@ -735,10 +810,10 @@ h1 {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.3), 
-    transparent);
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent);
   transition: left 0.5s;
 }
 
@@ -746,7 +821,7 @@ h1 {
   background: linear-gradient(135deg, rgba(76, 175, 80, 1) 0%, rgba(56, 142, 60, 1) 100%);
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6),
-              0 0 0 4px rgba(76, 175, 80, 0.2);
+    0 0 0 4px rgba(76, 175, 80, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
 }
 
@@ -770,9 +845,9 @@ h1 {
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   color: white;
   padding: 24px 32px;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4), 
-              0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-              0 0 60px rgba(76, 175, 80, 0.15);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 0 60px rgba(76, 175, 80, 0.15);
   z-index: 1000;
   font-family: 'Montserrat', 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
   max-height: 280px;
@@ -788,12 +863,12 @@ h1 {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(76, 175, 80, 0.6) 20%, 
-    rgba(76, 175, 80, 0.8) 50%, 
-    rgba(76, 175, 80, 0.6) 80%, 
-    transparent 100%);
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(76, 175, 80, 0.6) 20%,
+      rgba(76, 175, 80, 0.8) 50%,
+      rgba(76, 175, 80, 0.6) 80%,
+      transparent 100%);
   animation: shimmer 3s infinite;
 }
 
@@ -848,7 +923,7 @@ h1 {
   font-weight: 600;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4),
-              0 0 0 0 rgba(76, 175, 80, 0.5);
+    0 0 0 0 rgba(76, 175, 80, 0.5);
   letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
@@ -862,10 +937,10 @@ h1 {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.3), 
-    transparent);
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent);
   transition: left 0.5s;
 }
 
@@ -873,7 +948,7 @@ h1 {
   background: linear-gradient(135deg, rgba(76, 175, 80, 1) 0%, rgba(56, 142, 60, 1) 100%);
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6),
-              0 0 0 4px rgba(76, 175, 80, 0.2);
+    0 0 0 4px rgba(76, 175, 80, 0.2);
   border-color: rgba(255, 255, 255, 0.5);
 }
 
@@ -898,6 +973,7 @@ h1 {
     transform: translateY(100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -905,9 +981,12 @@ h1 {
 }
 
 @keyframes shimmer {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.6;
   }
+
   50% {
     opacity: 1;
   }
@@ -1062,6 +1141,7 @@ h1 {
     opacity: 0;
     transform: translateY(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1073,6 +1153,7 @@ h1 {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1085,25 +1166,134 @@ h1 {
     font-size: 3em;
     margin-bottom: 40px;
   }
-  
+
   .welcome-form {
     padding: 30px 20px;
   }
-  
+
   .welcome-subtitle {
     font-size: 1.2em;
   }
-  
+
   .welcome-input-group {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .welcome-input {
     width: 100%;
   }
-  
+
   .welcome-button {
     width: 100%;
+  }
+}
+
+/* ADMIN PANEL STYLES */
+.admin-panel {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 280px;
+  background: rgba(30, 35, 49, 0.9);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  z-index: 11000;
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.admin-header {
+  padding: 12px 16px;
+  background: rgba(76, 175, 80, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-header span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4CAF50;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.admin-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+}
+
+.admin-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.admin-buttons button {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-buttons button:hover {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: #4CAF50;
+}
+
+.admin-buttons button:active {
+  transform: scale(0.95);
+}
+
+.admin-buttons button[onclick*="unlockAll"] {
+  grid-column: span 2;
+  background: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

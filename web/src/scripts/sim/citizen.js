@@ -24,7 +24,7 @@ export class Citizen {
      * Age of the citizen in years
      * @type {number}
      */
-    this.age = 1 + Math.floor(100*Math.random());
+    this.age = 1 + Math.floor(100 * Math.random());
 
     /**
      * The current state of the citizen
@@ -49,7 +49,30 @@ export class Citizen {
      */
     this.workplace = null;
 
+    // Detailed attributes (0-100)
+    // Initialize based on city scores if available, otherwise random/default
+    this.education = (window.gameState?.education || 30) + (Math.random() * 20 - 10);
+    this.income = (window.gameState?.wellbeing || 50) + (Math.random() * 20 - 10);
+    this.health = (window.gameState?.health || 70) + (Math.random() * 20 - 10);
+    this.awareness = (window.gameState?.sustainability || 10) + (Math.random() * 20 - 10);
+
+    // Clamp values
+    this.#clampAttributes();
+
+    // Total life quality is average of other indices
+    this.lifeQuality = (this.income + this.education + this.health + this.awareness) / 4;
+
     this.#initializeState();
+  }
+
+  /**
+   * Helper to clamp attribute values between 0 and 100
+   */
+  #clampAttributes() {
+    this.education = Math.max(0, Math.min(100, this.education));
+    this.income = Math.max(0, Math.min(100, this.income));
+    this.health = Math.max(0, Math.min(100, this.health));
+    this.awareness = Math.max(0, Math.min(100, this.awareness));
   }
 
   /**
@@ -115,15 +138,15 @@ export class Citizen {
           let stillEmployed = false;
           if (this.workplace.jobs && this.workplace.jobs.workers) {
             stillEmployed = this.workplace.jobs.workers.includes(this);
-            
+
             // If not in list but workplace exists, try to re-add (might have been temporary removal)
             if (!stillEmployed) {
               // Check if building still has room
               const currentWorkers = this.workplace.jobs.workers.length;
-              const maxWorkers = this.workplace.maxWorkers || 
-                                (this.workplace.requiredWorkers ? this.workplace.requiredWorkers * 2 : 
-                                 this.workplace.jobs.maxWorkers || 10);
-              
+              const maxWorkers = this.workplace.maxWorkers ||
+                (this.workplace.requiredWorkers ? this.workplace.requiredWorkers * 2 :
+                  this.workplace.jobs.maxWorkers || 10);
+
               if (currentWorkers < maxWorkers) {
                 // Re-add to workers list
                 this.workplace.jobs.workers.push(this);
@@ -134,7 +157,7 @@ export class Citizen {
             // No jobs module - workplace is invalid
             stillEmployed = false;
           }
-          
+
           // Verify workplace building still exists in city (only check occasionally, not every tick)
           // Use stateCounter to check less frequently (every 20 ticks)
           if (stillEmployed && this.stateCounter % 20 === 0) {
@@ -149,7 +172,7 @@ export class Citizen {
               }
               if (buildingExists) break;
             }
-            
+
             if (!buildingExists) {
               // Building was removed - clean up and become unemployed
               if (this.workplace.jobs && this.workplace.jobs.workers) {
@@ -164,7 +187,7 @@ export class Citizen {
               return; // Exit early
             }
           }
-          
+
           // If citizen is no longer in workers list and couldn't be re-added, become unemployed
           if (!stillEmployed) {
             this.workplace = null;
@@ -172,7 +195,7 @@ export class Citizen {
             this.stateCounter = 0;
             return; // Exit early
           }
-          
+
           // Increment state counter
           this.stateCounter++;
         }
@@ -181,6 +204,53 @@ export class Citizen {
       default:
         console.error(`Citizen ${this.id} is in an unknown state (${this.state})`);
     }
+
+    // Evolve attributes based on city environment
+    this.#evolveAttributes(city);
+  }
+
+  /**
+   * Evolve citizen attributes based on city conditions
+   * @param {object} city 
+   */
+  #evolveAttributes(city) {
+    const shift = 0.05; // Amount to shift per tick (slowed down for stability)
+
+    // 1. Health: affected by global pollution
+    if (window.globalPollution) {
+      const pollution = window.globalPollution.totalPollution;
+      if (pollution > 50) {
+        this.health -= (pollution - 50) * 0.01; // High pollution hurts health
+      } else {
+        this.health += (50 - pollution) * 0.005; // Low pollution improves health
+      }
+    }
+
+    // 2. Income: affected by employment status
+    if (this.state === 'employed') {
+      this.income += shift;
+    } else if (this.state === 'unemployed') {
+      this.income -= shift * 2;
+    }
+
+    // 3. Education: improves slowly, boosted by technology factories or city score
+    if (window.gameState) {
+      const cityEdu = window.gameState.education;
+      if (cityEdu > this.education) {
+        this.education += (cityEdu - this.education) * 0.01;
+      }
+    }
+
+    // 4. Awareness: follows city sustainability score
+    if (window.gameState) {
+      const citySus = window.gameState.sustainability;
+      if (citySus > this.awareness) {
+        this.awareness += (citySus - this.awareness) * 0.01;
+      }
+    }
+
+    this.#clampAttributes();
+    this.lifeQuality = (this.income + this.education + this.health + this.awareness) / 4;
   }
 
   /**
@@ -223,7 +293,7 @@ export class Citizen {
         }
         if (workplaceStillValid) break;
       }
-      
+
       if (workplaceStillValid) {
         return this.workplace; // Keep current job
       } else {
@@ -237,7 +307,7 @@ export class Citizen {
         this.workplace = null;
       }
     }
-    
+
     // Find the tile where the residence is located
     let residenceTile = null;
     for (let x = 0; x < city.size; x++) {
@@ -258,29 +328,29 @@ export class Citizen {
     // Get workforce distribution policy (Level 4+)
     let workforceDistribution = null;
     if (window.cityPolicies && window.gameState && window.levelUnlocks &&
-        window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
+      window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
       workforceDistribution = window.cityPolicies.workforceDistribution;
     }
 
     // Collect all available jobs with their types
     const availableJobs = [];
-    
+
     // Search all tiles within range
     for (let distance = 1; distance <= config.citizen.maxJobSearchDistance; distance++) {
       for (let dx = -distance; dx <= distance; dx++) {
         for (let dy = -distance; dy <= distance; dy++) {
           if (Math.abs(dx) + Math.abs(dy) !== distance) continue; // Manhattan distance
-          
+
           const x = residenceTile.x + dx;
           const y = residenceTile.y + dy;
           const tile = city.getTile(x, y);
-          
+
           if (!tile || !tile.building) continue;
-          
+
           const building = tile.building;
           let jobType = null;
           let hasAvailableJob = false;
-          
+
           // Check if it's a factory
           if (building.jobs && building.requiredWorkers !== undefined) {
             const currentWorkers = building.jobs.workers ? building.jobs.workers.length : 0;
@@ -293,10 +363,10 @@ export class Citizen {
             } else {
               maxWorkers = building.requiredWorkers * 2; // Default: 2x required workers
             }
-            
+
             // Check if factory has space for more workers
-            if (currentWorkers < maxWorkers && 
-                (!building.jobs.workers || !building.jobs.workers.includes(this))) {
+            if (currentWorkers < maxWorkers &&
+              (!building.jobs.workers || !building.jobs.workers.includes(this))) {
               jobType = 'factories';
               hasAvailableJob = true;
             }
@@ -306,7 +376,7 @@ export class Citizen {
             const currentWorkers = building.jobs.workers ? building.jobs.workers.length : 0;
             const maxWorkers = building.jobs.maxWorkers || 10;
             if (currentWorkers < maxWorkers &&
-                (!building.jobs.workers || !building.jobs.workers.includes(this))) {
+              (!building.jobs.workers || !building.jobs.workers.includes(this))) {
               jobType = 'recycling';
               hasAvailableJob = true;
             }
@@ -314,12 +384,12 @@ export class Citizen {
           // Check if it's commercial
           else if (building.type === 'commercial' && building.jobs) {
             if (building.jobs.availableJobs > 0 &&
-                (!building.jobs.workers || !building.jobs.workers.includes(this))) {
+              (!building.jobs.workers || !building.jobs.workers.includes(this))) {
               jobType = 'commercial';
               hasAvailableJob = true;
             }
           }
-          
+
           if (hasAvailableJob && jobType) {
             availableJobs.push({ tile, building, jobType, distance });
           }
@@ -341,7 +411,7 @@ export class Citizen {
       // Calculate current worker distribution
       // Note: Don't count this citizen if they're already in a workers list (to avoid double counting)
       const currentDistribution = { factories: 0, recycling: 0, commercial: 0 };
-      
+
       // Traverse all tiles to count workers
       for (let x = 0; x < city.size; x++) {
         for (let y = 0; y < city.size; y++) {
@@ -354,7 +424,7 @@ export class Citizen {
             if (building.jobs.workers.includes(this)) {
               workerCount--; // Don't count this citizen if they're already here
             }
-            
+
             if (building.requiredWorkers !== undefined) {
               currentDistribution.factories += workerCount;
             } else if (building.type === 'recycling-center') {
@@ -365,23 +435,23 @@ export class Citizen {
           }
         }
       }
-      
+
       const totalCurrent = currentDistribution.factories + currentDistribution.recycling + currentDistribution.commercial;
-      
+
       // Calculate desired distribution percentages
       const desiredPercentages = {
         factories: workforceDistribution.factories / 100,
         recycling: workforceDistribution.recycling / 100,
         commercial: workforceDistribution.commercial / 100
       };
-      
+
       // Calculate current percentages
       const currentPercentages = totalCurrent > 0 ? {
         factories: currentDistribution.factories / totalCurrent,
         recycling: currentDistribution.recycling / totalCurrent,
         commercial: currentDistribution.commercial / totalCurrent
       } : { factories: 0, recycling: 0, commercial: 0 };
-      
+
       // Score jobs based on how far they are from desired distribution
       availableJobs.forEach(job => {
         const desired = desiredPercentages[job.jobType] || 0;
@@ -389,7 +459,7 @@ export class Citizen {
         const deficit = desired - current; // Positive if we need more workers in this category
         job.priority = deficit * 1000 - job.distance; // Higher priority for jobs we need more, closer jobs preferred
       });
-      
+
       // Sort by priority (highest first)
       availableJobs.sort((a, b) => b.priority - a.priority);
     } else {
@@ -407,27 +477,27 @@ export class Citizen {
     if (!selectedJob) {
       return null;
     }
-    
+
     const building = selectedJob.building;
-    
+
     // Employ the citizen at the building
     if (!building.jobs) {
       console.warn(`Building ${building.type} has no jobs module`);
       return null;
     }
-    
+
     if (!building.jobs.workers) {
       building.jobs.workers = [];
     }
-    
+
     // Check if citizen is already in the workers list
     if (!building.jobs.workers.includes(this)) {
       building.jobs.workers.push(this);
     }
-    
+
     // Set workplace for the citizen
     this.workplace = building;
-    
+
     return building;
   }
 
@@ -481,18 +551,30 @@ export class Citizen {
           </span>
         `;
     }
-    
+
     return `
       <li class="info-citizen">
         <span class="info-citizen-name">${this.name}</span>
         <br>
-        <span class="info-citizen-details">
+        <span class="info-citizen-details" style="margin-bottom: 4px;">
           <span>
             <img class="info-citizen-icon" src="/icons/calendar.png">
             ${this.age} yaş
           </span>
           ${workplaceInfo}
         </span>
+        <div class="info-citizen-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.8em; opacity: 0.9;">
+          <div title="Refah/Gelir">💰 ${Math.round(this.income)}</div>
+          <div title="Eğitim">🎓 ${Math.round(this.education)}</div>
+          <div title="Sağlık">🏥 ${Math.round(this.health)}</div>
+          <div title="Eko-Bilinç">♻️ ${Math.round(this.awareness)}</div>
+        </div>
+        <div style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2px;">
+          <span style="font-size: 0.8em;">Yaşam Kalitesi:</span>
+          <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.3); border-radius: 2px; margin-top: 2px;">
+            <div style="width: ${this.lifeQuality}%; height: 100%; background: #4CAF50; border-radius: 2px;"></div>
+          </div>
+        </div>
       </li>
     `;
   }
@@ -517,6 +599,6 @@ function generateRandomName() {
 
   const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
   const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-  
+
   return randomFirstName + ' ' + randomLastName;
 }

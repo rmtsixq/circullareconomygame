@@ -30,7 +30,7 @@ export class GameUI {
   hideLoadingText() {
     document.getElementById('loading').style.visibility = 'hidden';
   }
-  
+
   /**
    * 
    * @param {*} event 
@@ -38,12 +38,12 @@ export class GameUI {
   onToolSelected(event) {
     // Find the button element (might be clicked on child element like span or img)
     const button = event.target.closest('.ui-button') || event.currentTarget;
-    
+
     if (!button) {
       console.warn('Button not found in onToolSelected');
       return;
     }
-    
+
     // Check tutorial restrictions
     if (window.tutorialState && window.tutorialState.isActive) {
       const toolType = button.getAttribute('data-type');
@@ -56,7 +56,7 @@ export class GameUI {
         return;
       }
     }
-    
+
     // Deselect previously selected button and selected this one
     if (this.selectedControl) {
       this.selectedControl.classList.remove('selected');
@@ -65,7 +65,7 @@ export class GameUI {
     this.selectedControl.classList.add('selected');
 
     this.activeToolId = this.selectedControl.getAttribute('data-type');
-    
+
     if (!this.activeToolId) {
       console.warn('No data-type attribute found on button:', button);
     }
@@ -96,13 +96,13 @@ export class GameUI {
     const date = new Date('1/1/2023');
     date.setDate(date.getDate() + game.city.simTime);
     document.getElementById('sim-time').innerHTML = date.toLocaleDateString();
-    
+
     // Update game state in title bar
     this.updateGameState(window.gameState);
-    
+
     // Update pollution display only if unlocked (Level 6+)
-    if (window.gameState && window.levelUnlocks && 
-        window.levelUnlocks.isUnlocked('global-pollution', window.gameState.level)) {
+    if (window.gameState && window.levelUnlocks &&
+      window.levelUnlocks.isUnlocked('global-pollution', window.gameState.level)) {
       if (window.globalPollution) {
         this.updatePollutionDisplay();
       }
@@ -113,17 +113,17 @@ export class GameUI {
         pollutionEl.style.display = 'none';
       }
     }
-    
+
     // Update toolbar visibility
     this.updateToolbarVisibility();
   }
-  
+
   /**
    * Update global pollution display in title bar
    */
   updatePollutionDisplay() {
     if (!window.globalPollution) return;
-    
+
     // Add pollution indicator to title bar if not exists
     let pollutionEl = document.getElementById('pollution-display');
     if (!pollutionEl) {
@@ -135,75 +135,87 @@ export class GameUI {
         titleBarLeft.appendChild(pollutionEl);
       }
     }
-    
+
     const pollution = window.globalPollution.totalPollution;
     const level = window.globalPollution.getLevel();
     const color = level === 'maximum' ? '#f44336' : level === 'danger' ? '#ff5722' : level === 'critical' ? '#ff9800' : level === 'warning' ? '#ffc107' : '#4CAF50';
-    
+
     pollutionEl.innerHTML = `<span style="color: ${color};">🌍 ${pollution.toFixed(1)}%</span>`;
     pollutionEl.title = `Şehir Kirliliği: ${pollution.toFixed(1)}%`;
   }
 
   /**
-   * Updates game state display in title bar
+   * Updates game state display in title bar and scores bar
    * @param {GameState} gameState 
    */
   updateGameState(gameState) {
     if (!gameState) return;
-    
+
     // Update money display
     const moneyElement = document.getElementById('money-display');
     if (moneyElement) {
       moneyElement.innerHTML = `💰 ${gameState.money.toLocaleString()}`;
     }
-    
+
     // Update energy display
     const energyElement = document.getElementById('energy-display');
     if (energyElement) {
       energyElement.innerHTML = `⚡ ${gameState.energy.toFixed(0)}`;
     }
-    
+
     // Update level display
     const levelElement = document.getElementById('level-display');
     if (levelElement) {
-      levelElement.innerHTML = `Level ${gameState.level}`;
+      levelElement.innerHTML = `Seviye ${gameState.level}`;
     }
-    
-    // Update XP display
-    const xpElement = document.getElementById('xp-display');
-    if (xpElement) {
-      const progress = gameState.getXPProgress();
-      const displayXP = gameState.getDisplayXP();
-      xpElement.innerHTML = `XP: ${displayXP} (${progress.toFixed(0)}%)`;
+
+    // Update population display
+    const popElement = document.getElementById('population-display');
+    if (popElement) {
+      popElement.innerHTML = `🏠 ${gameState.population.toLocaleString()}`;
     }
-    
-    // Update Circular Score display with progress bar
-    const scoreBar = document.getElementById('circular-score-bar');
-    const scoreText = document.getElementById('circular-score-text');
-    
-    if (scoreBar && scoreText) {
-      const score = gameState.circularScore || 0;
-      const maxScore = 100;
-      const percentage = Math.min(100, (score / maxScore) * 100);
-      
-      // Update progress bar width
-      scoreBar.style.width = `${percentage}%`;
-      
-      // Update text
-      scoreText.textContent = `${score}/${maxScore}`;
-      
-      // Update bar color based on score
-      if (percentage >= 80) {
-        scoreBar.style.background = 'linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%)'; // Green
-      } else if (percentage >= 60) {
-        scoreBar.style.background = 'linear-gradient(90deg, #8BC34A 0%, #FFC107 100%)'; // Yellow-Green
-      } else if (percentage >= 40) {
-        scoreBar.style.background = 'linear-gradient(90deg, #FFC107 0%, #FF9800 100%)'; // Yellow-Orange
-      } else if (percentage >= 20) {
-        scoreBar.style.background = 'linear-gradient(90deg, #FF9800 0%, #FF5722 100%)'; // Orange-Red
+
+    // === Update City Scores Bar ===
+    this.updateScoreBar('wellbeing', gameState.wellbeing || 0, '#4CAF50');
+    this.updateScoreBar('education', gameState.education || 0, '#2196F3');
+    this.updateScoreBar('health', gameState.health || 0, '#E91E63');
+    this.updateScoreBar('sustainability', gameState.sustainability || 0, '#8BC34A');
+
+    // Management score (cumulative, no bar)
+    const mgmtVal = document.getElementById('score-val-management');
+    if (mgmtVal) {
+      mgmtVal.textContent = Math.round(gameState.managementScore || 0);
+    }
+  }
+
+  /**
+   * Update a single score bar element
+   * @param {string} key - Score key (wellbeing, education, health, sustainability)
+   * @param {number} value - Score value (0-100)
+   * @param {string} baseColor - Base color for the bar
+   */
+  updateScoreBar(key, value, baseColor) {
+    const bar = document.getElementById(`score-bar-${key}`);
+    const val = document.getElementById(`score-val-${key}`);
+
+    if (bar) {
+      const pct = Math.max(0, Math.min(100, value));
+      bar.style.width = `${pct}%`;
+
+      // Color shifts with value
+      if (pct >= 70) {
+        bar.style.background = baseColor;
+      } else if (pct >= 40) {
+        bar.style.background = '#FFC107'; // Yellow for mid
+      } else if (pct >= 20) {
+        bar.style.background = '#FF9800'; // Orange for low
       } else {
-        scoreBar.style.background = 'linear-gradient(90deg, #FF5722 0%, #f44336 100%)'; // Red
+        bar.style.background = '#f44336'; // Red for critical
       }
+    }
+
+    if (val) {
+      val.textContent = Math.round(value);
     }
   }
 
@@ -213,7 +225,7 @@ export class GameUI {
    */
   updateResources(resourceManager) {
     if (!resourceManager) return;
-    
+
     // Resource name mappings
     const resourceNames = {
       // Raw Materials
@@ -222,7 +234,7 @@ export class GameUI {
       'raw-metal': '🔩 Ham Metal',
       'raw-electronics': '💻 Elektronik',
       'raw-glass': '🪟 Ham Cam',
-      
+
       // Products
       'clothing': '👔 Giyim',
       'sports-gear': '👟 Spor Ekipmanı',
@@ -234,14 +246,14 @@ export class GameUI {
       'electric-bike': '🚲 Elektrikli Bisiklet',
       'fertilizer': '🌱 Gübre',
       'compost': '🍂 Kompost',
-      
+
       // Waste
       'textile-waste': '🧶 Tekstil Atığı',
       'e-waste': '📟 E-Atık',
       'scrap-metal': '🗑️ Hurda Metal',
       'plastic-waste': '🥤 Plastik Atık',
       'organic-waste': '🥬 Organik Atık',
-      
+
       // Recycled
       'recycled-fabric': '♻️🧵 Geri Dönüşümlü Kumaş',
       'recycled-metal': '♻️🔩 Geri Dönüşümlü Metal',
@@ -300,7 +312,7 @@ export class GameUI {
         const limit = resourceManager.limits[type] || 0;
         const percentage = limit > 0 ? (amount / limit) * 100 : 0;
         const color = percentage > 80 ? '#ff6666' : percentage > 50 ? '#ffaa66' : '#ffffff';
-        
+
         const item = document.createElement('div');
         item.className = 'resource-item';
         item.innerHTML = `
@@ -340,11 +352,11 @@ export class GameUI {
   toggleResourcePanel() {
     const panel = document.getElementById('resource-panel');
     const button = document.getElementById('button-resources');
-    
+
     if (panel) {
       const isHidden = panel.style.display === 'none';
       panel.style.display = isHidden ? 'block' : 'none';
-      
+
       // Update button state
       if (button) {
         if (isHidden) {
@@ -363,9 +375,9 @@ export class GameUI {
     const panel = document.getElementById('resource-panel');
     const header = panel?.querySelector('.panel-header');
     const button = document.getElementById('button-resources');
-    
+
     if (!panel || !header) return;
-    
+
     // Set initial state - panel hidden, button not selected
     panel.style.display = 'none';
     if (button) {
@@ -386,7 +398,7 @@ export class GameUI {
 
     function dragStart(e) {
       if (e.target.classList.contains('panel-close')) return;
-      
+
       initialX = e.clientX - xOffset;
       initialY = e.clientY - yOffset;
 
@@ -425,7 +437,7 @@ export class GameUI {
       console.error('Info panel element not found!');
       return;
     }
-    
+
     if (object) {
       console.log('Updating info panel for:', object.name, 'isPlayerHouse:', object.isPlayerHouse);
       infoElement.style.visibility = 'visible';
@@ -433,7 +445,7 @@ export class GameUI {
       const html = object.toHTML();
       console.log('Generated HTML length:', html.length);
       infoElement.innerHTML = html;
-      
+
       // Re-attach event listeners for player house buttons
       if (object.isPlayerHouse) {
         this.attachPlayerHouseButtonListeners();
@@ -515,12 +527,12 @@ export class GameUI {
    */
   updateMarketLists() {
     if (!window.resourceManager) return;
-    
+
     const sellList = document.getElementById('market-sell-list');
     const buyList = document.getElementById('market-buy-list');
-    
+
     if (!sellList || !buyList) return;
-    
+
     // Sell list - show resources player can sell
     sellList.innerHTML = '';
     const sellableResources = {
@@ -533,7 +545,7 @@ export class GameUI {
       'recycled-metal': { price: 40, name: '♻️🔩 Geri Dönüşümlü Metal' },
       'recycled-plastic': { price: 25, name: '♻️🧴 Geri Dönüşümlü Plastik' }
     };
-    
+
     Object.entries(sellableResources).forEach(([resource, info]) => {
       const amount = window.resourceManager.getResource(resource);
       if (amount > 0) {
@@ -558,11 +570,11 @@ export class GameUI {
         sellList.appendChild(item);
       }
     });
-    
+
     if (sellList.children.length === 0) {
       sellList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Satılacak ürün yok</div>';
     }
-    
+
     // Buy list - show resources player can buy
     buyList.innerHTML = '';
     const buyableResources = {
@@ -574,7 +586,7 @@ export class GameUI {
       'e-waste': { price: 8, name: '💻 E-Atık' },
       'scrap-metal': { price: 10, name: '🔩 Hurda Metal' }
     };
-    
+
     Object.entries(buyableResources).forEach(([resource, info]) => {
       const item = document.createElement('div');
       item.className = 'resource-item';
@@ -603,7 +615,7 @@ export class GameUI {
    */
   sellResource(resourceType, amount) {
     if (!window.resourceManager || !window.gameState) return;
-    
+
     const prices = {
       'clothing': 50,
       'smartphone': 200,
@@ -614,13 +626,13 @@ export class GameUI {
       'recycled-metal': 40,
       'recycled-plastic': 25
     };
-    
+
     const price = prices[resourceType];
     if (!price) return;
-    
+
     const available = window.resourceManager.getResource(resourceType);
     const sellAmount = Math.min(amount, available);
-    
+
     if (sellAmount > 0 && window.resourceManager.removeResource(resourceType, sellAmount)) {
       const totalPrice = sellAmount * price;
       window.gameState.addMoney(totalPrice);
@@ -635,7 +647,7 @@ export class GameUI {
    */
   buyResource(resourceType, amount) {
     if (!window.resourceManager || !window.gameState) return;
-    
+
     const prices = {
       'raw-fabric': 20,
       'raw-plastic': 15,
@@ -645,12 +657,12 @@ export class GameUI {
       'e-waste': 8,
       'scrap-metal': 10
     };
-    
+
     const price = prices[resourceType];
     if (!price) return;
-    
+
     const totalCost = amount * price;
-    
+
     if (window.gameState.spendMoney(totalCost)) {
       window.resourceManager.addResource(resourceType, amount);
       this.updateMarketLists();
@@ -670,10 +682,10 @@ export class GameUI {
     panel.style.width = '450px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
-    
+
     const level = window.gameState?.level || 1;
     const autoBuyUnlocked = window.levelUnlocks && window.levelUnlocks.isUnlocked('auto-buy', level);
-    
+
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
         <div style="padding: 8px; margin-bottom: 12px; background: #1e3a2e; border-radius: 4px; border: 1px solid #4CAF50;">
@@ -709,17 +721,17 @@ export class GameUI {
       panel.replaceChild(content, panel.querySelector('.panel-content'));
     }
     panel.style.display = 'block';
-    
+
     // Update market lists
     this.updateMarketLists();
   }
-  
+
   /**
    * Update market buy/sell lists
    */
   updateMarketLists() {
     if (!window.market || !window.resourceManager) return;
-    
+
     // Update sell list (products)
     const sellList = document.getElementById('market-sell-list');
     if (sellList) {
@@ -737,7 +749,7 @@ export class GameUI {
         'fertilizer': '🌾 Gübre',
         'compost': '♻️ Kompost'
       };
-      
+
       products.forEach(product => {
         const amount = window.resourceManager.getResource(product);
         if (amount > 0) {
@@ -764,12 +776,12 @@ export class GameUI {
           sellList.appendChild(item);
         }
       });
-      
+
       if (sellList.children.length === 0) {
         sellList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Satılacak ürün yok</div>';
       }
     }
-    
+
     // Update buy list (raw materials)
     const buyList = document.getElementById('market-buy-list');
     if (buyList) {
@@ -782,7 +794,7 @@ export class GameUI {
         'raw-electronics': '💻 Ham Elektronik',
         'raw-glass': '🪟 Ham Cam'
       };
-      
+
       materials.forEach(material => {
         const price = window.market.getMaterialPrice(material);
         const item = document.createElement('div');
@@ -810,13 +822,13 @@ export class GameUI {
       });
     }
   }
-  
+
   /**
    * Sell product manually
    */
   sellProduct(product, amount) {
     if (!window.market || !window.resourceManager || !window.gameState) return;
-    
+
     const earned = window.market.sellProduct(product, amount, window.resourceManager, window.gameState);
     if (earned > 0) {
       this.updateMarketLists();
@@ -825,13 +837,13 @@ export class GameUI {
       this.showNotification('💰 Satış', `${amount} ${product} satıldı: ${earned.toFixed(0)} 💰`, 'success');
     }
   }
-  
+
   /**
    * Buy material manually
    */
   buyMaterial(material, amount) {
     if (!window.market || !window.resourceManager || !window.gameState) return;
-    
+
     const success = window.market.buyMaterial(material, amount, window.resourceManager, window.gameState);
     if (success) {
       this.updateMarketLists();
@@ -856,9 +868,9 @@ export class GameUI {
     const panel = this.getOrCreatePanel('settings-panel', '⚙️ Şehir Politikaları');
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
-    
+
     const policies = window.cityPolicies || { recyclingPriority: 50, energyPolicy: 'balanced', productionEnvironmentBalance: 50, autoSave: true, autoSaveInterval: 30 };
-    
+
     content.innerHTML = `
         <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
           <div class="resource-section-title">♻️ Geri Dönüşüm Önceliği</div>
@@ -1103,7 +1115,7 @@ export class GameUI {
       factories = Math.round(factories * ratio);
       recycling = Math.round(recycling * ratio);
       commercial = Math.round(commercial * ratio);
-      
+
       // Ensure total is exactly 100 (adjust for rounding)
       const newTotal = factories + recycling + commercial;
       const diff = 100 - newTotal;
@@ -1158,7 +1170,7 @@ export class GameUI {
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
-    
+
     if (!window.market || !window.resourceManager || !window.gameState) {
       const missing = [];
       if (!window.market) missing.push('Market');
@@ -1203,7 +1215,7 @@ export class GameUI {
       const canAfford1 = window.gameState.money >= price;
       const canAfford10 = window.gameState.money >= (price * 10);
       const canAfford50 = window.gameState.money >= (price * 50);
-      
+
       materialsHTML += `
         <div style="padding: 8px; margin-bottom: 8px; background: #1e2331; border-radius: 4px; border: 1px solid #333;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -1245,7 +1257,7 @@ export class GameUI {
         ${materialsHTML}
       </div>
     `;
-    
+
     if (!panel.querySelector('.panel-content')) {
       panel.appendChild(content);
     } else {
@@ -1263,12 +1275,12 @@ export class GameUI {
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
-    
+
     const energy = window.gameState?.energy || 0;
     const energyProduction = this.calculateEnergyProduction();
     const energyConsumption = this.calculateEnergyConsumption();
     const energyBalance = energyProduction - energyConsumption;
-    
+
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
         <div class="resource-section-title">📊 Enerji Durumu</div>
@@ -1362,12 +1374,12 @@ export class GameUI {
    */
   updateEnergyLists() {
     if (!window.game || !window.game.city) return;
-    
+
     const productionList = document.getElementById('energy-production-list');
     const consumptionList = document.getElementById('energy-consumption-list');
-    
+
     if (!productionList || !consumptionList) return;
-    
+
     // Production list
     productionList.innerHTML = '';
     const productionCounts = {};
@@ -1391,7 +1403,7 @@ export class GameUI {
         }
       }
     });
-    
+
     Object.entries(productionCounts).forEach(([type, data]) => {
       const item = document.createElement('div');
       item.style.display = 'flex';
@@ -1406,11 +1418,11 @@ export class GameUI {
       `;
       productionList.appendChild(item);
     });
-    
+
     if (productionList.children.length === 0) {
       productionList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Enerji üreten bina yok</div>';
     }
-    
+
     // Consumption list
     consumptionList.innerHTML = '';
     const consumptionCounts = {};
@@ -1424,7 +1436,7 @@ export class GameUI {
         consumptionCounts[type].total += obj.building.energyConsumption;
       }
     });
-    
+
     Object.entries(consumptionCounts).sort((a, b) => b[1].total - a[1].total).forEach(([type, data]) => {
       const item = document.createElement('div');
       item.style.display = 'flex';
@@ -1439,7 +1451,7 @@ export class GameUI {
       `;
       consumptionList.appendChild(item);
     });
-    
+
     if (consumptionList.children.length === 0) {
       consumptionList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Enerji tüketen bina yok</div>';
     }
@@ -1471,9 +1483,9 @@ export class GameUI {
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
-    
+
     const stats = this.calculateCityStatistics();
-    
+
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
         <div class="resource-section-title">♻️ Döngüsel Ekonomi</div>
@@ -1590,13 +1602,13 @@ export class GameUI {
         recyclingCenters: 0
       };
     }
-    
+
     const stats = {
       recyclingRate: 0,
       renewableEnergyPercent: 0,
-      totalWaste: window.resourceManager.getResource('textile-waste') + 
-                  window.resourceManager.getResource('e-waste') + 
-                  window.resourceManager.getResource('scrap-metal'),
+      totalWaste: window.resourceManager.getResource('textile-waste') +
+        window.resourceManager.getResource('e-waste') +
+        window.resourceManager.getResource('scrap-metal'),
       textileWaste: window.resourceManager.getResource('textile-waste'),
       eWaste: window.resourceManager.getResource('e-waste'),
       scrapMetal: window.resourceManager.getResource('scrap-metal'),
@@ -1608,10 +1620,10 @@ export class GameUI {
       energyBuildings: 0,
       recyclingCenters: 0
     };
-    
+
     stats.energyBalance = stats.energyProduction - stats.energyConsumption;
     stats.renewableEnergyPercent = stats.energyProduction > 0 ? 100 : 0; // All energy is renewable in this game
-    
+
     window.game.city.traverse((obj) => {
       if (obj.building) {
         stats.totalBuildings++;
@@ -1626,14 +1638,14 @@ export class GameUI {
         }
       }
     });
-    
+
     // Calculate recycling rate (simplified)
     const totalWasteProduced = stats.totalWaste;
-    const recycled = window.resourceManager.getResource('recycled-fabric') + 
-                     window.resourceManager.getResource('recycled-metal') + 
-                     window.resourceManager.getResource('recycled-plastic');
+    const recycled = window.resourceManager.getResource('recycled-fabric') +
+      window.resourceManager.getResource('recycled-metal') +
+      window.resourceManager.getResource('recycled-plastic');
     stats.recyclingRate = totalWasteProduced > 0 ? (recycled / (totalWasteProduced + recycled) * 100) : 0;
-    
+
     return stats;
   }
 
@@ -1646,9 +1658,9 @@ export class GameUI {
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
-    
+
     const level = window.gameState?.level || 1;
-    
+
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
         <div class="resource-section-title">📚 Teknoloji Ağacı</div>
@@ -1684,7 +1696,7 @@ export class GameUI {
       { id: 'green-tech', name: 'Yeşil Teknoloji', level: 9, desc: '+30% enerji üretimi, +20% Circular Score', unlocked: level >= 9 },
       { id: 'circular-master', name: 'Döngüsel Ustası', level: 10, desc: '+50% Circular Score bonusu', unlocked: level >= 10 }
     ];
-    
+
     let html = '';
     researches.forEach(research => {
       const isUnlocked = research.unlocked;
@@ -1701,7 +1713,7 @@ export class GameUI {
         </div>
       `;
     });
-    
+
     return html;
   }
 
@@ -1720,7 +1732,7 @@ export class GameUI {
       document.getElementById('ui').appendChild(panel);
       this.initPanelDrag(panel);
     }
-    
+
     // Update or create header
     let header = panel.querySelector('.panel-header');
     if (!header) {
@@ -1732,7 +1744,7 @@ export class GameUI {
       <span>${title}</span>
       <button class="panel-close" onclick="ui.closePanel('${id}')">×</button>
     `;
-    
+
     return panel;
   }
 
@@ -1796,11 +1808,11 @@ export class GameUI {
    */
   populateTradeSelects() {
     if (!window.resourceManager) return;
-    
+
     const resources = window.resourceManager.getAllResources();
     const selectFrom = document.getElementById('trade-resource-from');
     const selectTo = document.getElementById('trade-resource-to');
-    
+
     if (!selectFrom || !selectTo) return;
 
     const resourceNames = {
@@ -1832,7 +1844,7 @@ export class GameUI {
         if (type.includes('waste') || type.includes('recycled')) {
           return;
         }
-        
+
         // Only show resources that exist or are raw materials
         if (amount > 0 || type.startsWith('raw-')) {
           const option = document.createElement('option');
@@ -1870,8 +1882,8 @@ export class GameUI {
     }
 
     // Prevent trading waste or recycled materials (they should be used in production/recycling)
-    if (fromType.includes('waste') || fromType.includes('recycled') || 
-        toType.includes('waste') || toType.includes('recycled')) {
+    if (fromType.includes('waste') || fromType.includes('recycled') ||
+      toType.includes('waste') || toType.includes('recycled')) {
       alert('Atık ve geri dönüşümlü malzemeler takas edilemez! Bunları üretim ve geri dönüşümde kullanın.');
       return;
     }
@@ -1879,7 +1891,7 @@ export class GameUI {
     // Execute trade (for now, just swap - later will be with NPCs or other players)
     window.resourceManager.removeResource(fromType, fromAmount);
     window.resourceManager.addResource(toType, toAmount);
-    
+
     this.updateResources(window.resourceManager);
     this.showNotification('✅ Takas Tamamlandı', `${fromAmount} ${fromType} → ${toAmount} ${toType}`, 'success');
     this.closePanel('trade-panel');
@@ -1936,7 +1948,7 @@ export class GameUI {
     const bgColor = type === 'error' ? '#3a1e1e' : type === 'success' ? '#1e3a2e' : '#1e2331';
     const borderColor = type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3';
     const textColor = type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3';
-    
+
     notification.style.cssText = `
       position: fixed;
       top: 80px;
@@ -1951,7 +1963,7 @@ export class GameUI {
       z-index: 10000;
       animation: slideIn 0.3s ease-out;
     `;
-    
+
     notification.innerHTML = `
       <div style="font-weight: bold; color: ${textColor}; margin-bottom: 4px;">
         ${title}
@@ -1960,9 +1972,9 @@ export class GameUI {
         ${message}
       </div>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Auto-remove after 5 seconds
     setTimeout(() => {
       notification.style.animation = 'slideOut 0.3s ease-out';
@@ -1973,7 +1985,7 @@ export class GameUI {
       }, 300);
     }, 5000);
   }
-  
+
   /**
    * Called when player levels up
    * @param {number} newLevel 
@@ -1982,7 +1994,7 @@ export class GameUI {
   onLevelUp(newLevel, oldLevel) {
     // Update toolbar visibility
     this.updateToolbarVisibility();
-    
+
     // Show level up modal
     this.showLevelUpModal(newLevel);
   }
@@ -1995,7 +2007,7 @@ export class GameUI {
     if (!window.levelUnlocks) return;
 
     const levelInfo = window.levelUnlocks.getLevelInfo(level);
-    
+
     // Create or get modal container
     let modal = document.getElementById('level-up-modal');
     if (!modal) {
@@ -2006,12 +2018,12 @@ export class GameUI {
     }
 
     // Build features HTML
-    const featuresHTML = levelInfo.features.map(feature => 
+    const featuresHTML = levelInfo.features.map(feature =>
       `<li>${feature}</li>`
     ).join('');
 
     // Build tips HTML
-    const tipsHTML = levelInfo.tips.map(tip => 
+    const tipsHTML = levelInfo.tips.map(tip =>
       `<li>${tip}</li>`
     ).join('');
 
@@ -2048,7 +2060,7 @@ export class GameUI {
 
     // Show modal
     modal.style.display = 'flex';
-    
+
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
 
@@ -2080,7 +2092,7 @@ export class GameUI {
     }
 
     const level = window.gameState.level;
-    
+
     // Button unlock mappings
     const buttonUnlocks = {
       'button-commercial': 'eco-shop', // Level 5
@@ -2115,10 +2127,10 @@ export class GameUI {
    */
   checkWasteAlarms() {
     if (!window.game || !window.game.city) return;
-    
+
     let criticalWasteCount = 0;
     let warningWasteCount = 0;
-    
+
     // Check all buildings for waste levels
     window.game.city.traverse((obj) => {
       if (obj.building && obj.building.waste) {
@@ -2130,7 +2142,7 @@ export class GameUI {
         }
       }
     });
-    
+
     // Show alarm if critical waste detected (only if count > 0)
     if (criticalWasteCount > 0 && (!this._lastCriticalAlarm || Date.now() - this._lastCriticalAlarm > 10000)) {
       this.showNotification(
@@ -2143,7 +2155,7 @@ export class GameUI {
       // Reset alarm timer if no critical waste
       this._lastCriticalAlarm = null;
     }
-    
+
     // Check global pollution
     if (window.globalPollution) {
       const pollutionLevel = window.globalPollution.getLevel();
@@ -2220,7 +2232,7 @@ export class GameUI {
    */
   lockToolbar(allowedActions) {
     const toolbarButtons = document.querySelectorAll('#ui-toolbar .ui-button');
-    
+
     toolbarButtons.forEach(button => {
       const toolType = button.getAttribute('data-type');
       if (!toolType) {
@@ -2232,7 +2244,7 @@ export class GameUI {
         }
         return;
       }
-      
+
       if (allowedActions.includes(toolType)) {
         button.disabled = false;
         button.style.opacity = '1';
@@ -2250,7 +2262,7 @@ export class GameUI {
    */
   unlockToolbar() {
     const toolbarButtons = document.querySelectorAll('#ui-toolbar .ui-button');
-    
+
     toolbarButtons.forEach(button => {
       button.disabled = false;
       button.style.opacity = '1';

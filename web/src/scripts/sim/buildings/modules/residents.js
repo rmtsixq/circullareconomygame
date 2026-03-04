@@ -36,11 +36,12 @@ export class ResidentsModule extends SimModule {
   }
 
   /**
-   * Maximuim number of residents that can live in this building
+   * Maximum number of residents that can live in this building
+   * Fixed at 3 per house as per Circular World design document
    * @returns {number}
    */
   get maximum() {
-    return Math.pow(config.modules.residents.maxResidents, this.#zone.development.level);
+    return config.modules.residents.maxResidents || 3;
   }
 
   /**
@@ -55,11 +56,11 @@ export class ResidentsModule extends SimModule {
       // Apply tax policy effects (Level 6+)
       let moveInChance = config.modules.residents.residentMoveInChance;
       if (window.cityPolicies && window.gameState && window.levelUnlocks &&
-          window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
+        window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
         const taxEffects = window.cityPolicies.getTaxPolicyEffects();
         moveInChance = moveInChance * taxEffects.population;
       }
-      
+
       if (this.#residents.length < this.maximum && Math.random() < moveInChance) {
         this.#residents.push(new Citizen(this.#zone));
       }
