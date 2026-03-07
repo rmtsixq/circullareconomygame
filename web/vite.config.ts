@@ -2,8 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  // Set the base directory for GitHub pages
-  base: '/simcity-threejs-clone/',
+  // Set the base directory
+  base: '/',
 
   // Set the project root directory (relative to the config file)
   root: './src',

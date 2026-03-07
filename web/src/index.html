@@ -19,7 +19,6 @@
   <script type="module" src="./scripts/saveSystem.js"></script>
   <script type="module" src="./scripts/ui.js"></script>
   <script type="module" src="./scripts/game.js"></script>
-  <script type="module" src="./scripts/adminPanel.js"></script>
 </head>
 
 <body>
@@ -63,7 +62,6 @@
         </div>
         <div class="title-bar-center-items title-bar-items">
           <span id="city-name">My City</span>
-          <span style="cursor: pointer; opacity: 0.1;" onclick="window.adminPanel?.toggle()">⚙️</span>
           <span>&nbsp;-&nbsp;</span>
           <span id="sim-time">1/1/2023</span>
         </div>
@@ -227,37 +225,6 @@
         </div>
       </div>
 
-      <!-- Admin Panel -->
-      <div id="admin-panel" class="admin-panel" style="display: none;">
-        <div class="admin-header">
-          <span>Dev Admin Panel</span>
-          <button onclick="window.adminPanel.hide()">×</button>
-        </div>
-        <div class="admin-content">
-          <div class="admin-section">
-            <div class="admin-label">Ekonomi</div>
-            <div class="admin-buttons">
-              <button onclick="window.adminPanel.addMoney(50000)">+50k 💰</button>
-              <button onclick="window.adminPanel.addMoney(500000)">+500k 💰</button>
-            </div>
-          </div>
-          <div class="admin-section">
-            <div class="admin-label">Seviye & Kilitler</div>
-            <div class="admin-buttons">
-              <button onclick="window.adminPanel.setLevel(2)">Seviye 2</button>
-              <button onclick="window.adminPanel.setLevel(5)">Seviye 5</button>
-              <button onclick="window.adminPanel.unlockAll()">Her Şeyi Aç 🔓</button>
-            </div>
-          </div>
-          <div class="admin-section">
-            <div class="admin-label">Şehir Durumu</div>
-            <div class="admin-buttons">
-              <button onclick="window.adminPanel.maxScores()">Skorları Fulleyince 📊</button>
-              <button onclick="window.adminPanel.toggleTutorial()">Tutorial Toggle 🎓</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </body>
