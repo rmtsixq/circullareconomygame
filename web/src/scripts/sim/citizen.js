@@ -538,7 +538,7 @@ export class Citizen {
       }
       workplaceInfo = `
           <span>
-            <img class="info-citizen-icon" src="/icons/job.png">
+            <img class="info-citizen-icon" src="icons/job.png">
             ${workplaceName}
           </span>
         `;
@@ -546,7 +546,7 @@ export class Citizen {
       // No workplace - show state
       workplaceInfo = `
           <span>
-            <img class="info-citizen-icon" src="/icons/job.png">
+            <img class="info-citizen-icon" src="icons/job.png">
             ${this.state}
           </span>
         `;
@@ -558,7 +558,7 @@ export class Citizen {
         <br>
         <span class="info-citizen-details" style="margin-bottom: 4px;">
           <span>
-            <img class="info-citizen-icon" src="/icons/calendar.png">
+            <img class="info-citizen-icon" src="icons/calendar.png">
             ${this.age} yaş
           </span>
           ${workplaceInfo}
