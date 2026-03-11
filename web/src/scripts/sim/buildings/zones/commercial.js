@@ -9,24 +9,24 @@ export class CommercialZone extends Zone {
    * @type {JobsModule}
    */
   jobs = new JobsModule(this);
-  
+
   /**
    * @type {WasteModule}
    */
   waste = new WasteModule(this);
-  
+
   /**
    * Current level of the eco shop (1-3)
    * @type {number}
    */
   level = 1;
-  
+
   /**
    * Maximum level
    * @type {number}
    */
   maxLevel = 3;
-  
+
   /**
    * Inventory - products available for sale
    * @type {Object}
@@ -40,7 +40,7 @@ export class CommercialZone extends Zone {
     'electric-car': 0,
     'electric-bike': 0
   };
-  
+
   /**
    * Maximum inventory capacity by level
    * @type {Object}
@@ -50,7 +50,7 @@ export class CommercialZone extends Zone {
     2: 20,   // 20 products max
     3: 40    // 40 products max
   };
-  
+
   /**
    * Product prices (how much money per product sold)
    * @type {Object}
@@ -64,7 +64,7 @@ export class CommercialZone extends Zone {
     'electric-car': 2000,
     'electric-bike': 400
   };
-  
+
   /**
    * Sales rate per tick by level (how many products can be sold)
    * @type {Object}
@@ -74,7 +74,7 @@ export class CommercialZone extends Zone {
     2: 0.4,  // 0.4 products per tick (1 product every 2.5 ticks)
     3: 0.8   // 0.8 products per tick (1 product every 1.25 ticks)
   };
-  
+
   /**
    * Auto-purchase rate per tick (how many products to buy from global inventory)
    * @type {Object}
@@ -84,19 +84,19 @@ export class CommercialZone extends Zone {
     2: 0.2,  // 0.2 products per tick
     3: 0.4   // 0.4 products per tick
   };
-  
+
   /**
    * Waste production per tick (packaging waste)
    * @type {number}
    */
   baseWasteProduction = 0.5; // Increased from 0.2
-  
+
   /**
    * Accumulated sales progress (for fractional sales)
    * @type {number}
    */
   salesProgress = 0;
-  
+
   /**
    * Accumulated purchase progress (for fractional purchases)
    * @type {number}
@@ -108,10 +108,10 @@ export class CommercialZone extends Zone {
     this.name = generateBusinessName();
     this.type = BuildingType.commercial;
     this.power.required = 3; // Low energy consumption
-    
+
     // Set style for commercial (A or B)
     this.style = ['A', 'B'][Math.floor(2 * Math.random())];
-    
+
     // Initialize waste module for commercial (low packaging waste)
     this.waste.productionRate = this.baseWasteProduction;
     this.waste.wasteType = 'plastic-waste';
@@ -125,7 +125,7 @@ export class CommercialZone extends Zone {
   get maxInventory() {
     return this.maxInventoryByLevel[this.level] || 10;
   }
-  
+
   /**
    * Get current sales rate
    * @returns {number}
@@ -133,7 +133,7 @@ export class CommercialZone extends Zone {
   get salesRate() {
     return this.salesRateByLevel[this.level] || 0.2;
   }
-  
+
   /**
    * Get current purchase rate
    * @returns {number}
@@ -141,7 +141,7 @@ export class CommercialZone extends Zone {
   get purchaseRate() {
     return this.purchaseRateByLevel[this.level] || 0.1;
   }
-  
+
   /**
    * Get total products in inventory
    * @returns {number}
@@ -149,7 +149,7 @@ export class CommercialZone extends Zone {
   get totalInventory() {
     return Object.values(this.inventory).reduce((sum, val) => sum + val, 0);
   }
-  
+
   /**
    * Check if inventory has space
    * @returns {boolean}
@@ -157,7 +157,7 @@ export class CommercialZone extends Zone {
   hasInventorySpace() {
     return this.totalInventory < this.maxInventory;
   }
-  
+
   /**
    * Get available products for sale (products that are in inventory)
    * @returns {Array<string>}
@@ -176,34 +176,34 @@ export class CommercialZone extends Zone {
   simulate(city, currentTick = 0) {
     super.simulate(city);
     this.jobs.simulate();
-    
+
     // Check if Eco Shop is unlocked (Level 5+)
     if (!window.gameState || !window.levelUnlocks ||
-        !window.levelUnlocks.isUnlocked('eco-shop', window.gameState.level)) {
+      !window.levelUnlocks.isUnlocked('eco-shop', window.gameState.level)) {
       return;
     }
-    
+
     // Update waste module (only if waste system is unlocked - Level 3+)
     if (this.waste && window.levelUnlocks.isUnlocked('local-waste', window.gameState.level)) {
       this.waste.simulate(city, currentTick);
     }
-    
+
     // Only work if powered and has road access
     if (!this.power.isFullyPowered || !this.roadAccess.value || !window.resourceManager) {
       return;
     }
-    
+
     // 1. AUTO-PURCHASE: Buy products from global inventory
     if (this.hasInventorySpace()) {
       this.purchaseProgress += this.purchaseRate;
-      
+
       if (this.purchaseProgress >= 1) {
         const productsToBuy = Math.floor(this.purchaseProgress);
         this.purchaseProgress -= productsToBuy;
-        
+
         // Try to buy products (prioritize by price/value)
         const productPriority = ['electric-car', 'laptop', 'electric-bike', 'steel-structure', 'smartphone', 'steel-beam', 'clothing'];
-        
+
         for (let i = 0; i < productsToBuy && this.hasInventorySpace(); i++) {
           for (const productType of productPriority) {
             const globalAmount = window.resourceManager.getResource(productType);
@@ -217,42 +217,42 @@ export class CommercialZone extends Zone {
         }
       }
     }
-    
+
     // 2. SALES: Sell products from inventory
     const availableProducts = this.getAvailableProducts();
     if (availableProducts.length > 0) {
       this.salesProgress += this.salesRate;
-      
+
       if (this.salesProgress >= 1) {
         const productsToSell = Math.floor(this.salesProgress);
         this.salesProgress -= productsToSell;
-        
+
         // Sell products (prioritize higher value products)
         const sortedProducts = availableProducts.sort((a, b) => {
           return (this.productPrices[b] || 0) - (this.productPrices[a] || 0);
         });
-        
+
         for (let i = 0; i < productsToSell && sortedProducts.length > 0; i++) {
           const productType = sortedProducts[0];
           if (this.inventory[productType] > 0) {
             // Sell 1 product
             this.inventory[productType]--;
             const price = this.productPrices[productType] || 0;
-            
+
             // Earn money
             window.gameState.addMoney(price);
-            
+
             // Add XP (small amount per sale)
             window.gameState.addXP(0.5);
-            
+
             // Add Circular Score (eco shops contribute to circular economy)
             window.gameState.updateCircularScore(0.2);
-            
+
             // Show sale effect
             if (window.visualEffects) {
               window.visualEffects.addEffect(this.x, this.y, `+${price} 💰`, 'success');
             }
-            
+
             // Update sorted products list
             sortedProducts.shift();
           }
@@ -278,13 +278,13 @@ export class CommercialZone extends Zone {
       // Not enough money - show notification
       if (window.ui) {
         window.ui.showNotification(
-          '💰 Yetersiz Para',
-          `Yükseltme için ${upgradeCost.toLocaleString()} 💰 gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()} 💰`,
+          'Yetersiz Para',
+          `Yükseltme için ${upgradeCost.toLocaleString()} birim gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()}`,
           'error'
         );
       }
     }
-    
+
     return false;
   }
 
@@ -319,9 +319,12 @@ export class CommercialZone extends Zone {
    */
   toHTML() {
     let html = super.toHTML();
-    
+
     html += `
-      <div class="info-heading">🌿 Eco Shop</div>
+      <div class="info-heading">
+        <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Eco Shop
+      </div>
       <span class="info-label">Seviye </span>
       <span class="info-value">${this.level}/${this.maxLevel}</span>
       <br>
@@ -335,22 +338,26 @@ export class CommercialZone extends Zone {
       <span class="info-value">${this.totalInventory}/${this.maxInventory}</span>
       <br>
     `;
-    
+
     // Show inventory
     const hasProducts = this.totalInventory > 0;
     if (hasProducts) {
-      html += `<div class="info-heading" style="margin-top: 12px;">📦 Stok</div>`;
+      html += `
+        <div class="info-heading" style="margin-top: 12px;">
+          <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          Stok
+        </div>`;
       Object.entries(this.inventory).forEach(([product, amount]) => {
         if (amount > 0) {
           const price = this.productPrices[product] || 0;
           const productNames = {
-            'clothing': '👕 Kıyafet',
-            'smartphone': '📱 Telefon',
-            'laptop': '💻 Laptop',
-            'steel-beam': '🔩 Çelik Kiriş',
-            'steel-structure': '🏗️ Çelik Yapı',
-            'electric-car': '🚗 Elektrikli Araba',
-            'electric-bike': '🚲 Elektrikli Bisiklet'
+            'clothing': 'Kıyafet',
+            'smartphone': 'Telefon',
+            'laptop': 'Laptop',
+            'steel-beam': 'Çelik Kiriş',
+            'steel-structure': 'Çelik Yapı',
+            'electric-car': 'Elektrikli Araba',
+            'electric-bike': 'Elektrikli Bisiklet'
           };
           html += `
             <div style="padding: 4px 8px; margin: 2px 0; background-color: #22294160; border-radius: 4px;">
@@ -363,15 +370,18 @@ export class CommercialZone extends Zone {
     } else {
       html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Envanter boş - Ürün bekleniyor</div>`;
     }
-    
+
     html += this.jobs.toHTML();
-    
+
     // Waste information
     if (this.waste) {
       const wasteLevel = this.waste.getLevel();
       const wasteColor = wasteLevel >= 95 ? '#f44336' : wasteLevel >= 80 ? '#FF9800' : '#4CAF50';
       html += `
-        <div class="info-heading" style="margin-top: 12px;">🗑️ Atık Durumu</div>
+        <div class="info-heading" style="margin-top: 12px;">
+          <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          Atık Durumu
+        </div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
             <span>Atık Seviyesi:</span>
@@ -383,19 +393,20 @@ export class CommercialZone extends Zone {
         </div>
       `;
     }
-    
+
     // Upgrade button
     if (this.level < this.maxLevel) {
       const upgradeCost = this.getUpgradeCost();
       html += `
         <div style="padding: 8px; margin-top: 8px;">
-          <button class="action-button" onclick="window.game?.upgradeFactory(${this.x}, ${this.y})" style="width: 100%;">
-            ⬆️ Yükselt (${upgradeCost.toLocaleString()} 💰)
+          <button class="action-button" onclick="window.game?.upgradeFactory(${this.x}, ${this.y})" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+            Yükselt (${upgradeCost.toLocaleString()} birim)
           </button>
         </div>
       `;
     }
-    
+
     return html;
   }
 }

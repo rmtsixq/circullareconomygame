@@ -7,25 +7,25 @@ import { BuildingType } from './buildingType.js';
  */
 export class PoliceStation extends Building {
   type = BuildingType.policeStation;
-  
+
   /**
    * Current level of the police station (1-3)
    * @type {number}
    */
   level = 1;
-  
+
   /**
    * Maximum level
    * @type {number}
    */
   maxLevel = 3;
-  
+
   /**
    * Energy consumption per tick
    * @type {number}
    */
   energyConsumption = 5;
-  
+
   /**
    * Police vehicles spawned by level
    * @type {Object}
@@ -35,32 +35,32 @@ export class PoliceStation extends Building {
     2: 2,  // 2 police vehicles
     3: 3   // 3 police vehicles
   };
-  
+
   /**
    * Spawn interval in milliseconds
    * @type {number}
    */
   spawnInterval = 15000; // 15 seconds
-  
+
   /**
    * Last spawn time
    * @type {number}
    */
   lastSpawnTime = 0;
-  
+
   /**
    * Active police vehicles count
    * @type {number}
    */
   activeVehicles = 0;
-  
+
   /**
    * Entrance direction (0 = bottom, 1 = right, 2 = top, 3 = left)
    * Determines where the road should curve
    * @type {number}
    */
   entranceDirection = 0; // Default: bottom (south)
-  
+
   constructor(x, y) {
     super(x, y);
     this.x = x;
@@ -68,11 +68,11 @@ export class PoliceStation extends Building {
     this.name = 'Polis Merkezi';
     this.hideTerrain = true;
     this.roadAccess.enabled = true;
-    
+
     // Determine entrance direction based on nearby roads
     this.determineEntranceDirection();
   }
-  
+
   /**
    * Get base cost for building
    * @returns {number}
@@ -80,7 +80,7 @@ export class PoliceStation extends Building {
   getBaseCost() {
     return 3000; // Base cost for police station
   }
-  
+
   /**
    * Determine entrance direction based on nearby roads
    * @param {City} city - City instance (optional, will use window.game.city if not provided)
@@ -96,17 +96,17 @@ export class PoliceStation extends Building {
       { x: 0, y: -1, dir: 2 }, // top (north)
       { x: -1, y: 0, dir: 3 }  // left (west)
     ];
-    
+
     // Find the direction with the nearest road
     let bestDirection = 0;
     let minDistance = Infinity;
-    
+
     for (const dir of directions) {
       for (let dist = 1; dist <= 3; dist++) {
         const checkX = this.x + dir.x * dist;
         const checkY = this.y + dir.y * dist;
         const tile = city.getTile(checkX, checkY);
-        
+
         if (tile && tile.building && tile.building.type === 'road') {
           if (dist < minDistance) {
             minDistance = dist;
@@ -116,10 +116,10 @@ export class PoliceStation extends Building {
         }
       }
     }
-    
+
     this.entranceDirection = bestDirection;
   }
-  
+
   /**
    * Refresh view - load model and update road connections
    * @param {City} city - City instance
@@ -127,40 +127,40 @@ export class PoliceStation extends Building {
   refreshView(city) {
     // Determine entrance direction
     this.determineEntranceDirection(city);
-    
+
     // Load model
     const modelName = `police-station-${this.level}`;
     const mesh = window.assetManager.getModel(modelName, this);
     this.setMesh(mesh);
-    
+
     // Update road connections (virtual road for vehicle path)
     this.updateRoadConnections(city);
   }
-  
+
   /**
    * Update road connections - create virtual road path without visual road
    */
   updateRoadConnections(city) {
     if (!city.vehicleGraph) return;
-    
+
     // Get entrance tile coordinates
     const entranceCoords = this.getEntranceCoords();
     if (!entranceCoords) return;
-    
+
     const { x: entranceX, y: entranceY } = entranceCoords;
-    
+
     // Create a virtual road connection in the vehicle graph
     // This allows vehicles to path through the police station
     // but doesn't create a visual road tile
-    
+
     // Find adjacent road tiles
     const adjacentRoads = this.findAdjacentRoads(city);
-    
+
     // Connect police station entrance to adjacent roads
     // This is handled in vehicleGraph.updateTile with a special flag
     // For now, we'll mark this building as a special road connection point
   }
-  
+
   /**
    * Get entrance coordinates based on entrance direction
    * @returns {{x: number, y: number} | null}
@@ -172,14 +172,14 @@ export class PoliceStation extends Building {
       { x: 0, y: -1 },  // top (north)
       { x: -1, y: 0 }   // left (west)
     ];
-    
+
     const dir = directions[this.entranceDirection];
     return {
       x: this.x + dir.x,
       y: this.y + dir.y
     };
   }
-  
+
   /**
    * Find adjacent road tiles
    * @returns {Array}
@@ -192,64 +192,64 @@ export class PoliceStation extends Building {
       { x: 0, y: -1 },  // top
       { x: -1, y: 0 }   // left
     ];
-    
+
     for (const dir of directions) {
       const checkX = this.x + dir.x;
       const checkY = this.y + dir.y;
       const tile = city.getTile(checkX, checkY);
-      
+
       if (tile && tile.building && tile.building.type === 'road') {
         roads.push({ x: checkX, y: checkY, tile });
       }
     }
-    
+
     return roads;
   }
-  
+
   /**
    * Simulate police station
    */
   simulate(city, currentTick) {
     super.simulate(city, currentTick);
-    
+
     // Spawn police vehicles periodically
     const now = Date.now();
     if (now - this.lastSpawnTime >= this.spawnInterval) {
       const maxVehicles = this.vehiclesByLevel[this.level] || 1;
-      
+
       if (this.activeVehicles < maxVehicles) {
         this.spawnPoliceVehicle(city);
         this.lastSpawnTime = now;
       }
     }
   }
-  
+
   /**
    * Spawn a police vehicle
    */
   spawnPoliceVehicle(city) {
     if (!city.vehicleGraph) return;
-    
+
     // Get entrance coordinates
     const entranceCoords = this.getEntranceCoords();
     if (!entranceCoords) return;
-    
+
     // Find a nearby road to spawn from
     const adjacentRoads = this.findAdjacentRoads(city);
     if (adjacentRoads.length === 0) return;
-    
+
     // Get vehicle graph tile for the entrance
     const vehicleGraphTile = city.vehicleGraph.getTile(entranceCoords.x, entranceCoords.y);
     if (!vehicleGraphTile) return;
-    
+
     // Spawn police vehicle (this will be handled by a special vehicle spawner)
     // For now, we'll increment the counter
     this.activeVehicles++;
-    
+
     // The actual vehicle spawning will be handled by the vehicle system
     // with a special police vehicle type
   }
-  
+
   /**
    * Upgrade the police station
    */
@@ -263,7 +263,7 @@ export class PoliceStation extends Building {
     }
     return false;
   }
-  
+
   /**
    * Returns an HTML representation of this object
    * @returns {string}
@@ -271,26 +271,35 @@ export class PoliceStation extends Building {
   toHTML() {
     const canUpgrade = this.level < this.maxLevel;
     const upgradeCost = this.getUpgradeCost();
-    
+
     return `
       <div class="info-panel">
-        <h2>${this.name}</h2>
+        <div class="info-heading">
+          <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M8 10h8"/><path d="M10 14h4"/></svg>
+          ${this.name}
+        </div>
         <div class="info-section">
-          <p><strong>Seviye:</strong> ${this.level}/${this.maxLevel}</p>
-          <p><strong>Enerji Tüketimi:</strong> ${this.energyConsumption} ⚡/tick</p>
-          <p><strong>Aktif Polis Araçları:</strong> ${this.activeVehicles}/${this.vehiclesByLevel[this.level]}</p>
+          <span class="info-label">Seviye </span>
+          <span class="info-value">${this.level}/${this.maxLevel}</span>
+          <br>
+          <span class="info-label">Enerji Tüketimi </span>
+          <span class="info-value">${this.energyConsumption} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>/tick</span>
+          <br>
+          <span class="info-label">Aktif Polis Araçları </span>
+          <span class="info-value">${this.activeVehicles}/${this.vehiclesByLevel[this.level]}</span>
         </div>
         ${canUpgrade ? `
-          <div class="info-section">
-            <button class="action-button" onclick="window.game.selectedObject.building.upgrade(); window.ui.refreshInfoPanel();">
-              Yükselt (${upgradeCost} 💰)
+          <div style="padding: 8px; margin-top: 8px;">
+            <button class="action-button" onclick="window.game.selectedObject.building.upgrade(); window.ui.refreshInfoPanel();" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+              Yükselt (${upgradeCost.toLocaleString()} birim)
             </button>
           </div>
         ` : ''}
       </div>
     `;
   }
-  
+
   /**
    * Get upgrade cost
    * @returns {number}

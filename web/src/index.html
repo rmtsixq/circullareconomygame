@@ -52,13 +52,41 @@
     <div id="ui">
       <div id="title-bar">
         <div class="title-bar-left-items title-bar-items">
-          <span id="money-display">💰 500,000</span>
+          <div class="title-bar-stat" id="money-stat">
+            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+              <path d="M12 18V6" />
+            </svg>
+            <span id="money-display">500,000</span>
+          </div>
           <span class="tb-sep">|</span>
-          <span id="energy-display">⚡ 100</span>
+          <div class="title-bar-stat" id="energy-stat">
+            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+            <span id="energy-display">100</span>
+          </div>
           <span class="tb-sep">|</span>
-          <span id="level-display">Seviye 1</span>
+          <div class="title-bar-stat">
+            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            <span id="level-display">Seviye 1</span>
+          </div>
           <span class="tb-sep">|</span>
-          <span id="population-display">🏠 0</span>
+          <div class="title-bar-stat">
+            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span id="population-display">0</span>
+          </div>
         </div>
         <div class="title-bar-center-items title-bar-items">
           <span id="city-name">My City</span>
@@ -70,10 +98,15 @@
           <span id="population-counter">0</span>
         </div>
       </div>
-      <!-- City Scores Bar -->
       <div id="scores-bar">
         <div class="score-item" title="Refah (Well-being)">
-          <span class="score-icon">🟢</span>
+          <span class="score-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </span>
           <span class="score-label">Refah</span>
           <div class="score-bar-bg">
             <div id="score-bar-wellbeing" class="score-bar-fill" style="width: 50%; background: #4CAF50;"></div>
@@ -81,7 +114,13 @@
           <span id="score-val-wellbeing" class="score-val">50</span>
         </div>
         <div class="score-item" title="Eğitim (Education)">
-          <span class="score-icon">🎓</span>
+          <span class="score-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3.333 3 10.667 3 14 0v-5" />
+            </svg>
+          </span>
           <span class="score-label">Eğitim</span>
           <div class="score-bar-bg">
             <div id="score-bar-education" class="score-bar-fill" style="width: 30%; background: #2196F3;"></div>
@@ -89,7 +128,15 @@
           <span id="score-val-education" class="score-val">30</span>
         </div>
         <div class="score-item" title="Sağlık (Health)">
-          <span class="score-icon">🏥</span>
+          <span class="score-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path
+                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.505 4.045 3 5.5L12 21z" />
+              <path d="M12 5v14" />
+              <path d="M7 9h10" />
+            </svg>
+          </span>
           <span class="score-label">Sağlık</span>
           <div class="score-bar-bg">
             <div id="score-bar-health" class="score-bar-fill" style="width: 70%; background: #E91E63;"></div>
@@ -97,7 +144,15 @@
           <span id="score-val-health" class="score-val">70</span>
         </div>
         <div class="score-item" title="Sürdürülebilirlik (Sustainability)">
-          <span class="score-icon">♻️</span>
+          <span class="score-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+              <path d="M16 16h5v5" />
+            </svg>
+          </span>
           <span class="score-label">Sürd.</span>
           <div class="score-bar-bg">
             <div id="score-bar-sustainability" class="score-bar-fill" style="width: 0%; background: #8BC34A;"></div>
@@ -105,76 +160,194 @@
           <span id="score-val-sustainability" class="score-val">0</span>
         </div>
         <div class="score-item" title="Yönetim Puanı (Management Score)">
-          <span class="score-icon">⭐</span>
+          <span class="score-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </span>
           <span class="score-label">Yönetim</span>
           <span id="score-val-management" class="score-val" style="font-weight: bold; color: #FFD700;">0</span>
         </div>
       </div>
       <div id="ui-toolbar" class="container">
         <button id='button-select' class="ui-button selected" data-type="select" onclick="ui.onToolSelected(event)">
-          <img class="toolbar-icon" src="icons/select-color.png">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
+            <path d="m13 13 6 6" />
+          </svg>
         </button>
         <button id='button-bulldoze' class="ui-button" data-type="bulldoze" onclick="ui.onToolSelected(event)">
-          <img class="toolbar-icon" src="icons/bulldozer-color.png">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M3 6h18" />
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+            <line x1="10" y1="11" x2="10" y2="17" />
+            <line x1="14" y1="11" x2="14" y2="17" />
+          </svg>
         </button>
         <button id='button-residential' class="ui-button" data-type="residential" onclick="ui.onToolSelected(event)">
-          <img class="toolbar-icon" src="icons/house-color.png">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
         </button>
         <button id='button-commercial' class="ui-button" data-type="commercial" onclick="ui.onToolSelected(event)">
-          <img class="toolbar-icon" src="icons/store-color.png">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z" />
+            <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9" />
+            <path d="M12 3v6" />
+          </svg>
         </button>
         <button id='button-farming' class="ui-button" data-type="farming" onclick="ui.onToolSelected(event)"
           title="Tarım Alanı">
-          <span style="font-size: 1.2em;">🌾</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.8A7 7 0 0 1 11 20z" />
+            <path d="M11 20V10" />
+          </svg>
         </button>
         <button id='button-textile-factory' class="ui-button" data-type="textile-factory"
           onclick="ui.onToolSelected(event)" title="Tekstil Fabrikası">
-          <img class="toolbar-icon" src="icons/textile-factory.png">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M22 20H2v-7l5-4 5 4 5-4 5 4z" />
+            <path d="M17 18h1" />
+            <path d="M12 18h1" />
+            <path d="M7 18h1" />
+          </svg>
         </button>
         <button id='button-technology-factory' class="ui-button" data-type="technology-factory"
           onclick="ui.onToolSelected(event)" title="Teknoloji Fabrikası">
-          <span style="font-size: 1.2em;">💻</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+            <rect x="9" y="9" width="6" height="6" />
+            <path d="M9 1v3" />
+            <path d="M15 1v3" />
+            <path d="M9 20v3" />
+            <path d="M15 20v3" />
+            <path d="M20 9h3" />
+            <path d="M20 15h3" />
+            <path d="M1 9h3" />
+            <path d="M1 15h3" />
+          </svg>
         </button>
         <button id='button-steel-factory' class="ui-button" data-type="steel-factory" onclick="ui.onToolSelected(event)"
           title="Çelik Fabrikası">
-          <span style="font-size: 1.2em;">⚙️</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M2 20h20" />
+            <path d="M5 20V8l7 4V8l7 4v8" />
+          </svg>
         </button>
         <button id='button-automotive-factory' class="ui-button" data-type="automotive-factory"
           onclick="ui.onToolSelected(event)" title="Otomotiv Fabrikası">
-          <span style="font-size: 1.2em;">🚗</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path
+              d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
+            <circle cx="7" cy="17" r="2" />
+            <path d="M9 17h6" />
+            <circle cx="17" cy="17" r="2" />
+          </svg>
         </button>
         <button id='button-recycling-center' class="ui-button" data-type="recycling-center"
           onclick="ui.onToolSelected(event)" title="Geri Dönüşüm Merkezi">
-          <span style="font-size: 1.2em;">♻️</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+            <path d="M16 16h5v5" />
+          </svg>
         </button>
         <button id='button-solar-panel' class="ui-button" data-type="solar-panel" onclick="ui.onToolSelected(event)"
           title="Güneş Paneli">
-          <img class="toolbar-icon" src="icons/solar-panel.png">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
         </button>
         <button id='button-wind-turbine' class="ui-button" data-type="wind-turbine" onclick="ui.onToolSelected(event)"
           title="Rüzgar Türbini">
-          <img class="toolbar-icon" src="icons/wind-turbine.png">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Z" />
+            <path d="M12 12c0 2.2 1.8 4 4 4s4-1.8 4-4-1.8-4-4-4-4 1.8-4 4Z" />
+            <path d="M12 12c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4Z" />
+            <path d="M12 2v10" />
+            <path d="M12 12v10" />
+            <path d="M12 12H2" />
+            <path d="M22 12H12" />
+          </svg>
         </button>
         <button id='button-hydro-plant' class="ui-button" data-type="hydro-plant" onclick="ui.onToolSelected(event)"
           title="Hidroelektrik Santrali">
-          <span style="font-size: 1.2em;">💧</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M2 6c.6.5 1.2 1 2.5 1C5.8 7 7 6 8.5 6s2.7 1 4 1 2.7-1 4-1 2.7 1 4 1" />
+            <path d="M2 12c.6.5 1.2 1 2.5 1 1.3 0 2.5-1 4-1s2.7 1 4 1 2.7-1 4-1 2.7 1 4 1" />
+          </svg>
         </button>
         <button id='button-waste-to-energy' class="ui-button" data-type="waste-to-energy"
           onclick="ui.onToolSelected(event)" title="Atıktan Enerji Tesisi">
-          <img class="toolbar-icon" src="icons/waste-to-energy.png">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+            <path d="M21 16v5H16" />
+            <path d="M11 20H4v-5" />
+          </svg>
         </button>
         <button id='button-police-station' class="ui-button" data-type="police-station"
           onclick="ui.onToolSelected(event)" title="Polis Merkezi">
-          <span style="font-size: 1.2em;">🚓</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
         </button>
         <button id='button-road' class="ui-button" data-type="road" onclick="ui.onToolSelected(event)">
-          <img class="toolbar-icon" src="icons/road-color.png">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M12 3v18" />
+            <path d="M8 8h1" />
+            <path d="M8 12h1" />
+            <path d="M8 16h1" />
+            <path d="M15 8h1" />
+            <path d="M15 12h1" />
+            <path d="M15 16h1" />
+          </svg>
         </button>
         <button id='button-pause' class="ui-button" onclick="ui.togglePause()">
-          <img id='pause-button-icon' class="toolbar-icon" src="icons/pause-color.png">
+          <svg id='pause-button-icon' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" class="toolbar-svg">
+            <rect x="6" y="4" width="4" height="16" />
+            <rect x="14" y="4" width="4" height="16" />
+          </svg>
         </button>
         <button id='button-resources' class="ui-button" onclick="ui.toggleResourcePanel()" title="Kaynaklar">
-          <span style="font-size: 1.5em;">📦</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="toolbar-svg">
+            <path d="m7.5 4.27 9 5.15" />
+            <path
+              d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+            <path d="m3.3 7 8.7 5 8.7-5" />
+            <path d="M12 22V12" />
+          </svg>
         </button>
       </div>
       <div id="info-panel" class="container">
@@ -182,7 +355,17 @@
       <!-- Floating Resource Panel -->
       <div id="resource-panel" class="floating-panel">
         <div class="panel-header">
-          <span>📦 Kaynaklar</span>
+          <span style="display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" class="toolbar-svg" style="width: 18px; height: 18px;">
+              <path d="m7.5 4.27 9 5.15" />
+              <path
+                d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+              <path d="m3.3 7 8.7 5 8.7-5" />
+              <path d="M12 22V12" />
+            </svg>
+            Kaynaklar
+          </span>
           <button class="panel-close" onclick="ui.toggleResourcePanel()">×</button>
         </div>
         <div class="panel-content">

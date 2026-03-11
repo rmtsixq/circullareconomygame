@@ -98,6 +98,11 @@ export class GameState {
   checkLevelUp() {
     if (!window.levelUnlocks) return;
 
+    // Disable leveling during tutorial to prevent flow breakage
+    if (window.tutorialState && window.tutorialState.isActive) {
+      return;
+    }
+
     const nextLevel = this.level + 1;
     if (nextLevel <= 6) {
       if (window.levelUnlocks.isRequirementMet(nextLevel, this)) {

@@ -14,43 +14,43 @@ export class Factory extends Building {
    * @type {number}
    */
   level = 1;
-  
+
   /**
    * Maximum level for this factory
    * @type {number}
    */
   maxLevel = 5;
-  
+
   /**
    * Production queue - array of production jobs
    * @type {Array}
    */
   productionQueue = [];
-  
+
   /**
    * Energy consumption per tick
    * @type {number}
    */
   energyConsumption = 5;
-  
+
   /**
    * Base waste production per tick
    * @type {number}
    */
   baseWasteProduction = 4; // Increased from 3
-  
+
   /**
    * Available recipes for this factory
    * @type {Array}
    */
   recipes = [];
-  
+
   /**
    * Factory style (A, B, or C)
    * @type {string}
    */
   style = ['A', 'B', 'C'][Math.floor(3 * Math.random())];
-  
+
   /**
    * Waste module for this factory
    * @type {WasteModule}
@@ -72,11 +72,11 @@ export class Factory extends Building {
   constructor(x = 0, y = 0) {
     super(x, y);
     this.power.required = this.energyConsumption;
-    
+
     // Initialize waste module
     this.waste.productionRate = this.baseWasteProduction;
     this.waste.wasteType = this.getWasteType();
-    
+
     // Initialize jobs module (factories need workers)
     // Note: JobsModule expects a Zone, but we'll adapt it for factories
     // We'll create a simple wrapper or modify JobsModule to work with factories
@@ -91,7 +91,7 @@ export class Factory extends Building {
     // Higher level = more efficient = less waste (but not too much reduction)
     const efficiency = 1 - (this.level - 1) * 0.05; // 5% reduction per level (reduced from 10%)
     const baseWaste = Math.max(0, this.baseWasteProduction * efficiency);
-    
+
     // Apply production mode multiplier
     return baseWaste * this.wasteProductionMultiplier;
   }
@@ -104,11 +104,11 @@ export class Factory extends Building {
     if (!this.power.isFullyPowered) {
       return 0.5; // 50% efficiency if no power
     }
-    
+
     // Check worker availability
     const currentWorkers = this.jobs ? this.jobs.workers.length : 0;
     let baseEfficiency = Math.min(1, 0.7 + (this.level - 1) * 0.1);
-    
+
     if (currentWorkers < this.requiredWorkers) {
       // If no workers at all, factory stops completely
       if (currentWorkers === 0) {
@@ -119,30 +119,30 @@ export class Factory extends Building {
       // Production scales with worker ratio (e.g., 50% workers = 50% production)
       baseEfficiency = baseEfficiency * workerRatio;
     }
-    
+
     // Apply production mode effects (Level 6+)
     if (window.cityPolicies && window.gameState && window.levelUnlocks &&
-        window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
+      window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
       const modeEffects = window.cityPolicies.getProductionModeEffects();
       baseEfficiency = baseEfficiency * modeEffects.speed;
     }
-    
+
     return Math.min(1, baseEfficiency);
   }
-  
+
   /**
    * Get waste production multiplier based on production mode
    * @returns {number}
    */
   get wasteProductionMultiplier() {
     if (window.cityPolicies && window.gameState && window.levelUnlocks &&
-        window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
+      window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level)) {
       const modeEffects = window.cityPolicies.getProductionModeEffects();
       return modeEffects.waste;
     }
     return 1.0;
   }
-  
+
   /**
    * Get current number of workers
    * @returns {number}
@@ -150,7 +150,7 @@ export class Factory extends Building {
   get currentWorkers() {
     return this.jobs ? this.jobs.workers.length : 0;
   }
-  
+
   /**
    * Get maximum number of workers this factory can employ
    * @returns {number}
@@ -184,10 +184,10 @@ export class Factory extends Building {
     };
 
     this.productionQueue.push(job);
-    
+
     // Consume resources
     window.resourceManager.consumeResources(recipe.inputs);
-    
+
     return true;
   }
 
@@ -202,11 +202,11 @@ export class Factory extends Building {
     if (recipe.requiredLevel && this.level < recipe.requiredLevel) {
       return false;
     }
-    
+
     // No player level restrictions - recipes unlock based on factory level only
     // Grade 2 recipes (requiredLevel: 2) are available when factory is level 2
     // Grade 3 recipes (requiredLevel: 3) are available when factory is level 3
-    
+
     // Check if recipe is available for this factory
     return this.recipes.some(r => r.id === recipe.id);
   }
@@ -218,14 +218,14 @@ export class Factory extends Building {
     if (this.productionQueue.length === 0) return;
 
     const efficiency = this.productionEfficiency;
-    
+
     // Process each job in queue
     for (let i = this.productionQueue.length - 1; i >= 0; i--) {
       const job = this.productionQueue[i];
-      
+
       // Update progress based on efficiency
       job.progress += efficiency;
-      
+
       // Check if production is complete
       if (job.progress >= job.totalTime) {
         this.completeProduction(job);
@@ -240,13 +240,13 @@ export class Factory extends Building {
    */
   completeProduction(job) {
     const recipe = job.recipe;
-    
+
     // Add outputs to inventory
     if (window.resourceManager) {
       Object.entries(recipe.outputs).forEach(([resource, amount]) => {
         window.resourceManager.addResource(resource, amount);
       });
-      
+
       // Add waste
       if (recipe.waste) {
         Object.entries(recipe.waste).forEach(([wasteType, amount]) => {
@@ -254,12 +254,12 @@ export class Factory extends Building {
         });
       }
     }
-    
+
     // Add XP
     if (window.gameState) {
       window.gameState.addXP(5);
     }
-    
+
     // Show production effect
     if (window.visualEffects) {
       // Get total output amount
@@ -274,11 +274,11 @@ export class Factory extends Building {
   startAutomaticProduction() {
     // Maximum queue size (allow multiple products in queue)
     const maxQueueSize = 5; // Allow up to 5 products in queue
-    
+
     // Fill queue up to max size
     while (this.productionQueue.length < maxQueueSize) {
       let added = false;
-      
+
       // Find first available recipe that we can produce
       // Try recipes in order (Level 1 first, then Level 2, then Level 3)
       // This ensures we always use the best available recipe for current factory level
@@ -291,7 +291,7 @@ export class Factory extends Building {
         }
         return levelA - levelB; // Lower level first
       });
-      
+
       for (const recipe of sortedRecipes) {
         if (this.canProduce(recipe) && window.resourceManager && window.resourceManager.hasResources(recipe.inputs)) {
           this.addProduction(recipe);
@@ -299,7 +299,7 @@ export class Factory extends Building {
           break;
         }
       }
-      
+
       // If no recipe could be added, stop trying
       if (!added) {
         break;
@@ -335,7 +335,7 @@ export class Factory extends Building {
         );
       }
     }
-    
+
     return false;
   }
 
@@ -364,48 +364,48 @@ export class Factory extends Building {
       console.error('AssetManager not available');
       return;
     }
-    
+
     let modelName;
-    
+
     // Use factory-specific model naming: type-style-level
     // e.g., "textile-factory-A1", "technology-factory-B2"
     modelName = `${this.type}-${this.style}${this.level}`;
-    
+
     // Check if model exists in assetManager
     if (!window.assetManager.models || !window.assetManager.models[modelName]) {
       console.warn(`Model not found: ${modelName}, trying fallback...`);
       // Fallback to A1 style
       modelName = `${this.type}-A${this.level}`;
-      
+
       // If still not found, try A1
       if (!window.assetManager.models[modelName]) {
         modelName = `${this.type}-A1`;
       }
     }
-    
+
     // Final check
     if (!window.assetManager.models || !window.assetManager.models[modelName]) {
       console.error(`Model not found: ${modelName} for factory type: ${this.type}`);
       return;
     }
-    
+
     try {
       let mesh = window.assetManager.getModel(modelName, this);
-      
+
       if (!mesh) {
         console.error(`Failed to load model: ${modelName}`);
         return;
       }
-      
+
       // Note: Missing resources check is now done in simulate() method
       // to ensure it updates every tick, not just when view refreshes
       // Status icon is managed by setStatus() in Building class
-      
+
       // Tint building based on status and waste level
       // Priority: no-power > waste level > normal
       const wasteSystemUnlocked = window.gameState && window.levelUnlocks &&
-          window.levelUnlocks.isUnlocked('local-waste', window.gameState.level);
-      
+        window.levelUnlocks.isUnlocked('local-waste', window.gameState.level);
+
       if (this.status === 'no-power' || (this.power && !this.power.isFullyPowered)) {
         mesh.traverse((obj) => {
           if (obj.material) {
@@ -443,7 +443,7 @@ export class Factory extends Building {
           }
         });
       }
-      
+
       this.setMesh(mesh);
     } catch (error) {
       console.error(`Error loading model ${modelName}:`, error);
@@ -457,72 +457,72 @@ export class Factory extends Building {
    */
   simulate(city, currentTick = 0) {
     const previousWasteAmount = this.waste ? this.waste.amount : 0;
-    
+
     super.simulate(city);
-    
+
     // Simulate jobs module (workers)
     if (this.jobs) {
       this.jobs.simulate(city);
     }
-    
+
     // Update waste module (only if waste system is unlocked - Level 3+)
     const wasteSystemUnlocked = window.gameState && window.levelUnlocks &&
-        window.levelUnlocks.isUnlocked('local-waste', window.gameState.level);
-    
+      window.levelUnlocks.isUnlocked('local-waste', window.gameState.level);
+
     if (this.waste && wasteSystemUnlocked) {
       this.waste.simulate(city, currentTick);
-      
+
       // Refresh view if waste level changed significantly (for color update)
       const currentWasteAmount = this.waste.amount;
-      if (Math.abs(currentWasteAmount - previousWasteAmount) >= 5 || 
-          (previousWasteAmount < 50 && currentWasteAmount >= 50) ||
-          (previousWasteAmount < 80 && currentWasteAmount >= 80) ||
-          (previousWasteAmount < 95 && currentWasteAmount >= 95) ||
-          (previousWasteAmount >= 95 && currentWasteAmount < 95) ||
-          (previousWasteAmount >= 100 && currentWasteAmount < 100)) {
+      if (Math.abs(currentWasteAmount - previousWasteAmount) >= 5 ||
+        (previousWasteAmount < 50 && currentWasteAmount >= 50) ||
+        (previousWasteAmount < 80 && currentWasteAmount >= 80) ||
+        (previousWasteAmount < 95 && currentWasteAmount >= 95) ||
+        (previousWasteAmount >= 95 && currentWasteAmount < 95) ||
+        (previousWasteAmount >= 100 && currentWasteAmount < 100)) {
         this.refreshView();
       }
     }
-    
-      // Apply waste efficiency penalty to production (only if waste system is unlocked)
-      const wastePenalty = (this.waste && wasteSystemUnlocked) ? this.waste.getEfficiencyPenalty() : 1;
-      
-      // Energy is consumed automatically in Building.simulate
-      // Process production queue if powered AND has workers
-      // Note: wastePenalty can be 0 if waste is critical (100), which stops production
-      // Note: productionEfficiency can be 0 if no workers, which stops production
-      if (this.power.isFullyPowered) {
-        // Store original efficiency (includes worker check - will be 0 if no workers)
-        const originalEfficiency = this.productionEfficiency;
-        
-        // Apply waste penalty (0 if waste is critical, which stops production)
-        const adjustedEfficiency = originalEfficiency * wastePenalty;
-        
-        // Process production with adjusted efficiency (only if both waste penalty and workers allow)
-        // adjustedEfficiency will be 0 if no workers OR critical waste
-        if (this.productionQueue.length > 0 && adjustedEfficiency > 0) {
-          for (let i = this.productionQueue.length - 1; i >= 0; i--) {
-            const job = this.productionQueue[i];
-            job.progress += adjustedEfficiency;
-            
-            if (job.progress >= job.totalTime) {
-              this.completeProduction(job);
-              this.productionQueue.splice(i, 1);
-            }
+
+    // Apply waste efficiency penalty to production (only if waste system is unlocked)
+    const wastePenalty = (this.waste && wasteSystemUnlocked) ? this.waste.getEfficiencyPenalty() : 1;
+
+    // Energy is consumed automatically in Building.simulate
+    // Process production queue if powered AND has workers
+    // Note: wastePenalty can be 0 if waste is critical (100), which stops production
+    // Note: productionEfficiency can be 0 if no workers, which stops production
+    if (this.power.isFullyPowered) {
+      // Store original efficiency (includes worker check - will be 0 if no workers)
+      const originalEfficiency = this.productionEfficiency;
+
+      // Apply waste penalty (0 if waste is critical, which stops production)
+      const adjustedEfficiency = originalEfficiency * wastePenalty;
+
+      // Process production with adjusted efficiency (only if both waste penalty and workers allow)
+      // adjustedEfficiency will be 0 if no workers OR critical waste
+      if (this.productionQueue.length > 0 && adjustedEfficiency > 0) {
+        for (let i = this.productionQueue.length - 1; i >= 0; i--) {
+          const job = this.productionQueue[i];
+          job.progress += adjustedEfficiency;
+
+          if (job.progress >= job.totalTime) {
+            this.completeProduction(job);
+            this.productionQueue.splice(i, 1);
           }
         }
-        
-        // Start automatic production to fill queue (only if both waste penalty and workers allow)
-        // This ensures production continues even after leveling up
-        if (adjustedEfficiency > 0) {
-          this.startAutomaticProduction();
-        }
       }
-      
-      // Check for missing resources and update status icon (every tick for real-time updates)
-      this.#checkMissingResources();
+
+      // Start automatic production to fill queue (only if both waste penalty and workers allow)
+      // This ensures production continues even after leveling up
+      if (adjustedEfficiency > 0) {
+        this.startAutomaticProduction();
+      }
+    }
+
+    // Check for missing resources and update status icon (every tick for real-time updates)
+    this.#checkMissingResources();
   }
-  
+
   /**
    * Check if factory has missing resources and update status icon
    * Called every tick in simulate() for real-time updates
@@ -535,9 +535,9 @@ export class Factory extends Building {
       }
       return;
     }
-    
+
     let hasMissingResources = false;
-    
+
     // Check if any recipe that can be produced is missing resources
     for (const recipe of this.recipes) {
       if (this.canProduce(recipe)) {
@@ -548,7 +548,7 @@ export class Factory extends Building {
         }
       }
     }
-    
+
     // Also check production queue - if queue has jobs but can't produce due to missing resources
     if (!hasMissingResources && this.productionQueue.length > 0) {
       // Check if we can actually produce the queued items
@@ -560,7 +560,7 @@ export class Factory extends Building {
         }
       }
     }
-    
+
     // Update status
     if (hasMissingResources) {
       if (this.status !== 'missing-resources') {
@@ -595,14 +595,14 @@ export class Factory extends Building {
    */
   toHTML() {
     let html = super.toHTML();
-    
+
     html += `
       <div class="info-heading">Factory Info</div>
       <span class="info-label">Level </span>
       <span class="info-value">${this.level}/${this.maxLevel}</span>
       <br>
       <span class="info-label">Energy </span>
-      <span class="info-value">${this.power.isFullyPowered ? this.power.required : 0}/${this.power.required} ⚡</span>
+      <span class="info-value">${this.power.isFullyPowered ? this.power.required : 0}/${this.power.required} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
       <br>
       <span class="info-label">Workers </span>
       <span class="info-value" style="color: ${this.currentWorkers >= this.requiredWorkers ? '#4CAF50' : this.currentWorkers > 0 ? '#FF9800' : '#f44336'};">
@@ -618,7 +618,7 @@ export class Factory extends Building {
       <span class="info-value">${(this.productionEfficiency * 100).toFixed(0)}%</span>
       <br>
     `;
-    
+
     // Production queue
     if (this.productionQueue.length > 0) {
       html += `<div class="info-heading">Production Queue (${this.productionQueue.length})</div>`;
@@ -633,11 +633,11 @@ export class Factory extends Building {
       });
     } else {
       html += `<div class="info-heading">Production Queue (Empty)</div>`;
-      
+
       // Check why production is not starting
       let canProduceAny = false;
       let missingResources = [];
-      
+
       for (const recipe of this.recipes) {
         if (this.canProduce(recipe)) {
           canProduceAny = true;
@@ -669,7 +669,7 @@ export class Factory extends Building {
           }
         }
       }
-      
+
       // Show warning if no resources available
       if (canProduceAny && missingResources.length > 0) {
         html += `<div style="padding: 8px; margin-top: 8px; background-color: #ff980020; border-left: 3px solid #ff9800; border-radius: 4px;">`;
@@ -687,11 +687,11 @@ export class Factory extends Building {
         html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Fabrika seviyesi yetersiz veya tarife yok.</div>`;
       }
     }
-    
+
     // Waste information (only if waste system is unlocked - Level 3+)
     const wasteSystemUnlocked = window.gameState && window.levelUnlocks &&
-        window.levelUnlocks.isUnlocked('local-waste', window.gameState.level);
-    
+      window.levelUnlocks.isUnlocked('local-waste', window.gameState.level);
+
     if (this.waste && wasteSystemUnlocked) {
       const wasteLevel = this.waste.getLevel();
       const wasteColor = wasteLevel >= 95 ? '#f44336' : wasteLevel >= 80 ? '#FF9800' : '#4CAF50';
@@ -711,19 +711,20 @@ export class Factory extends Building {
         </div>
       `;
     }
-    
+
     // Upgrade button
     if (this.level < this.maxLevel) {
       const upgradeCost = this.getUpgradeCost();
       html += `
         <div style="padding: 8px; margin-top: 8px;">
-          <button class="action-button" onclick="window.game?.upgradeFactory(${this.x}, ${this.y})" style="width: 100%;">
-            ⬆️ Yükselt (${upgradeCost.toLocaleString()} 💰)
+          <button class="action-button" onclick="window.game?.upgradeFactory(${this.x}, ${this.y})" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+            Yükselt (${upgradeCost.toLocaleString()} birim)
           </button>
         </div>
       `;
     }
-    
+
     return html;
   }
 
@@ -735,7 +736,7 @@ export class Factory extends Building {
     if (this.jobs) {
       this.jobs.dispose();
     }
-    
+
     // Call parent dispose
     super.dispose();
   }

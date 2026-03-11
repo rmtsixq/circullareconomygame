@@ -42,7 +42,7 @@ export class Building extends SimObject {
     this.#statusIcon.scale.set(0.5, 0.5, 0.5);
     this.add(this.#statusIcon);
   }
-  
+
   /**
    * 
    * @param {*} status 
@@ -50,7 +50,7 @@ export class Building extends SimObject {
   setStatus(status) {
     if (status !== this.status) {
       this.status = status;
-      switch(status) {
+      switch (status) {
         case BuildingStatus.NoPower:
           this.#statusIcon.visible = true;
           this.#statusIcon.material.map = window.assetManager.statusIcons[BuildingStatus.NoPower];
@@ -85,7 +85,7 @@ export class Building extends SimObject {
 
   simulate(city) {
     super.simulate(city);
-    
+
     // Power consumption from energy pool
     if (this.power.required > 0 && window.gameState) {
       // Try to consume energy from pool
@@ -93,13 +93,13 @@ export class Building extends SimObject {
         window.gameState.consumeEnergy(this.power.required);
       }
     }
-    
+
     this.roadAccess.simulate(city);
 
     // Check waste status first (highest priority) - only if waste system is unlocked
     if (this.waste && window.gameState && window.levelUnlocks &&
-        window.levelUnlocks.isUnlocked('local-waste', window.gameState.level) &&
-        this.waste.amount >= 95) {
+      window.levelUnlocks.isUnlocked('local-waste', window.gameState.level) &&
+      this.waste.amount >= 95) {
       this.setStatus(BuildingStatus.CriticalWaste);
       return; // Don't check other statuses if waste is critical
     }
@@ -119,14 +119,17 @@ export class Building extends SimObject {
     this.roadAccess.dispose();
     super.dispose();
   }
-  
+
   /**
    * Returns an HTML representation of this object
    * @returns {string}
    */
   toHTML() {
     let html = `
-      <div class="info-heading">Building</div>
+      <div class="info-heading">
+        <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Building
+      </div>
       <span class="info-label">Name </span>
       <span class="info-value">${this.name}</span>
       <br>
@@ -134,16 +137,21 @@ export class Building extends SimObject {
       <span class="info-value">${this.type}</span>
       <br>
       <span class="info-label">Road Access </span>
-      <span class="info-value">${this.roadAccess.value}</span>
+      <span class="info-value">
+        ${this.roadAccess.value ?
+        '<svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #4CAF50;"><polyline points="20 6 9 17 4 12"/></svg>' :
+        '<svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f44336;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+      }
+      </span>
       <br>`;
 
     if (this.power.required > 0) {
       const supplied = this.power.isFullyPowered ? this.power.required : 0;
       html += `
-        <span class="info-label">Power (kW)</span>
-        <span class="info-value">${supplied}/${this.power.required}</span>
+        <span class="info-label">Power (kW) </span>
+        <span class="info-value">${supplied}/${this.power.required} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
         <br>`;
-    } 
+    }
     return html;
   }
 }

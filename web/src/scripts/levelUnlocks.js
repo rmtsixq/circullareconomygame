@@ -79,7 +79,7 @@ export class LevelUnlocks {
    * Conditions required to reach each level
    */
   static levelConditions = {
-    2: (gs) => gs.wellbeing >= 50,
+    2: (gs) => gs.wellbeing >= 55,
     3: (gs) => gs.sustainability >= 40,
     4: (gs) => (window.globalPollution?.totalPollution || 0) > 30 || gs.sustainability >= 50,
     5: (gs) => gs.sustainability >= 70,

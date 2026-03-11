@@ -154,8 +154,10 @@ export class Game {
         }
       }
 
-      // Initialize tutorial if Level 1 and not loading from save (after player house is placed)
+      // Force initialize tutorial if Level 1 AND this is a new game (no saveData)
       if (!saveData && window.tutorialState && window.gameState && window.gameState.level === 1) {
+        console.log('Forcing tutorial start for new game');
+        window.tutorialState.isActive = true;
         window.tutorialState.initializeStep(0);
       }
 

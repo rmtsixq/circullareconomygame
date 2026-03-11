@@ -13,6 +13,7 @@
 
 html,
 body {
+  box-sizing: border-box;
   height: 100%;
   margin: 0;
   /* Primary font for Turkish characters, Bebas as fallback for English */
@@ -23,6 +24,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   background: linear-gradient(0deg, #3a5177, #81b1e0);
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
 }
 
 h1 {
@@ -69,6 +76,42 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.stat-icon,
+.score-icon,
+.toolbar-svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar-svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+  transition: transform 0.2s ease;
+}
+
+.ui-button:hover .toolbar-svg {
+  transform: scale(1.1);
+  color: #4CAF50;
+}
+
+.ui-button.selected .toolbar-svg {
+  color: #4CAF50;
+}
+
+.info-svg {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+  color: currentColor;
 }
 
 .container {
@@ -171,33 +214,59 @@ h1 {
   position: fixed;
 
   top: 0;
-  left: 0px;
+  left: 0;
   right: 0;
-  height: 48px;
+  height: 52px;
 
-  background-color: #00000048;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: white;
-  padding: 8px;
+  padding: 0 20px;
 
-  box-shadow: 0px 0px 1px black;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: nowrap;
   overflow: hidden;
+  z-index: 1000;
 }
 
 .title-bar-items {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.5em;
+  font-size: 1.1em;
+  font-weight: 500;
   flex-wrap: nowrap;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.title-bar-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-icon {
+  width: 18px;
+  height: 18px;
+  stroke: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+}
+
+#money-stat .stat-icon {
+  stroke: #FFD700;
+}
+
+#energy-stat .stat-icon {
+  stroke: #00E5FF;
+}
+
 
 .title-bar-left-items {
   flex: 2 1 45%;
@@ -238,18 +307,20 @@ h1 {
 /* CITY SCORES BAR */
 #scores-bar {
   position: fixed;
-  top: 48px;
+  top: 52px;
   left: 0;
   right: 0;
-  height: 32px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.3) 100%);
+  height: 36px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 24px;
   padding: 0 16px;
   z-index: 999;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .score-item {
@@ -262,8 +333,19 @@ h1 {
 }
 
 .score-icon {
-  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
 }
+
+.score-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: rgba(255, 255, 255, 0.8);
+}
+
 
 .score-label {
   font-weight: 600;
@@ -428,6 +510,7 @@ h1 {
 
 .panel-content {
   padding: 8px;
+  padding-bottom: 40px;
 }
 
 .resource-section {

@@ -9,13 +9,13 @@ export class FarmingArea extends Zone {
    * @type {WasteModule}
    */
   waste = new WasteModule(this);
-  
+
   /**
    * Production progress (0-1)
    * @type {number}
    */
   productionProgress = 0;
-  
+
   /**
    * Production rate per tick (based on level)
    * @type {number}
@@ -31,25 +31,25 @@ export class FarmingArea extends Zone {
     };
     return rates[this.development.level] || 0.05;
   }
-  
+
   /**
    * Products produced by farming area
    * @type {Array<string>}
    */
   products = ['fertilizer', 'compost'];
-  
+
   constructor(x = 0, y = 0) {
     super(x, y);
     this.name = generateFarmName();
     this.type = BuildingType.farming;
     this.power.required = 2; // Düşük enerji tüketimi
-    
+
     // Initialize waste module for farming (organic waste)
     this.waste.productionRate = 1.0; // Increased from 0.5
     this.waste.wasteType = 'organic-waste';
     this.waste.productionInterval = 5; // Produce every 5 ticks
   }
-  
+
   /**
    * Steps the state of the zone forward in time by one simulation step
    * @param {City} city 
@@ -57,26 +57,26 @@ export class FarmingArea extends Zone {
    */
   simulate(city, currentTick = 0) {
     super.simulate(city);
-    
+
     // Update waste module
     if (this.waste) {
       this.waste.simulate(city, currentTick);
     }
-    
+
     // Only produce if developed, powered, and has road access
-    if (this.development.state === 'developed' && 
-        this.power.isFullyPowered && 
-        this.roadAccess.value &&
-        window.resourceManager) {
-      
+    if (this.development.state === 'developed' &&
+      this.power.isFullyPowered &&
+      this.roadAccess.value &&
+      window.resourceManager) {
+
       // Increase production progress
       this.productionProgress += this.productionRate;
-      
+
       // When progress reaches 1, produce a product
       if (this.productionProgress >= 1) {
         const productsToProduce = Math.floor(this.productionProgress);
         this.productionProgress -= productsToProduce;
-        
+
         // Produce products based on level
         for (let i = 0; i < productsToProduce; i++) {
           // Level 1: fertilizer only
@@ -91,15 +91,15 @@ export class FarmingArea extends Zone {
             // Level 3: 30% fertilizer, 70% compost
             productType = Math.random() < 0.3 ? 'fertilizer' : 'compost';
           }
-          
+
           // Add product to global inventory
           window.resourceManager.addResource(productType, 1);
-          
+
           // Add XP
           if (window.gameState) {
             window.gameState.addXP(2);
           }
-          
+
           // Show production effect
           if (window.visualEffects) {
             window.visualEffects.showProductionEffect(this, 1, productType);
@@ -122,22 +122,22 @@ export class FarmingArea extends Zone {
     }
 
     let mesh = window.assetManager.getModel(modelName, this);
-    
+
     // Safety check
     if (!mesh) {
       console.warn(`Failed to load model: ${modelName}`);
       return;
     }
-    
+
     // Ensure mesh is centered on tile (X and Z should be 0)
     mesh.position.x = 0;
     mesh.position.z = 0;
-    
+
     // Calculate bounding box to ensure mesh fits within tile
     const box = new THREE.Box3().setFromObject(mesh);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
-    
+
     // If mesh is too large, scale it down to fit within 1x1 tile
     const maxSize = 0.9; // Leave some margin
     if (size.x > maxSize || size.z > maxSize) {
@@ -146,15 +146,15 @@ export class FarmingArea extends Zone {
       const scale = Math.min(scaleX, scaleZ);
       mesh.scale.multiplyScalar(scale);
     }
-    
+
     // Center the mesh on the tile
     mesh.position.x = -center.x;
     mesh.position.z = -center.z;
-    
+
     // Adjust Y position to make farm touch the ground
     // Use -center.y to place the bottom of the mesh at y=0
     mesh.position.y = -center.y;
-    
+
     // Tint building a dark color if it is abandoned
     if (this.development.state === DevelopmentState.abandoned) {
       mesh.traverse((obj) => {
@@ -163,19 +163,22 @@ export class FarmingArea extends Zone {
         }
       });
     }
-    
+
     this.setMesh(mesh);
   }
-  
+
   /**
    * Returns HTML representation
    * @returns {string}
    */
   toHTML() {
     let html = super.toHTML();
-    
+
     html += `
-      <div class="info-heading">🌾 Tarım Alanı</div>
+      <div class="info-heading">
+        <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20V5.5a2.5 2.5 0 1 0-5 0V17"/><path d="M14 20v-9.5a2.5 2.5 0 1 1 5 0V17"/></svg>
+        Tarım Alanı
+      </div>
       <span class="info-label">Seviye </span>
       <span class="info-value">${this.development.level}/${this.development.maxLevel}</span>
       <br>
@@ -183,10 +186,10 @@ export class FarmingArea extends Zone {
       <span class="info-value">${this.development.state === 'developed' ? 'Aktif' : this.development.state === 'under-construction' ? 'İnşaat' : 'Gelişmemiş'}</span>
       <br>
       <span class="info-label">Enerji </span>
-      <span class="info-value">${this.power.isFullyPowered ? this.power.required : 0}/${this.power.required} ⚡</span>
+      <span class="info-value">${this.power.isFullyPowered ? this.power.required : 0}/${this.power.required} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
       <br>
     `;
-    
+
     if (this.development.state === 'developed' && this.power.isFullyPowered) {
       const progressPercent = (this.productionProgress * 100).toFixed(0);
       html += `
@@ -203,13 +206,16 @@ export class FarmingArea extends Zone {
         <br>
       `;
     }
-    
+
     // Waste information
     if (this.waste) {
       const wasteLevel = (this.waste.amount / this.waste.maxCapacity * 100).toFixed(0);
       const wasteColor = wasteLevel >= 95 ? '#f44336' : wasteLevel >= 80 ? '#FF9800' : '#4CAF50';
       html += `
-        <div class="info-heading" style="margin-top: 12px;">🗑️ Atık Durumu</div>
+        <div class="info-heading" style="margin-top: 12px;">
+          <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>
+          Atık Durumu
+        </div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
             <span>Atık Seviyesi:</span>
@@ -221,7 +227,7 @@ export class FarmingArea extends Zone {
         </div>
       `;
     }
-    
+
     return html;
   }
 }
@@ -234,7 +240,7 @@ const suffixes = ['Farm', 'Fields', 'Acres', 'Estate', 'Ranch', 'Grove', 'Garden
 function generateFarmName() {
   const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
   const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-  
+
   return prefix + ' ' + suffix;
 }
 
