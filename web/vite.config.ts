@@ -10,10 +10,11 @@ export default defineConfig({
 
   // Set the directory to serve static files from (relative to the root)
   publicDir: './public',
-  
+
   // Set the build output directory
   build: {
-    outDir: './dist'
+    outDir: '../dist',
+    emptyOutDir: true
   },
 
   plugins: [react()],
