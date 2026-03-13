@@ -136,7 +136,7 @@ export class ResidentialZone extends Zone {
             Envanter
           </button>
           ` : ''}
-          ${levelUnlocks && levelUnlocks.isUnlocked('auto-buy', level) ? `
+          ${levelUnlocks && levelUnlocks.isUnlocked('material-shop', level) ? `
           <button class="action-button" onclick="ui.openMaterialShop()" style="width: 100%; margin-bottom: 4px;">
             Ham Madde Satın Al
           </button>

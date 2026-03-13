@@ -1232,7 +1232,14 @@ export class GameUI {
             <span style="color: #aaa; font-size: 0.9em;">Mevcut: ${current.toFixed(0)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span style="color: #4CAF50;">Fiyat: ${price.toFixed(0)} 💰</span>
+            <span style="color: #4CAF50; display: flex; align-items: center; gap: 4px;">
+              Fiyat: ${price.toFixed(0)} 
+              <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                <path d="M12 18V6" />
+              </svg>
+            </span>
           </div>
           <div style="display: flex; gap: 4px;">
             <button class="action-button" onclick="ui.buyMaterial('${type}', 1)" 
@@ -1280,7 +1287,7 @@ export class GameUI {
    */
   openEnergyManagementPanel() {
     this.closeAllPanels();
-    const panel = this.getOrCreatePanel('energy-panel', '⚡ Enerji Yönetimi');
+    const panel = this.getOrCreatePanel('energy-panel', '<span style="display: flex; align-items: center; gap: 8px;"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg> Enerji Yönetimi</span>');
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
@@ -1296,8 +1303,11 @@ export class GameUI {
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
             <span>Mevcut Enerji:</span>
-            <span style="color: ${energy > 50 ? '#4CAF50' : energy > 20 ? '#FF9800' : '#f44336'}; font-weight: bold;">
-              ${energy.toFixed(1)} ⚡
+            <span style="color: ${energy > 50 ? '#4CAF50' : energy > 20 ? '#FF9800' : '#f44336'}; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+              ${energy.toFixed(1)} 
+              <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
             </span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">

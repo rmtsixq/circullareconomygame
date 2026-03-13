@@ -38,6 +38,7 @@ export class LevelUnlocks {
     'auto-sell': 1,
     'road': 1,
     'inventory-panel': 1,
+    'material-shop': 1,
     'residential-level-2': 2,
     'production-queue': 2,
     'auto-buy': 2,
@@ -134,6 +135,7 @@ export class LevelUnlocks {
           'Konut (Level 1)',
           'Solar Panel',
           'Tekstil Fabrikası',
+          'Ham Madde Satın Alma',
           'Para & Enerji Havuzu',
           'Vatandaş İndeksleri'
         ],
