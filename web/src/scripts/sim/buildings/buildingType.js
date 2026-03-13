@@ -15,7 +15,5 @@ export const BuildingType = {
   solarPanel: 'solar-panel',
   windTurbine: 'wind-turbine',
   hydroPlant: 'hydro-plant',
-  wasteToEnergy: 'waste-to-energy',
-  // CircularWorld Services
-  policeStation: 'police-station'
-}
+  wasteToEnergy: 'waste-to-energy'
+};

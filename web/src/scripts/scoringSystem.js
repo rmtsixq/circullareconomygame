@@ -93,12 +93,6 @@ export class ScoringSystem {
       'waste-to-energy': {
         wellbeing: { base: 1, perLevel: 0.5 },
         health: { base: -0.5, perLevel: 0.3 },     // Slight pollution but improves with level
-        sustainability: { base: 4, perLevel: 2 },
-      },
-      // Police Station / Public Services
-      'police-station': {
-        wellbeing: { base: 3, perLevel: 1.5 },
-        health: { base: 1, perLevel: 0.5 },
       },
     };
   }
@@ -154,7 +148,6 @@ export class ScoringSystem {
         if (type === 'residential') residentialCount++;
         else if (type === 'commercial') commercialCount++;
         else if (type === 'farming') farmingCount++;
-        else if (type === 'police-station') publicServiceCount++;
         else if (type === 'recycling-center') recyclingCount++;
         else if (['solar-panel', 'wind-turbine', 'hydro-plant'].includes(type)) renewableCount++;
         else if (['textile-factory', 'technology-factory', 'steel-factory', 'automotive-factory'].includes(type)) factoryCount++;

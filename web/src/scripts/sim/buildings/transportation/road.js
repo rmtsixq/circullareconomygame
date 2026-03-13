@@ -24,39 +24,11 @@ export class Road extends Building {
     let left = (city.getTile(this.x - 1, this.y)?.building?.type === this.type) ?? false;
     let right = (city.getTile(this.x + 1, this.y)?.building?.type === this.type) ?? false;
     
-    // Check for police station (treat as road connection but not visual road)
+    // Check for road connections
     const topBuilding = city.getTile(this.x, this.y - 1)?.building;
     const bottomBuilding = city.getTile(this.x, this.y + 1)?.building;
     const leftBuilding = city.getTile(this.x - 1, this.y)?.building;
     const rightBuilding = city.getTile(this.x + 1, this.y)?.building;
-    
-    // If adjacent tile is police station, treat it as a road connection for pathing
-    // but don't show road visually on that tile
-    if (topBuilding?.type === 'police-station') {
-      // Check if police station entrance is towards this road
-      const entranceDir = topBuilding.entranceDirection || 0;
-      if (entranceDir === 2) { // top (north) - entrance facing this road
-        top = true; // Treat as connected for pathing
-      }
-    }
-    if (bottomBuilding?.type === 'police-station') {
-      const entranceDir = bottomBuilding.entranceDirection || 0;
-      if (entranceDir === 0) { // bottom (south) - entrance facing this road
-        bottom = true;
-      }
-    }
-    if (leftBuilding?.type === 'police-station') {
-      const entranceDir = leftBuilding.entranceDirection || 0;
-      if (entranceDir === 1) { // right (east) - entrance facing this road
-        left = true;
-      }
-    }
-    if (rightBuilding?.type === 'police-station') {
-      const entranceDir = rightBuilding.entranceDirection || 0;
-      if (entranceDir === 3) { // left (west) - entrance facing this road
-        right = true;
-      }
-    }
 
     // Check all combinations
     // Four-way intersection

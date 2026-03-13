@@ -26,7 +26,42 @@ export class TutorialState {
   isActionAllowed(action) {
     if (!this.isActive) return true;
     if (this.currentStep < 0) return true;
+
+    // Limit residential placement to 1 during the tutorial (Step 6)
+    if (this.currentStep === 6 && action === 'residential') {
+      if (this.countResidentialBuildings() >= 1) {
+        if (window.ui) {
+          window.ui.showNotification(
+            'Limit Aşıldı',
+            'Tutorial sırasında sadece 1 adet konut inşa edebilirsin.',
+            'warning'
+          );
+        }
+        return false;
+      }
+    }
+
     return this.allowedActions.has(action);
+  }
+
+  /**
+   * Count residential buildings excluding player house
+   */
+  countResidentialBuildings() {
+    if (!window.game || !window.game.city) return 0;
+    let count = 0;
+    for (let x = 0; x < window.game.city.size; x++) {
+      for (let y = 0; y < window.game.city.size; y++) {
+        const tile = window.game.city.getTile(x, y);
+        if (tile && tile.building && 
+           (tile.building.type === BuildingType.residential || tile.building.type === 'residential')) {
+          if (!tile.building.isPlayerHouse) {
+            count++;
+          }
+        }
+      }
+    }
+    return count;
   }
 
   /**

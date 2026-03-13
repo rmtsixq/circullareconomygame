@@ -172,8 +172,7 @@ export class City extends THREE.Group {
           'solar-panel': 'solar-panel', // Level 1 (always unlocked)
           'wind-turbine': 'wind-turbine', // Level 5
           'hydro-plant': 'hydro-plant', // Level 7
-          'waste-to-energy': 'waste-to-energy', // Level 5
-          'police-station': 'police-station' // Level 4
+          'waste-to-energy': 'waste-to-energy' // Level 5
         };
         
         const feature = buildingUnlocks[buildingType];
@@ -229,8 +228,7 @@ export class City extends THREE.Group {
           'solar-panel': 3,
           'wind-turbine': 4,
           'hydro-plant': 6,
-          'farming': 4,
-          'police-station': 3
+          'farming': 4
         };
         const xp = xpRewards[buildingType] || 1;
         window.gameState.addXP(xp);
@@ -245,14 +243,6 @@ export class City extends THREE.Group {
 
       if (tile.building && tile.building.type === BuildingType.road) {
         this.vehicleGraph.updateTile(x, y, tile.building);
-      } else if (tile.building && tile.building.type === 'police-station') {
-        // Police station doesn't create a visual road, but needs vehicle graph connection
-        // The road system will handle the visual connection
-        // Update adjacent roads to curve towards police station
-        this.getTile(x - 1, y)?.refreshView(this);
-        this.getTile(x + 1, y)?.refreshView(this);
-        this.getTile(x, y - 1)?.refreshView(this);
-        this.getTile(x, y + 1)?.refreshView(this);
       }
       
       // Update UI

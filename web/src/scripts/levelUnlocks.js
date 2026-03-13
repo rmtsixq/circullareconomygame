@@ -31,16 +31,13 @@ export class LevelUnlocks {
     'player-house': 1,
     'energy-pool': 1,
     'solar-panel': 1,
+    'textile-factory': 1,
     'residential-level-1': 1,
     'money': 1,
     'tick-system': 1,
     'auto-sell': 1,
     'road': 1,
-    'police-station': 1,
     'inventory-panel': 1,
-
-    // Seviye 2 - Sanayi Başlangıcı (Refah > 50)
-    'textile-factory': 2,
     'residential-level-2': 2,
     'production-queue': 2,
     'auto-buy': 2,
@@ -136,7 +133,7 @@ export class LevelUnlocks {
         features: [
           'Konut (Level 1)',
           'Solar Panel',
-          'Polis Merkezi',
+          'Tekstil Fabrikası',
           'Para & Enerji Havuzu',
           'Vatandaş İndeksleri'
         ],
@@ -150,7 +147,6 @@ export class LevelUnlocks {
         title: 'Sanayi ve Refah',
         description: 'Refah seviyesi 50\'yi geçti! Sanayiye ilk adımı atın.',
         features: [
-          'Tekstil Fabrikası',
           'Konut (Level 2)',
           'Üretim Kuyruğu',
           'Otomatik Satın Alma'
