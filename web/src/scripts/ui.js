@@ -237,6 +237,7 @@ export class GameUI {
       'raw-metal': 'Ham Metal',
       'raw-electronics': 'Elektronik',
       'raw-glass': 'Ham Cam',
+      'water': 'Temiz Su',
 
       // Products
       'clothing': 'Giyim',
@@ -256,6 +257,7 @@ export class GameUI {
       'scrap-metal': 'Hurda Metal',
       'plastic-waste': 'Plastik Atık',
       'organic-waste': 'Organik Atık',
+      'wastewater': 'Atık Su',
 
       // Recycled
       'recycled-fabric': 'Geri Dönüşümlü Kumaş',
@@ -268,7 +270,7 @@ export class GameUI {
     const rawMaterialsList = document.getElementById('raw-materials-list');
     if (rawMaterialsList) {
       rawMaterialsList.innerHTML = '';
-      const rawMaterials = ['raw-fabric', 'raw-plastic', 'raw-metal', 'raw-electronics', 'raw-glass'];
+      const rawMaterials = ['raw-fabric', 'raw-plastic', 'raw-metal', 'raw-electronics', 'raw-glass', 'water'];
       rawMaterials.forEach(type => {
         const amount = resourceManager.getResource(type);
         if (amount > 0 || type.startsWith('raw-')) {
@@ -309,7 +311,7 @@ export class GameUI {
     const wasteList = document.getElementById('waste-list');
     if (wasteList) {
       wasteList.innerHTML = '';
-      const wastes = ['textile-waste', 'e-waste', 'scrap-metal', 'plastic-waste', 'organic-waste'];
+      const wastes = ['textile-waste', 'e-waste', 'scrap-metal', 'plastic-waste', 'organic-waste', 'wastewater'];
       wastes.forEach(type => {
         const amount = resourceManager.getResource(type);
         const limit = resourceManager.limits[type] || 0;
@@ -1859,18 +1861,15 @@ export class GameUI {
     [selectFrom, selectTo].forEach(select => {
       select.innerHTML = '<option value="">Kaynak seçin...</option>';
       Object.entries(resources).forEach(([type, amount]) => {
-        // Don't allow trading waste or recycled materials (they should be used in production/recycling)
+        // Don't allow trading waste or recycled materials
         if (type.includes('waste') || type.includes('recycled')) {
           return;
         }
 
-        // Only show resources that exist or are raw materials
-        if (amount > 0 || type.startsWith('raw-')) {
-          const option = document.createElement('option');
-          option.value = type;
-          option.textContent = `${resourceNames[type] || type} (${amount})`;
-          select.appendChild(option);
-        }
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = `${resourceNames[type] || type} (${amount})`;
+        select.appendChild(option);
       });
     });
   }
@@ -2122,7 +2121,13 @@ export class GameUI {
       'button-recycling-center': 'recycling-center', // Level 3
       'button-wind-turbine': 'wind-turbine', // Level 5
       'button-hydro-plant': 'hydro-plant', // Level 7
-      'button-waste-to-energy': 'waste-to-energy' // Level 5
+      'button-waste-to-energy': 'waste-to-energy', // Level 5
+      'button-park': 'park',
+      'button-school': 'school',
+      'button-hospital': 'hospital',
+      'button-awareness-center': 'awareness-center',
+      'button-mrf': 'mrf',
+      'button-water-treatment': 'water-treatment'
     };
 
     // Update each button
@@ -2297,6 +2302,62 @@ export class GameUI {
       button.style.opacity = '1';
       button.style.cursor = 'pointer';
     });
+  }
+
+  /**
+   * Show Quiz Modal
+   * @param {Object} question 
+   */
+  showQuizModal(question) {
+    if (!question) return;
+
+    const modal = document.getElementById('quiz-modal');
+    const textEl = document.getElementById('quiz-question-text');
+    const optionsContainer = document.getElementById('quiz-options-container');
+
+    if (!modal || !textEl || !optionsContainer) return;
+
+    // Set question text
+    textEl.textContent = question.text;
+
+    // Build options
+    let html = '';
+    question.options.forEach((opt, idx) => {
+      html += `
+        <button class="action-button" style="text-align: left; padding: 12px; font-size: 1.1em; background-color: #1e2331; border: 1px solid #4CAF50;" 
+          onclick="window.ui.submitQuizAnswer(${idx})">
+          ${idx + 1}) ${opt}
+        </button>
+      `;
+    });
+    optionsContainer.innerHTML = html;
+
+    // Show modal
+    modal.style.display = 'flex';
+  }
+
+  /**
+   * Handle Quiz Answer
+   * @param {number} index 
+   */
+  submitQuizAnswer(index) {
+    if (window.quizSystem) {
+      window.quizSystem.answerQuestion(index);
+    }
+    this.closeQuizModal();
+  }
+
+  /**
+   * Close Quiz Modal
+   */
+  closeQuizModal() {
+    const modal = document.getElementById('quiz-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      if (window.quizSystem) {
+        window.quizSystem.isActive = false; // Free up the quiz system if closed manually
+      }
+    }
   }
 }
 

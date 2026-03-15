@@ -30,6 +30,10 @@ export class JobsModule extends SimModule {
     if (this.#building.maxWorkers !== undefined) {
       return this.#building.maxWorkers;
     }
+    // Fallback for factories using requiredWorkers
+    if (this.#building.requiredWorkers !== undefined) {
+      return this.#building.requiredWorkers * 2;
+    }
     
     // For Zone buildings, check development state
     if (this.#building.development) {

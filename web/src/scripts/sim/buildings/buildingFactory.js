@@ -10,6 +10,12 @@ import { TechnologyFactory } from './factories/technologyFactory.js';
 import { SteelFactory } from './factories/steelFactory.js';
 import { AutomotiveFactory } from './factories/automotiveFactory.js';
 import { RecyclingCenter } from './recyclingCenter.js';
+import { MRF } from './mrf.js';
+import { School } from './zones/school.js';
+import { Hospital } from './zones/hospital.js';
+import { Park } from './zones/park.js';
+import { AwarenessCenter } from './zones/awarenessCenter.js';
+import { WaterTreatmentPlant } from './zones/waterTreatment.js';
 import { SolarPanel } from './energy/solarPanel.js';
 import { WindTurbine } from './energy/windTurbine.js';
 import { HydroPlant } from './energy/hydroPlant.js';
@@ -57,6 +63,24 @@ export function createBuilding(x, y, type) {
     case BuildingType.recyclingCenter:
     case 'recycling-center':
       return new RecyclingCenter(x, y);
+    case BuildingType.mrf:
+    case 'mrf':
+      return new MRF(x, y);
+    case BuildingType.school:
+    case 'school':
+      return new School(x, y);
+    case BuildingType.hospital:
+    case 'hospital':
+      return new Hospital(x, y);
+    case BuildingType.park:
+    case 'park':
+      return new Park(x, y);
+    case BuildingType.awarenessCenter:
+    case 'awareness-center':
+      return new AwarenessCenter(x, y);
+    case BuildingType.waterTreatment:
+    case 'water-treatment':
+      return new WaterTreatmentPlant(x, y);
     case BuildingType.solarPanel:
     case 'solar-panel':
       return new SolarPanel(x, y);
@@ -73,4 +97,4 @@ export function createBuilding(x, y, type) {
       console.error(`${type} (${typeStr}) is not a recognized building type. Available types:`, Object.values(BuildingType));
       return null;
   }
-}
+}

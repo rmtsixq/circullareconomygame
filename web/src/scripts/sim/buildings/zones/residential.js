@@ -25,9 +25,9 @@ export class ResidentialZone extends Zone {
     this.style = ['A', 'B', 'C', 'D', 'E', 'F'][Math.floor(6 * Math.random())];
 
     // Initialize waste module for residential (low waste production)
-    this.waste.productionRate = 0.3; // Increased from 0.1
+    this.waste.productionRate = 1.0; // Increased from 0.3
     this.waste.wasteType = 'organic-waste';
-    this.waste.productionInterval = 8; // Produce every 8 ticks (increased frequency)
+    this.waste.productionInterval = 3; // Produce every 3 ticks
   }
 
   /**
@@ -44,8 +44,20 @@ export class ResidentialZone extends Zone {
       this.waste.simulate(city, currentTick);
     }
 
-    // Development simulation is handled in Zone.simulate
-    // Development module will check for isPlayerHouse and skip auto-leveling
+    // Water consumption & Wastewater generation
+    if (currentTick % 10 === 0 && window.resourceManager) {
+      const population = this.residents ? this.residents.count : 0;
+      if (population > 0) {
+        const waterNeeded = population * 0.5; // 0.5 water per resident per 10 ticks
+        if (window.resourceManager.getResource('water') >= waterNeeded) {
+          window.resourceManager.removeResource('water', waterNeeded);
+          window.resourceManager.addResource('wastewater', waterNeeded * 0.8);
+        } else if (window.scoringSystem) {
+          // Water shortage penalty
+          window.scoringSystem.health = Math.max(0, window.scoringSystem.health - 0.1);
+        }
+      }
+    }
   }
 
   /**

@@ -12,6 +12,7 @@ export class ResourceManager {
       'raw-metal': 40,    // Increased from 20
       'raw-electronics': 30, // Increased from 15
       'raw-glass': 20,    // Increased from 10
+      'water': 1000,      // Starting water amount
       
       // Products
       'clothing': 0,
@@ -31,6 +32,7 @@ export class ResourceManager {
       'scrap-metal': 0,
       'plastic-waste': 0,
       'organic-waste': 0,
+      'wastewater': 0,
       
       // Recycled Materials
       'recycled-fabric': 0,

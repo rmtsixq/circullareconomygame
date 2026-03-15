@@ -33,6 +33,7 @@ export class LevelUnlocks {
     'solar-panel': 1,
     'textile-factory': 1,
     'residential-level-1': 1,
+    'park': 1,
     'money': 1,
     'tick-system': 1,
     'auto-sell': 1,
@@ -42,6 +43,8 @@ export class LevelUnlocks {
     'residential-level-2': 2,
     'production-queue': 2,
     'auto-buy': 2,
+    'school': 2,
+    'hospital': 2,
 
     // Seviye 3 - Geri Dönüşüm (Sürdürülebilirlik > 40)
     'recycling-center': 3,
@@ -52,6 +55,9 @@ export class LevelUnlocks {
     'recycled-material': 3,
     'hq-policy-panel': 3,
     'hq-statistics': 3,
+    'awareness-center': 3,
+    'mrf': 3,
+    'water-treatment': 3,
 
     // Seviye 4 - Temiz Enerji & Kriz (Emisyon / Çevre Odaklı)
     'wind-turbine': 4,

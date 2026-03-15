@@ -11,9 +11,16 @@ export const BuildingType = {
   automotiveFactory: 'automotive-factory',
   // CircularWorld Utilities
   recyclingCenter: 'recycling-center',
+  mrf: 'mrf',
+  // CircularWorld Public Services
+  school: 'school',
+  hospital: 'hospital',
+  park: 'park',
+  awarenessCenter: 'awareness-center',
+  waterTreatment: 'water-treatment',
   // CircularWorld Energy Production
   solarPanel: 'solar-panel',
   windTurbine: 'wind-turbine',
   hydroPlant: 'hydro-plant',
   wasteToEnergy: 'waste-to-energy'
-};
+};

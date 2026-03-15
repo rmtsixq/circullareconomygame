@@ -71,6 +71,33 @@ export class ScoringSystem {
         health: { base: 2, perLevel: 1 },
         sustainability: { base: 8, perLevel: 3 },   // Major sustainability boost
       },
+      // School
+      'school': {
+        education: { base: 5, perLevel: 3 },
+      },
+      // Hospital
+      'hospital': {
+        health: { base: 8, perLevel: 4 },
+      },
+      // Park
+      'park': {
+        wellbeing: { base: 2, perLevel: 0 },
+        health: { base: 1, perLevel: 0 },
+        sustainability: { base: 1, perLevel: 0 },
+      },
+      // Awareness Center
+      'awareness-center': {
+        education: { base: 4, perLevel: 2 },
+        sustainability: { base: 2, perLevel: 1 },
+      },
+      // MRF
+      'mrf': {
+        sustainability: { base: 4, perLevel: 2 },
+      },
+      // Water Treatment
+      'water-treatment': {
+        sustainability: { base: 3, perLevel: 1.5 },
+      },
       // Solar Panel
       'solar-panel': {
         wellbeing: { base: 1, perLevel: 0.5 },

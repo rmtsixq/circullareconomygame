@@ -1,4 +1,8 @@
 export default {
+  "park-1": {
+    "type": "zone",
+    "filename": "tile-park.glb"
+  },
   "under-construction": {
     "type": "zone",
     "filename": "construction-small.glb",
@@ -406,24 +410,98 @@ export default {
     "preserveMaterials": true
   },
   "waste-to-energy-1": {
-    "type": "zone",
+    "type": "building",
     "filename": "waste-to-energy/scene.gltf",
-    "format": "gltf",
-    "scale": 0.3,
-    "preserveMaterials": true
+    "scale": 0.005
   },
   "waste-to-energy-2": {
-    "type": "zone",
+    "type": "building",
     "filename": "waste-to-energy/scene.gltf",
-    "format": "gltf",
-    "scale": 0.3,
-    "preserveMaterials": true
+    "scale": 0.005
   },
   "waste-to-energy-3": {
-    "type": "zone",
+    "type": "building",
     "filename": "waste-to-energy/scene.gltf",
-    "format": "gltf",
-    "scale": 0.3,
-    "preserveMaterials": true
+    "scale": 0.005
+  },
+  "school-1": {
+    "type": "zone",
+    "filename": "building-school.glb",
+    "scale": 1
+  },
+  "school-2": {
+    "type": "zone",
+    "filename": "building-school.glb",
+    "scale": 1.1
+  },
+  "school-3": {
+    "type": "zone",
+    "filename": "building-school.glb",
+    "scale": 1.2
+  },
+  "hospital-1": {
+    "type": "zone",
+    "filename": "building-hospital.glb",
+    "scale": 1
+  },
+  "hospital-2": {
+    "type": "zone",
+    "filename": "building-hospital.glb",
+    "scale": 1.1
+  },
+  "hospital-3": {
+    "type": "zone",
+    "filename": "building-hospital.glb",
+    "scale": 1.2
+  },
+  "park-1": {
+    "type": "zone",
+    "filename": "tile-park.glb",
+    "scale": 1
+  },
+  "awareness-center-1": {
+    "type": "zone",
+    "filename": "building-museum.glb",
+    "scale": 1
+  },
+  "awareness-center-2": {
+    "type": "zone",
+    "filename": "building-museum.glb",
+    "scale": 1.1
+  },
+  "awareness-center-3": {
+    "type": "zone",
+    "filename": "building-museum.glb",
+    "scale": 1.2
+  },
+  "mrf-1": {
+    "type": "zone",
+    "filename": "industry-building.glb",
+    "scale": 1
+  },
+  "mrf-2": {
+    "type": "zone",
+    "filename": "industry-building.glb",
+    "scale": 1.1
+  },
+  "mrf-3": {
+    "type": "zone",
+    "filename": "industry-building.glb",
+    "scale": 1.2
+  },
+  "water-treatment-1": {
+    "type": "zone",
+    "filename": "cooling-tower.glb",
+    "scale": 1
+  },
+  "water-treatment-2": {
+    "type": "zone",
+    "filename": "cooling-tower.glb",
+    "scale": 1.1
+  },
+  "water-treatment-3": {
+    "type": "zone",
+    "filename": "cooling-tower.glb",
+    "scale": 1.2
   }
 }

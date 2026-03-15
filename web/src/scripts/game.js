@@ -7,6 +7,7 @@ import { SimObject } from './sim/simObject.js';
 import { GameState } from './gameState.js';
 import { ResourceManager } from './resources.js';
 import { VisualEffectsManager } from './visualEffects.js';
+import { QuizSystem } from './quizSystem.js';
 
 /** 
  * Manager for the Three.js scene. Handles rendering of a `City` object
@@ -71,6 +72,10 @@ export class Game {
       // Initialize visual effects manager after scene is ready
       if (!window.visualEffects) {
         window.visualEffects = new VisualEffectsManager(this.scene);
+      }
+      
+      if (!window.quizSystem) {
+        window.quizSystem = new QuizSystem();
       }
 
       window.ui.hideLoadingText();
@@ -293,6 +298,11 @@ export class Game {
     if (window.globalPollution) {
       window.globalPollution.decay();
       window.globalPollution.applyPenalties(this.currentTick);
+    }
+
+    // Run quiz system
+    if (window.quizSystem) {
+      window.quizSystem.simulate(this.city, this.currentTick);
     }
 
     // Apply production mode effects to Circular Score (Level 6+)

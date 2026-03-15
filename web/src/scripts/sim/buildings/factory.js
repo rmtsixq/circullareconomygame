@@ -516,6 +516,15 @@ export class Factory extends Building {
       // This ensures production continues even after leveling up
       if (adjustedEfficiency > 0) {
         this.startAutomaticProduction();
+        
+        // Water consumption & Wastewater generation during production
+        if (currentTick % 10 === 0 && window.resourceManager && this.currentWorkers > 0) {
+          const waterNeeded = this.currentWorkers * 1.0; // 1 water per worker per 10 ticks
+          if (window.resourceManager.getResource('water') >= waterNeeded) {
+            window.resourceManager.removeResource('water', waterNeeded);
+            window.resourceManager.addResource('wastewater', waterNeeded * 0.9);
+          }
+        }
       }
     }
 
