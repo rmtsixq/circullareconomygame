@@ -411,18 +411,15 @@ export default {
   },
   "waste-to-energy-1": {
     "type": "building",
-    "filename": "waste-to-energy/scene.gltf",
-    "scale": 0.005
+    "filename": "industry-factory-hall.glb"
   },
   "waste-to-energy-2": {
     "type": "building",
-    "filename": "waste-to-energy/scene.gltf",
-    "scale": 0.005
+    "filename": "industry-factory-hall.glb"
   },
   "waste-to-energy-3": {
     "type": "building",
-    "filename": "waste-to-energy/scene.gltf",
-    "scale": 0.005
+    "filename": "industry-factory-hall.glb"
   },
   "school-1": {
     "type": "zone",

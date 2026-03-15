@@ -32,8 +32,8 @@ export class TutorialState {
       if (this.countResidentialBuildings() >= 1) {
         if (window.ui) {
           window.ui.showNotification(
-            'Limit Aşıldı',
-            'Tutorial sırasında sadece 1 adet konut inşa edebilirsin.',
+            'Limit Reached',
+            'You can only build 1 residence during the tutorial.',
             'warning'
           );
         }
@@ -134,14 +134,14 @@ export class TutorialState {
   steps = [
     {
       id: 0,
-      title: 'Karşılama',
-      content: `Merhaba!
-CircularWorld'e hoş geldin.
+      title: 'Welcome',
+      content: `Hello!
+Welcome to CircularWorld.
 
-Bu şehir senin sorumluluğunda.
-Kaynakları yönetecek, enerji üretecek ve sürdürülebilir bir gelecek kuracaksın.
+This city is your responsibility.
+You will manage resources, produce energy, and build a sustainable future.
 
-Başlayalım mı?`,
+Shall we begin?`,
       allowedActions: [],
       onInit: () => {
         // No restrictions, just show message
@@ -149,14 +149,14 @@ Başlayalım mı?`,
     },
     {
       id: 1,
-      title: 'Enerjiye İhtiyaç',
-      content: `Şehrin enerjiye ihtiyacı var
+      title: 'Need for Energy',
+      content: `The city needs energy
 
-Binalar enerji olmadan çalışamaz.
-İlk işimiz temiz bir enerji kaynağı kurmak.
+Buildings cannot work without energy.
+Our first job is to build a clean energy source.
 
-Toolbar'dan Güneş Paneli'ni seç
-ve haritada uygun bir yere 1 adet yerleştir.`,
+Select the Solar Panel from the toolbar
+and place 1 unit in a suitable location on the map.`,
       allowedActions: ['solar-panel', 'select'],
       maxSolarPanels: 1,
       onInit: () => {
@@ -185,10 +185,10 @@ ve haritada uygun bir yere 1 adet yerleştir.`,
     },
     {
       id: 2,
-      title: 'Yol Bağlantısı',
-      content: `Enerji için yol gerekir
+      title: 'Road Connection',
+      content: `Power needs a road
 
-Hadi enerji panelinden oyuncu evine kadar bir yol çiz.`,
+Let's draw a road from the solar panel to the player house.`,
       allowedActions: ['road', 'select'],
       onInit: () => {
         // Lock all toolbar buttons except road
@@ -227,19 +227,19 @@ Hadi enerji panelinden oyuncu evine kadar bir yol çiz.`,
     },
     {
       id: 3,
-      title: 'Enerji İkonu Açıklaması',
-      content: `Bu enerji ikonu ne?
+      title: 'Energy Icon Explanation',
+      content: `What is this energy icon?
 
-Bir binanın üzerinde yıldırım simgesi görüyorsan
-bu, binanın yeterli enerjiye sahip olmadığını gösterir.
+If you see a lightning bolt symbol over a building
+this indicates the building does not have enough energy.
 
-Enerji yoksa:
-• Binalar çalışmaz
-• Üretim durur
-• Şehir gelişemez
+Without energy:
+• Buildings won't work
+• Production stops
+• The city cannot grow
 
-Şu an enerjimiz hâlâ yetersiz.
-Bunu düzeltelim.`,
+Right now, our energy is still insufficient.
+Let's fix this.`,
       allowedActions: ['select'],
       onInit: () => {
         // Lock all toolbar buttons
@@ -250,11 +250,11 @@ Bunu düzeltelim.`,
     },
     {
       id: 4,
-      title: 'Güneş Paneli Yükseltme',
-      content: `Enerji üretimini artır
+      title: 'Solar Panel Upgrade',
+      content: `Increase energy production
 
-Az önce kurduğun güneş panelini seç
-ve Seviye 3 olana kadar yükselt.`,
+Select the solar panel you just built
+and upgrade it to Level 3.`,
       allowedActions: ['select', 'upgrade'],
       targetSolarPanelLevel: 3,
       onInit: () => {
@@ -284,19 +284,18 @@ ve Seviye 3 olana kadar yükselt.`,
     },
     {
       id: 5,
-      title: 'Oyuncu Evi (HQ) Tanıtımı',
-      content: `Bu senin Oyuncu Evin (HQ)
+      title: 'Player House (HQ) Introduction',
+      content: `This is your Player House (HQ)
 
-Burası şehrinin yönetim merkezi.
+This is the management center of your city.
 
-Buradan:
-• Şehir ayarlarını
-• Enerji politikalarını
-• Ekonomi ve çevre dengesini
-yöneteceksin.
+From here you will manage:
+• City settings
+• Energy policies
+• Economy and environment balance
 
-Seviye atladıkça
-burada yeni ayarlar ve özellikler açılacak.`,
+As you level up
+new settings and features will unlock here.`,
       allowedActions: ['select'],
       onInit: () => {
         // Lock all toolbar buttons except select
@@ -307,11 +306,11 @@ burada yeni ayarlar ve özellikler açılacak.`,
     },
     {
       id: 6,
-      title: 'Konut İnşası',
-      content: `İnsanlar olmadan şehir olmaz
+      title: 'Building a Residence',
+      content: `No city without people
 
-Şehrine yaşayanlar eklemeliyiz.
-Bunun için bir Konut Binası inşa et.`,
+We need to add residents to your city.
+To do this, build a Residence Building.`,
       allowedActions: ['residential', 'select'],
       onInit: () => {
         // Lock all toolbar buttons except residential
@@ -346,15 +345,14 @@ Bunun için bir Konut Binası inşa et.`,
     },
     {
       id: 7,
-      title: 'Fabrika Kurulumu',
-      content: `Üretim zamanı
+      title: 'Factory Setup',
+      content: `Time for production
 
-Şehrini büyütmek için:
-• Üretime
-• İş imkanlarına
-ihtiyacın var.
+To grow your city, you need:
+• Production
+• Job opportunities
 
-Şimdi bir Tekstil Fabrikası kur.`,
+Now, build a Textile Factory.`,
       allowedActions: ['textile-factory', 'select'],
       onInit: () => {
         // Lock all toolbar buttons except textile factory
@@ -381,21 +379,21 @@ ihtiyacın var.
     },
     {
       id: 8,
-      title: 'Fabrika Açıklaması',
-      content: `Fabrikalar ne yapar?
+      title: 'Factory Explanation',
+      content: `What do factories do?
 
-Fabrikalar:
-• Ham maddeleri işler
-• Ürün üretir
-• Atık oluşturur
+Factories:
+• Process raw materials
+• Produce goods
+• Generate waste
 
-Daha fazla fabrika =
-daha fazla üretim ama daha fazla yönetim demek.
+More factories =
+more production but means more management.
 
-Üretim yaptıkça:
-• XP kazanırsın
-• Para kazanırsın
-• Şehrin büyür`,
+As you produce:
+• You gain XP
+• You earn money
+• Your city grows`,
       allowedActions: ['select'],
       onInit: () => {
         // Lock all toolbar buttons except select
@@ -406,15 +404,15 @@ daha fazla üretim ama daha fazla yönetim demek.
     },
     {
       id: 9,
-      title: 'Tutorial Bitiş',
-      content: `Hazırsın!
+      title: 'Tutorial End',
+      content: `You're ready!
 
-Artık:
-• Enerji üretebiliyor
-• İnsan barındırıyor
-• Üretim yapabiliyorsun
+Now you can:
+• Produce energy
+• House people
+• Manufacture goods
 
-Şehri büyütmek artık senin elinde.`,
+Growing the city is now in your hands.`,
       allowedActions: [],
       onInit: () => {
         // Unlock all toolbar buttons

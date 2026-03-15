@@ -49,8 +49,8 @@ export class GameUI {
       const toolType = button.getAttribute('data-type');
       if (toolType && !window.tutorialState.isActionAllowed(toolType)) {
         this.showNotification(
-          '🔒 Kilitli',
-          'Bu aksiyon tutorial sırasında kilitli.',
+          '🔒 Locked',
+          'This action is locked during the tutorial.',
           'warning'
         );
         return;
@@ -144,7 +144,7 @@ export class GameUI {
       <svg class="info-svg" style="margin: 0; width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
       ${pollution.toFixed(1)}%
     </span>`;
-    pollutionEl.title = `Şehir Kirliliği: ${pollution.toFixed(1)}%`;
+    pollutionEl.title = `City Pollution: ${pollution.toFixed(1)}%`;
   }
 
   /**
@@ -169,7 +169,7 @@ export class GameUI {
     // Update level display
     const levelElement = document.getElementById('level-display');
     if (levelElement) {
-      levelElement.innerHTML = `Seviye ${gameState.level}`;
+      levelElement.innerHTML = `Level ${gameState.level}`;
     }
 
     // Update population display
@@ -232,38 +232,38 @@ export class GameUI {
     // Resource name mappings
     const resourceNames = {
       // Raw Materials
-      'raw-fabric': 'Ham Kumaş',
-      'raw-plastic': 'Ham Plastik',
-      'raw-metal': 'Ham Metal',
-      'raw-electronics': 'Elektronik',
-      'raw-glass': 'Ham Cam',
-      'water': 'Temiz Su',
+      'raw-fabric': 'Raw Fabric',
+      'raw-plastic': 'Raw Plastic',
+      'raw-metal': 'Raw Metal',
+      'raw-electronics': 'Electronics',
+      'raw-glass': 'Raw Glass',
+      'water': 'Clean Water',
 
       // Products
-      'clothing': 'Giyim',
-      'sports-gear': 'Spor Ekipmanı',
-      'smartphone': 'Akıllı Telefon',
-      'laptop': 'Dizüstü Bilgisayar',
-      'steel-beam': 'Çelik Kiriş',
-      'steel-structure': 'Çelik Yapı',
-      'electric-car': 'Elektrikli Araba',
-      'electric-bike': 'Elektrikli Bisiklet',
-      'fertilizer': 'Gübre',
-      'compost': 'Kompost',
+      'clothing': 'Clothing',
+      'sports-gear': 'Sports Gear',
+      'smartphone': 'Smartphone',
+      'laptop': 'Laptop',
+      'steel-beam': 'Steel Beam',
+      'steel-structure': 'Steel Structure',
+      'electric-car': 'Electric Car',
+      'electric-bike': 'Electric Bike',
+      'fertilizer': 'Fertilizer',
+      'compost': 'Compost',
 
       // Waste
-      'textile-waste': 'Tekstil Atığı',
-      'e-waste': 'E-Atık',
-      'scrap-metal': 'Hurda Metal',
-      'plastic-waste': 'Plastik Atık',
-      'organic-waste': 'Organik Atık',
-      'wastewater': 'Atık Su',
+      'textile-waste': 'Textile Waste',
+      'e-waste': 'E-Waste',
+      'scrap-metal': 'Scrap Metal',
+      'plastic-waste': 'Plastic Waste',
+      'organic-waste': 'Organic Waste',
+      'wastewater': 'Wastewater',
 
       // Recycled
-      'recycled-fabric': 'Geri Dönüşümlü Kumaş',
-      'recycled-metal': 'Geri Dönüşümlü Metal',
-      'recycled-plastic': 'Geri Dönüşümlü Plastik',
-      'recycled-electronics': 'Geri Dönüşümlü Elektronik'
+      'recycled-fabric': 'Recycled Fabric',
+      'recycled-metal': 'Recycled Metal',
+      'recycled-plastic': 'Recycled Plastic',
+      'recycled-electronics': 'Recycled Electronics'
     };
 
     // Update raw materials
@@ -303,7 +303,7 @@ export class GameUI {
         }
       });
       if (productsList.children.length === 0) {
-        productsList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Henüz ürün yok</div>';
+        productsList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">No products yet</div>';
       }
     }
 
@@ -346,7 +346,7 @@ export class GameUI {
         }
       });
       if (recycledList.children.length === 0) {
-        recycledList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Henüz geri dönüşüm yok</div>';
+        recycledList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">No recycling yet</div>';
       }
     }
   }
@@ -476,46 +476,49 @@ export class GameUI {
    */
   openTradePanel() {
     this.closeAllPanels();
-    const panel = this.getOrCreatePanel('trade-panel', 'Takas & Pazar');
+    const panel = this.getOrCreatePanel('trade-panel', 'Trade & Market');
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
-        <div class="resource-section-title">🔄 Kaynak Takası</div>
+        <div class="resource-section-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          Resource Trade
+        </div>
         <div style="padding: 8px; color: #888; font-size: 0.9em; margin-bottom: 12px;">
-          Kaynaklarınızı birbiriyle takas edin
+          Trade your resources with each other
         </div>
         <div style="padding: 8px;">
-          <div class="resource-section-title">Takas Edilecek Kaynak</div>
+          <div class="resource-section-title">Resource to Trade</div>
           <select id="trade-resource-from" class="trade-select" style="width: 100%; padding: 4px; margin-bottom: 8px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;">
-            <option value="">Kaynak seçin...</option>
+            <option value="">Select resource...</option>
           </select>
-          <input type="number" id="trade-amount-from" placeholder="Miktar" min="1" 
+          <input type="number" id="trade-amount-from" placeholder="Amount" min="1" 
             style="width: 100%; padding: 4px; margin-bottom: 8px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;">
           <div style="text-align: center; margin: 8px 0; font-size: 1.5em;">⇄</div>
-          <div class="resource-section-title">Karşılığında Alınacak</div>
+          <div class="resource-section-title">Resource to Receive</div>
           <select id="trade-resource-to" class="trade-select" style="width: 100%; padding: 4px; margin-bottom: 8px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;">
-            <option value="">Kaynak seçin...</option>
+            <option value="">Select resource...</option>
           </select>
-          <input type="number" id="trade-amount-to" placeholder="Miktar" min="1" 
+          <input type="number" id="trade-amount-to" placeholder="Amount" min="1" 
             style="width: 100%; padding: 4px; margin-bottom: 8px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;">
           <button class="action-button" onclick="ui.executeTrade()" style="width: 100%; margin-top: 8px;">
-            Takas Yap
+            Execute Trade
           </button>
         </div>
         
         <div class="resource-section-title" style="margin-top: 16px; display: flex; align-items: center; gap: 8px;">
           <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-          Dış Pazar
+          External Market
         </div>
         <div style="padding: 8px; color: #888; font-size: 0.9em; margin-bottom: 12px;">
-          Şehir dışı dünya ile ticaret yapın
+          Trade with the outside world
         </div>
         <div style="padding: 8px;">
-          <div class="resource-section-title">Sat</div>
+          <div class="resource-section-title">Sell</div>
           <div id="market-sell-list" class="resource-list" style="max-height: 150px; overflow-y: auto;"></div>
-          <div class="resource-section-title" style="margin-top: 12px;">Satın Al</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Buy</div>
           <div id="market-buy-list" class="resource-list" style="max-height: 150px; overflow-y: auto;"></div>
         </div>
       </div>
@@ -544,14 +547,14 @@ export class GameUI {
     // Sell list - show resources player can sell
     sellList.innerHTML = '';
     const sellableResources = {
-      'clothing': { price: 50, name: 'Kıyafet' },
-      'smartphone': { price: 200, name: 'Akıllı Telefon' },
+      'clothing': { price: 50, name: 'Clothing' },
+      'smartphone': { price: 200, name: 'Smartphone' },
       'laptop': { price: 500, name: 'Laptop' },
-      'steel-beam': { price: 100, name: 'Çelik Kiriş' },
-      'electric-car': { price: 5000, name: 'Elektrikli Araba' },
-      'recycled-fabric': { price: 30, name: 'Geri Dönüşümlü Kumaş' },
-      'recycled-metal': { price: 40, name: 'Geri Dönüşümlü Metal' },
-      'recycled-plastic': { price: 25, name: 'Geri Dönüşümlü Plastik' }
+      'steel-beam': { price: 100, name: 'Steel Beam' },
+      'electric-car': { price: 5000, name: 'Electric Car' },
+      'recycled-fabric': { price: 30, name: 'Recycled Fabric' },
+      'recycled-metal': { price: 40, name: 'Recycled Metal' },
+      'recycled-plastic': { price: 25, name: 'Recycled Plastic' }
     };
 
     Object.entries(sellableResources).forEach(([resource, info]) => {
@@ -569,9 +572,9 @@ export class GameUI {
         item.innerHTML = `
           <span>${info.name}: ${amount.toFixed(1)}</span>
           <div>
-            <span style="color: #4CAF50; margin-right: 8px;">${info.price} birim/birim</span>
+            <span style="color: #4CAF50; margin-right: 8px;">${info.price} credits/unit</span>
             <button class="action-button" onclick="ui.sellResource('${resource}', 1)" style="padding: 2px 8px; font-size: 0.85em;">
-              Sat
+              Sell
             </button>
           </div>
         `;
@@ -580,19 +583,19 @@ export class GameUI {
     });
 
     if (sellList.children.length === 0) {
-      sellList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Satılacak ürün yok</div>';
+      sellList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">No products to sell</div>';
     }
 
     // Buy list - show resources player can buy
     buyList.innerHTML = '';
     const buyableResources = {
-      'raw-fabric': { price: 20, name: 'Ham Kumaş' },
-      'raw-plastic': { price: 15, name: 'Ham Plastik' },
-      'raw-metal': { price: 25, name: 'Ham Metal' },
-      'raw-electronics': { price: 30, name: 'Ham Elektronik' },
-      'textile-waste': { price: 5, name: 'Tekstil Atığı' },
-      'e-waste': { price: 8, name: 'E-Atık' },
-      'scrap-metal': { price: 10, name: 'Hurda Metal' }
+      'raw-fabric': { price: 20, name: 'Raw Fabric' },
+      'raw-plastic': { price: 15, name: 'Raw Plastic' },
+      'raw-metal': { price: 25, name: 'Raw Metal' },
+      'raw-electronics': { price: 30, name: 'Raw Electronics' },
+      'textile-waste': { price: 5, name: 'Textile Waste' },
+      'e-waste': { price: 8, name: 'E-Waste' },
+      'scrap-metal': { price: 10, name: 'Scrap Metal' }
     };
 
     Object.entries(buyableResources).forEach(([resource, info]) => {
@@ -608,9 +611,9 @@ export class GameUI {
       item.innerHTML = `
           <span>${info.name}</span>
           <div>
-            <span style="color: #2196F3; margin-right: 8px;">${info.price} birim/adet</span>
+            <span style="color: #2196F3; margin-right: 8px;">${info.price} credits/unit</span>
             <button class="action-button" onclick="ui.buyResource('${resource}', 1)" style="padding: 2px 8px; font-size: 0.85em;">
-              Al
+              Buy
             </button>
           </div>
         `;
@@ -677,7 +680,7 @@ export class GameUI {
       this.updateResources(window.resourceManager);
       this.updateGameState(window.gameState);
     } else {
-      console.warn('Yetersiz para!');
+      console.warn('Insufficient funds!');
     }
   }
 
@@ -686,7 +689,7 @@ export class GameUI {
    */
   openMarketPanel() {
     this.closeAllPanels();
-    const panel = this.getOrCreatePanel('market-panel', '🛒 Pazar');
+    const panel = this.getOrCreatePanel('market-panel', `<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="info-svg" style="margin:0;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Market</div>`);
     panel.style.width = '450px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
@@ -697,29 +700,41 @@ export class GameUI {
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
         <div style="padding: 8px; margin-bottom: 12px; background: #1e3a2e; border-radius: 4px; border: 1px solid #4CAF50;">
-          <div style="color: #4CAF50; font-weight: bold; margin-bottom: 4px;">✅ Otomatik Satış Aktif</div>
-          <div style="color: #aaa; font-size: 0.9em;">Üretilen ürünler otomatik olarak satılıyor. Manuel satış yok.</div>
+          <div style="color: #4CAF50; font-weight: bold; margin-bottom: 4px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; margin-right: 4px; vertical-align: middle;"><path d="M20 6 9 17l-5-5"/></svg>
+            Auto-Sell Active
+          </div>
+          <div style="color: #aaa; font-size: 0.9em;">Produced products are sold automatically. No manual sales are needed.</div>
         </div>
         
         ${autoBuyUnlocked ? `
           <div style="padding: 8px; margin-bottom: 12px; background: #1e3a2e; border-radius: 4px; border: 1px solid #4CAF50;">
-            <div style="color: #4CAF50; font-weight: bold; margin-bottom: 4px;">✅ Otomatik Satın Alma Aktif</div>
-            <div style="color: #aaa; font-size: 0.9em;">Eksik hammaddeler otomatik olarak satın alınıyor.</div>
+            <div style="color: #4CAF50; font-weight: bold; margin-bottom: 4px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; margin-right: 4px; vertical-align: middle;"><path d="M20 6 9 17l-5-5"/></svg>
+              Auto-Buy Active
+            </div>
+            <div style="color: #aaa; font-size: 0.9em;">Missing raw materials are bought automatically.</div>
           </div>
         ` : `
           <div style="padding: 8px; margin-bottom: 12px; background: #2a2a2a; border-radius: 4px; border: 1px solid #555;">
-            <div style="color: #888; font-weight: bold; margin-bottom: 4px;">🔒 Otomatik Satın Alma (Seviye 3)</div>
-            <div style="color: #666; font-size: 0.9em;">Seviye 3'te otomatik satın alma açılacak.</div>
+            <div style="color: #888; font-weight: bold; margin-bottom: 4px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; margin-right: 4px; vertical-align: middle;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Auto-Buy (Level 3)
+            </div>
+            <div style="color: #666; font-size: 0.9em;">Auto-buy unlocks at Level 3.</div>
           </div>
         `}
         
-        <div class="resource-section-title">Ürünler (Otomatik Satılıyor)</div>
+        <div class="resource-section-title">Products (Auto-Sold)</div>
         <div id="market-sell-list" class="resource-list" style="max-height: 200px; overflow-y: auto;"></div>
         <div style="padding: 8px; color: #888; font-size: 0.85em; margin-top: 8px;">
-          Ürünler otomatik olarak satılıyor. Manuel satış yapılamaz.
+          Products are sold automatically. Manual sales are disabled.
         </div>
         
-        <div class="resource-section-title" style="margin-top: 12px;">🛒 Hammaddeler Satın Al</div>
+        <div class="resource-section-title" style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="info-svg" style="margin: 0;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Buy Raw Materials
+        </div>
         <div id="market-buy-list" class="resource-list" style="max-height: 200px; overflow-y: auto;"></div>
       </div>
     `;
@@ -746,16 +761,16 @@ export class GameUI {
       sellList.innerHTML = '';
       const products = ['clothing', 'sports-gear', 'smartphone', 'laptop', 'steel-beam', 'steel-structure', 'electric-bike', 'electric-car', 'fertilizer', 'compost'];
       const productNames = {
-        'clothing': 'Kıyafet',
-        'sports-gear': 'Spor Ekipmanı',
-        'smartphone': 'Akıllı Telefon',
+        'clothing': 'Clothing',
+        'sports-gear': 'Sports Gear',
+        'smartphone': 'Smartphone',
         'laptop': 'Laptop',
-        'steel-beam': 'Çelik Kiriş',
-        'steel-structure': 'Çelik Yapı',
-        'electric-bike': 'Elektrikli Bisiklet',
-        'electric-car': 'Elektrikli Araba',
-        'fertilizer': 'Gübre',
-        'compost': 'Kompost'
+        'steel-beam': 'Steel Beam',
+        'steel-structure': 'Steel Structure',
+        'electric-bike': 'Electric Bike',
+        'electric-car': 'Electric Car',
+        'fertilizer': 'Fertilizer',
+        'compost': 'Compost'
       };
 
       products.forEach(product => {
@@ -774,11 +789,11 @@ export class GameUI {
           item.innerHTML = `
             <div>
               <div style="font-weight: bold;">${productNames[product] || product}</div>
-              <div style="font-size: 0.85em; color: #888;">Miktar: ${amount.toFixed(1)}</div>
+              <div style="font-size: 0.85em; color: #888;">Amount: ${amount.toFixed(1)}</div>
             </div>
             <div style="text-align: right;">
-              <div style="color: #4CAF50; font-weight: bold;">${price.toFixed(0)} birim/birim</div>
-              <div style="color: #4CAF50; font-size: 0.85em; margin-top: 4px;">Otomatik satılıyor</div>
+              <div style="color: #4CAF50; font-weight: bold;">${price.toFixed(0)} credits/unit</div>
+              <div style="color: #4CAF50; font-size: 0.85em; margin-top: 4px;">Auto-sold</div>
             </div>
           `;
           sellList.appendChild(item);
@@ -786,7 +801,7 @@ export class GameUI {
       });
 
       if (sellList.children.length === 0) {
-        sellList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Satılacak ürün yok</div>';
+        sellList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">No products to sell</div>';
       }
     }
 
@@ -796,11 +811,11 @@ export class GameUI {
       buyList.innerHTML = '';
       const materials = ['raw-fabric', 'raw-plastic', 'raw-metal', 'raw-electronics', 'raw-glass'];
       const materialNames = {
-        'raw-fabric': 'Ham Kumaş',
-        'raw-plastic': 'Ham Plastik',
-        'raw-metal': 'Ham Metal',
-        'raw-electronics': 'Ham Elektronik',
-        'raw-glass': 'Ham Cam'
+        'raw-fabric': 'Raw Fabric',
+        'raw-plastic': 'Raw Plastic',
+        'raw-metal': 'Raw Metal',
+        'raw-electronics': 'Raw Electronics',
+        'raw-glass': 'Raw Glass'
       };
 
       materials.forEach(material => {
@@ -817,12 +832,12 @@ export class GameUI {
         item.innerHTML = `
           <div>
             <div style="font-weight: bold;">${materialNames[material] || material}</div>
-            <div style="font-size: 0.85em; color: #888;">Mevcut: ${window.resourceManager.getResource(material).toFixed(1)}</div>
+            <div style="font-size: 0.85em; color: #888;">Available: ${window.resourceManager.getResource(material).toFixed(1)}</div>
           </div>
           <div style="text-align: right;">
-            <div style="color: #FF9800; font-weight: bold;">${price.toFixed(0)} birim/birim</div>
+            <div style="color: #FF9800; font-weight: bold;">${price.toFixed(0)} credits/unit</div>
             <button class="action-button" onclick="ui.buyMaterial('${material}', 1)" style="padding: 4px 12px; font-size: 0.85em; margin-top: 4px;">
-              Al (1)
+              Buy (1)
             </button>
           </div>
         `;
@@ -842,7 +857,7 @@ export class GameUI {
       this.updateMarketLists();
       this.updateResources(window.resourceManager);
       this.updateGameState(window.gameState);
-      this.showNotification('Satış', `${amount} ${product} satıldı: ${earned.toFixed(0)} birim`, 'success');
+      this.showNotification('Sale', `${amount} ${product} sold: ${earned.toFixed(0)} credits`, 'success');
     }
   }
 
@@ -858,13 +873,13 @@ export class GameUI {
       this.updateResources(window.resourceManager);
       this.updateGameState(window.gameState);
       const price = window.market.getMaterialPrice(material);
-      this.showNotification('Satın Alındı', `${amount} ${material} satın alındı: ${(amount * price).toFixed(0)} birim`, 'success');
+      this.showNotification('Purchased', `${amount} ${material} purchased: ${(amount * price).toFixed(0)} credits`, 'success');
       // Refresh material shop if open
       if (document.getElementById('material-shop-panel')?.style.display === 'block') {
         this.openMaterialShop();
       }
     } else {
-      this.showNotification('Hata', 'Yetersiz para veya geçersiz işlem', 'error');
+      this.showNotification('Error', 'Insufficient funds or invalid transaction', 'error');
     }
   }
 
@@ -873,7 +888,7 @@ export class GameUI {
    */
   openSettingsPanel() {
     this.closeAllPanels();
-    const panel = this.getOrCreatePanel('settings-panel', 'Şehir Politikaları');
+    const panel = this.getOrCreatePanel('settings-panel', 'City Policies');
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
 
@@ -881,139 +896,139 @@ export class GameUI {
 
     content.innerHTML = `
         <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
-          <div class="resource-section-title">Geri Dönüşüm Önceliği</div>
+          <div class="resource-section-title">Recycling Priority</div>
           <div style="padding: 8px;">
             <input type="range" id="recycling-priority" min="0" max="100" value="${policies.recyclingPriority || 50}" 
               style="width: 100%;" oninput="ui.updateRecyclingPriority(this.value)">
             <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.85em; color: #aaa;">
-              <span>Düşük</span>
+              <span>Low</span>
               <span id="recycling-priority-value">${policies.recyclingPriority || 50}%</span>
-              <span>Yüksek</span>
+              <span>High</span>
             </div>
           </div>
           
-          <div class="resource-section-title" style="margin-top: 12px;">Enerji Politikası</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Energy Policy</div>
           <div style="padding: 8px;">
             <select id="energy-policy" style="width: 100%; padding: 4px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;"
               onchange="ui.updateEnergyPolicy(this.value)">
-              <option value="balanced" ${policies.energyPolicy === 'balanced' ? 'selected' : ''}>Dengeli</option>
-              <option value="efficiency" ${policies.energyPolicy === 'efficiency' ? 'selected' : ''}>Verim Odaklı (-10% tüketim)</option>
-              <option value="green" ${policies.energyPolicy === 'green' ? 'selected' : ''}>Yeşil Öncelikli (+10% tüketim, +çevre)</option>
+              <option value="balanced" ${policies.energyPolicy === 'balanced' ? 'selected' : ''}>Balanced</option>
+              <option value="efficiency" ${policies.energyPolicy === 'efficiency' ? 'selected' : ''}>Efficiency Focused (-10% consumption)</option>
+              <option value="green" ${policies.energyPolicy === 'green' ? 'selected' : ''}>Green Priority (+10% consumption, +environment)</option>
             </select>
           </div>
           
           ${window.gameState && window.levelUnlocks && window.levelUnlocks.isUnlocked('hq-policy-panel', window.gameState.level) ? `
-          <div class="resource-section-title" style="margin-top: 12px;">Üretim Öncelik Politikası</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Production Priority Policy</div>
           <div style="padding: 8px;">
             <select id="production-mode" style="width: 100%; padding: 4px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;"
               onchange="ui.updateProductionMode(this.value)">
-              <option value="balanced" ${policies.productionMode === 'balanced' ? 'selected' : ''}>Dengeli (Normal üretim, normal atık)</option>
-              <option value="economy" ${policies.productionMode === 'economy' ? 'selected' : ''}>Ekonomi Odaklı (+20% üretim, +25% atık, -10% Circular Score)</option>
-              <option value="environment" ${policies.productionMode === 'environment' ? 'selected' : ''}>Çevre Odaklı (-15% üretim, -30% atık, +10% Circular Score)</option>
+              <option value="balanced" ${policies.productionMode === 'balanced' ? 'selected' : ''}>Balanced (Normal production, normal waste)</option>
+              <option value="economy" ${policies.productionMode === 'economy' ? 'selected' : ''}>Economy Focused (+20% production, +25% waste, -10% Circular Score)</option>
+              <option value="environment" ${policies.productionMode === 'environment' ? 'selected' : ''}>Environment Focused (-15% production, -30% waste, +10% Circular Score)</option>
             </select>
           </div>
           
-          <div class="resource-section-title" style="margin-top: 12px;">Otomatik Satış Politikası</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Auto-Sell Policy</div>
           <div style="padding: 8px;">
             <select id="sales-policy" style="width: 100%; padding: 4px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;"
               onchange="ui.updateSalesPolicy(this.value)">
-              <option value="auto" ${policies.salesPolicy === 'auto' ? 'selected' : ''}>Otomatik Sat (Eco Shop varsa premium, yoksa market)</option>
-              <option value="store" ${policies.salesPolicy === 'store' ? 'selected' : ''}>Depola (Hiç satma, manuel kontrol)</option>
-              <option value="smart" ${policies.salesPolicy === 'smart' ? 'selected' : ''}>Akıllı Satış (Stok %70+ ise sat, enerji fazlaysa üret&sat)</option>
+              <option value="auto" ${policies.salesPolicy === 'auto' ? 'selected' : ''}>Auto-Sell (Premium if Eco Shop exists, otherwise market)</option>
+              <option value="store" ${policies.salesPolicy === 'store' ? 'selected' : ''}>Store (Do not sell, manual control)</option>
+              <option value="smart" ${policies.salesPolicy === 'smart' ? 'selected' : ''}>Smart Sell (Sell if stock 70%+, produce&sell if energy surplus)</option>
             </select>
           </div>
           
-          <div class="resource-section-title" style="margin-top: 12px;">Vergi & Ticaret Politikası</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Tax & Trade Policy</div>
           <div style="padding: 8px;">
             <select id="tax-policy" style="width: 100%; padding: 4px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;"
               onchange="ui.updateTaxPolicy(this.value)">
-              <option value="low" ${policies.taxPolicy === 'low' ? 'selected' : ''}>Düşük (Normal para, +nüfus artışı)</option>
-              <option value="medium" ${policies.taxPolicy === 'medium' ? 'selected' : ''}>Orta (Normal para, stabil nüfus)</option>
-              <option value="high" ${policies.taxPolicy === 'high' ? 'selected' : ''}>Yüksek (Ekstra para, -nüfus artışı)</option>
+              <option value="low" ${policies.taxPolicy === 'low' ? 'selected' : ''}>Low (Normal money, +population growth)</option>
+              <option value="medium" ${policies.taxPolicy === 'medium' ? 'selected' : ''}>Medium (Normal money, stable population)</option>
+              <option value="high" ${policies.taxPolicy === 'high' ? 'selected' : ''}>High (Extra money, -population growth)</option>
             </select>
           </div>
           
-          <div class="resource-section-title" style="margin-top: 12px;">İş Gücü Dağıtımı</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Workforce Distribution</div>
           <div style="padding: 8px;">
             <div style="margin-bottom: 8px;">
-              <label style="color: white; font-size: 0.9em;">Fabrikalar</label>
+              <label style="color: white; font-size: 0.9em;">Factories</label>
               <input type="range" id="workforce-factories" min="0" max="100" value="${policies.workforceDistribution?.factories || 60}" 
                 style="width: 100%;" oninput="ui.updateWorkforceDistribution()">
               <span id="workforce-factories-value" style="color: #aaa; font-size: 0.85em;">${policies.workforceDistribution?.factories || 60}%</span>
             </div>
             <div style="margin-bottom: 8px;">
-              <label style="color: white; font-size: 0.9em;">Geri Dönüşüm</label>
+              <label style="color: white; font-size: 0.9em;">Recycling</label>
               <input type="range" id="workforce-recycling" min="0" max="100" value="${policies.workforceDistribution?.recycling || 20}" 
                 style="width: 100%;" oninput="ui.updateWorkforceDistribution()">
               <span id="workforce-recycling-value" style="color: #aaa; font-size: 0.85em;">${policies.workforceDistribution?.recycling || 20}%</span>
             </div>
             <div style="margin-bottom: 8px;">
-              <label style="color: white; font-size: 0.9em;">Ticaret</label>
+              <label style="color: white; font-size: 0.9em;">Commerce</label>
               <input type="range" id="workforce-commercial" min="0" max="100" value="${policies.workforceDistribution?.commercial || 20}" 
                 style="width: 100%;" oninput="ui.updateWorkforceDistribution()">
               <span id="workforce-commercial-value" style="color: #aaa; font-size: 0.85em;">${policies.workforceDistribution?.commercial || 20}%</span>
             </div>
             <div style="margin-top: 8px; padding: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; font-size: 0.85em; color: #aaa;">
-              <strong style="color: white;">Toplam:</strong> <span id="workforce-total">${(policies.workforceDistribution?.factories || 60) + (policies.workforceDistribution?.recycling || 20) + (policies.workforceDistribution?.commercial || 20)}%</span>
-              <div style="margin-top: 4px; font-size: 0.8em; color: #ff9800;">Toplam 100% olmalı. Bir slider değiştiğinde diğerleri otomatik ayarlanır.</div>
+              <strong style="color: white;">Total:</strong> <span id="workforce-total">${(policies.workforceDistribution?.factories || 60) + (policies.workforceDistribution?.recycling || 20) + (policies.workforceDistribution?.commercial || 20)}%</span>
+              <div style="margin-top: 4px; font-size: 0.8em; color: #ff9800;">Total must be 100%. Adjusting one slider automatically adjusts the others.</div>
             </div>
           </div>
           
-          <div class="resource-section-title" style="margin-top: 12px;">Enerji Ticaret Modu</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Energy Trade Mode</div>
           <div style="padding: 8px;">
             <select id="energy-trade-mode" style="width: 100%; padding: 4px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;"
               onchange="ui.updateEnergyTradeMode(this.value)">
-              <option value="none" ${policies.energyTradeMode === 'none' ? 'selected' : ''}>Satma (Enerji fazlası kullanılmaz)</option>
-              <option value="sell" ${policies.energyTradeMode === 'sell' ? 'selected' : ''}>Sat (Fazla enerjiyi düşük fiyata sat)</option>
-              <option value="store" ${policies.energyTradeMode === 'store' ? 'selected' : ''}>Depola (Gelecek feature)</option>
+              <option value="none" ${policies.energyTradeMode === 'none' ? 'selected' : ''}>Do not sell (Energy surplus is unused)</option>
+              <option value="sell" ${policies.energyTradeMode === 'sell' ? 'selected' : ''}>Sell (Sell excess energy at a low price)</option>
+              <option value="store" ${policies.energyTradeMode === 'store' ? 'selected' : ''}>Store (Future feature)</option>
             </select>
           </div>
           ` : ''}
           
-          <div class="resource-section-title" style="margin-top: 12px;">Üretim vs Çevre Dengesi</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Production vs Environment Balance</div>
           <div style="padding: 8px;">
             <input type="range" id="production-balance" min="0" max="100" value="${policies.productionEnvironmentBalance || 50}" 
               style="width: 100%;" oninput="ui.updateProductionBalance(this.value)">
             <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.85em; color: #aaa;">
-              <span>Üretim</span>
+              <span>Production</span>
               <span id="production-balance-value">${policies.productionEnvironmentBalance || 50}%</span>
-              <span>Çevre</span>
+              <span>Environment</span>
             </div>
           </div>
           
-          <div class="resource-section-title" style="margin-top: 12px;">Enerji Kriz Modu</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Energy Crisis Mode</div>
           <div style="padding: 8px; font-size: 0.9em; color: #aaa;">
-            Enerji azaldığında öncelik sırası:
+            Priority order when energy is low:
             <ol style="margin: 8px 0; padding-left: 20px; color: white;">
-              <li>Geri Dönüşüm</li>
-              <li>Fabrikalar</li>
-              <li>Konutlar</li>
-              <li>Ticari</li>
+              <li>Recycling</li>
+              <li>Factories</li>
+              <li>Residences</li>
+              <li>Commercial</li>
             </ol>
           </div>
           
-          <div class="resource-section-title" style="margin-top: 12px;">Oyun Ayarları</div>
+          <div class="resource-section-title" style="margin-top: 12px;">Game Settings</div>
           <div style="margin: 8px 0;">
             <label style="color: white; display: flex; align-items: center; gap: 8px;">
               <input type="checkbox" id="auto-save" ${policies.autoSave ? 'checked' : ''} onchange="ui.updateAutoSave(this.checked)">
-              Otomatik Kayıt (${policies.autoSaveInterval || 30} saniye)
+              Auto Save (${policies.autoSaveInterval || 30} seconds)
             </label>
           </div>
           <div style="margin: 8px 0;">
             <label style="color: white; display: flex; align-items: center; gap: 8px;">
               <input type="checkbox" id="show-effects" checked>
-              Görsel Efektler
+              Visual Effects
             </label>
           </div>
           <div style="margin-top: 12px;">
             <button class="action-button" onclick="ui.saveGame()" style="width: 100%; margin-bottom: 4px;">
-              Oyunu Kaydet
+              Save Game
             </button>
             <button class="action-button" onclick="ui.loadGame()" style="width: 100%; margin-bottom: 4px;">
-              Oyunu Yükle
+              Load Game
             </button>
             <button class="action-button" onclick="ui.restartTutorial()" style="width: 100%; background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);">
-              Tutorial'ı Yeniden Başlat
+              Restart Tutorial
             </button>
           </div>
         </div>
@@ -1177,7 +1192,7 @@ export class GameUI {
    */
   openMaterialShop() {
     this.closeAllPanels();
-    const panel = this.getOrCreatePanel('material-shop-panel', 'Ham Madde Satın Al');
+    const panel = this.getOrCreatePanel('material-shop-panel', 'Buy Raw Materials');
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
@@ -1187,7 +1202,7 @@ export class GameUI {
       if (!window.market) missing.push('Market');
       if (!window.resourceManager) missing.push('ResourceManager');
       if (!window.gameState) missing.push('GameState');
-      content.innerHTML = `<div style="padding: 8px; color: #ff9800;">⚠️ Sistem yükleniyor... (Eksik: ${missing.join(', ')})</div>`;
+      content.innerHTML = `<div style="padding: 8px; color: #ff9800;">⚠️ System loading... (Missing: ${missing.join(', ')})</div>`;
       if (!panel.querySelector('.panel-content')) {
         panel.appendChild(content);
       }
@@ -1197,7 +1212,7 @@ export class GameUI {
 
     // Check if getMaterialPrice method exists
     if (typeof window.market.getMaterialPrice !== 'function') {
-      content.innerHTML = '<div style="padding: 8px; color: #f44336;">❌ Market sistemi hatası: getMaterialPrice metodu bulunamadı</div>';
+      content.innerHTML = '<div style="padding: 8px; color: #f44336;">❌ Market system error: getMaterialPrice method not found</div>';
       if (!panel.querySelector('.panel-content')) {
         panel.appendChild(content);
       }
@@ -1206,11 +1221,11 @@ export class GameUI {
     }
 
     const rawMaterials = {
-      'raw-fabric': 'Ham Kumaş',
-      'raw-plastic': 'Ham Plastik',
-      'raw-metal': 'Ham Metal',
-      'raw-electronics': 'Elektronik',
-      'raw-glass': 'Ham Cam'
+      'raw-fabric': 'Raw Fabric',
+      'raw-plastic': 'Raw Plastic',
+      'raw-metal': 'Raw Metal',
+      'raw-electronics': 'Electronics',
+      'raw-glass': 'Raw Glass'
     };
 
     let materialsHTML = '';
@@ -1231,11 +1246,11 @@ export class GameUI {
         <div style="padding: 8px; margin-bottom: 8px; background: #1e2331; border-radius: 4px; border: 1px solid #333;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <span style="font-weight: bold;">${name}</span>
-            <span style="color: #aaa; font-size: 0.9em;">Mevcut: ${current.toFixed(0)}</span>
+            <span style="color: #aaa; font-size: 0.9em;">Available: ${current.toFixed(0)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <span style="color: #4CAF50; display: flex; align-items: center; gap: 4px;">
-              Fiyat: ${price.toFixed(0)} 
+              Price: ${price.toFixed(0)} 
               <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10" />
                 <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
@@ -1247,17 +1262,17 @@ export class GameUI {
             <button class="action-button" onclick="ui.buyMaterial('${type}', 1)" 
               style="flex: 1; padding: 4px; font-size: 0.85em; ${!canAfford1 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" 
               ${!canAfford1 ? 'disabled' : ''}>
-              1 Adet (${price.toFixed(0)} birim)
+              1 Unit (${price.toFixed(0)} cr)
             </button>
             <button class="action-button" onclick="ui.buyMaterial('${type}', 10)" 
               style="flex: 1; padding: 4px; font-size: 0.85em; ${!canAfford10 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" 
               ${!canAfford10 ? 'disabled' : ''}>
-              10 Adet (${(price * 10).toFixed(0)} birim)
+              10 Units (${(price * 10).toFixed(0)} cr)
             </button>
             <button class="action-button" onclick="ui.buyMaterial('${type}', 50)" 
               style="flex: 1; padding: 4px; font-size: 0.85em; ${!canAfford50 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" 
               ${!canAfford50 ? 'disabled' : ''}>
-              50 Adet (${(price * 50).toFixed(0)} birim)
+              50 Units (${(price * 50).toFixed(0)} cr)
             </button>
           </div>
         </div>
@@ -1267,9 +1282,9 @@ export class GameUI {
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
         <div style="padding: 8px; margin-bottom: 12px; background: #2d3561; border-radius: 4px; border-left: 3px solid #4a90e2;">
-          <div style="color: #4a90e2; font-weight: bold; margin-bottom: 4px;">Bilgi</div>
+          <div style="color: #4a90e2; font-weight: bold; margin-bottom: 4px;">Information</div>
           <div style="color: #ccc; font-size: 0.9em;">
-            Ham maddeleri buradan manuel olarak satın alabilirsiniz. Otomatik satın alma da aktif.
+            You can buy raw materials manually here. Auto-buy is also active.
           </div>
         </div>
         ${materialsHTML}
@@ -1289,7 +1304,7 @@ export class GameUI {
    */
   openEnergyManagementPanel() {
     this.closeAllPanels();
-    const panel = this.getOrCreatePanel('energy-panel', '<span style="display: flex; align-items: center; gap: 8px;"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg> Enerji Yönetimi</span>');
+    const panel = this.getOrCreatePanel('energy-panel', '<span style="display: flex; align-items: center; gap: 8px;"><svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg> Energy Management</span>');
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
@@ -1301,10 +1316,10 @@ export class GameUI {
 
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
-        <div class="resource-section-title">📊 Enerji Durumu</div>
+        <div class="resource-section-title">📊 Energy Status</div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Mevcut Enerji:</span>
+            <span>Current Energy:</span>
             <span style="color: ${energy > 50 ? '#4CAF50' : energy > 20 ? '#FF9800' : '#f44336'}; font-weight: bold; display: flex; align-items: center; gap: 4px;">
               ${energy.toFixed(1)} 
               <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1313,35 +1328,35 @@ export class GameUI {
             </span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Üretim:</span>
-            <span style="color: #4CAF50;">+${energyProduction.toFixed(1)} ⚡/saniye</span>
+            <span>Production:</span>
+            <span style="color: #4CAF50;">+${energyProduction.toFixed(1)} ⚡/sec</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Tüketim:</span>
-            <span style="color: #f44336;">-${energyConsumption.toFixed(1)} ⚡/saniye</span>
+            <span>Consumption:</span>
+            <span style="color: #f44336;">-${energyConsumption.toFixed(1)} ⚡/sec</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding-top: 8px; border-top: 1px solid #333;">
-            <span>Denge:</span>
+            <span>Balance:</span>
             <span style="color: ${energyBalance >= 0 ? '#4CAF50' : '#f44336'}; font-weight: bold;">
-              ${energyBalance >= 0 ? '+' : ''}${energyBalance.toFixed(1)} ⚡/saniye
+              ${energyBalance >= 0 ? '+' : ''}${energyBalance.toFixed(1)} ⚡/sec
             </span>
           </div>
         </div>
         
-        <div class="resource-section-title" style="margin-top: 12px;">⚡ Enerji Üretimi</div>
+        <div class="resource-section-title" style="margin-top: 12px;">⚡ Energy Production</div>
         <div id="energy-production-list" style="padding: 8px; max-height: 150px; overflow-y: auto;"></div>
         
-        <div class="resource-section-title" style="margin-top: 12px;">🔌 Enerji Tüketimi</div>
+        <div class="resource-section-title" style="margin-top: 12px;">🔌 Energy Consumption</div>
         <div id="energy-consumption-list" style="padding: 8px; max-height: 200px; overflow-y: auto;"></div>
         
-        <div class="resource-section-title" style="margin-top: 12px;">⚠️ Kriz Modu</div>
+        <div class="resource-section-title" style="margin-top: 12px;">⚠️ Crisis Mode</div>
         <div style="padding: 8px; font-size: 0.9em; color: #aaa;">
-          Enerji azaldığında öncelik sırası:
+          Priority order when energy is low:
           <ol style="margin: 8px 0; padding-left: 20px; color: white;">
-            <li>♻️ Geri Dönüşüm</li>
-            <li>🏭 Fabrikalar</li>
-            <li>🏠 Konutlar</li>
-            <li>🏪 Ticari</li>
+            <li>🌐 Recycling</li>
+            <li>🏭 Factories</li>
+            <li>🏠 Residences</li>
+            <li>🏪 Commercial</li>
           </ol>
         </div>
       </div>
@@ -1417,10 +1432,10 @@ export class GameUI {
           productionCounts[type].name = '☀️ Solar Panel';
         } else if (type === 'wind-turbine') {
           productionCounts[type].total += 10 * level;
-          productionCounts[type].name = '💨 Rüzgar Türbini';
+          productionCounts[type].name = '💨 Wind Turbine';
         } else if (type === 'hydro-plant') {
           productionCounts[type].total += 20 * level;
-          productionCounts[type].name = '💧 Hidroelektrik';
+          productionCounts[type].name = '💧 Hydro Plant';
         }
       }
     });
@@ -1441,7 +1456,7 @@ export class GameUI {
     });
 
     if (productionList.children.length === 0) {
-      productionList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Enerji üreten bina yok</div>';
+      productionList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">No energy producing buildings</div>';
     }
 
     // Consumption list
@@ -1474,7 +1489,7 @@ export class GameUI {
     });
 
     if (consumptionList.children.length === 0) {
-      consumptionList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">Enerji tüketen bina yok</div>';
+      consumptionList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">No energy consuming buildings</div>';
     }
   }
 
@@ -1483,14 +1498,14 @@ export class GameUI {
    */
   getBuildingDisplayName(type) {
     const names = {
-      'textile-factory': '🧵 Tekstil Fabrikası',
-      'technology-factory': '💻 Teknoloji Fabrikası',
-      'steel-factory': '⚙️ Çelik Fabrikası',
-      'automotive-factory': '🚗 Otomotiv Fabrikası',
-      'recycling-center': '♻️ Geri Dönüşüm Merkezi',
-      'farming': '🌾 Tarım Alanı',
-      'residential': '🏠 Konut',
-      'commercial': '🏪 Ticari'
+      'textile-factory': '🧵 Textile Factory',
+      'technology-factory': '💻 Tech Factory',
+      'steel-factory': '⚙️ Steel Factory',
+      'automotive-factory': '🚗 Auto Factory',
+      'recycling-center': '♻️ Recycling Center',
+      'farming': '🌾 Farm',
+      'residential': '🏠 Residence',
+      'commercial': '🏪 Commercial'
     };
     return names[type] || type;
   }
@@ -1500,7 +1515,7 @@ export class GameUI {
    */
   openStatisticsPanel() {
     this.closeAllPanels();
-    const panel = this.getOrCreatePanel('statistics-panel', '📊 Şehir İstatistikleri');
+    const panel = this.getOrCreatePanel('statistics-panel', '📊 City Statistics');
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
@@ -1509,7 +1524,7 @@ export class GameUI {
 
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
-        <div class="resource-section-title">♻️ Döngüsel Ekonomi</div>
+        <div class="resource-section-title">♻️ Circular Economy</div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
             <span>Circular Score:</span>
@@ -1518,19 +1533,19 @@ export class GameUI {
             </span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Geri Dönüşüm Oranı:</span>
+            <span>Recycling Rate:</span>
             <span>${stats.recyclingRate.toFixed(1)}%</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Yenilenebilir Enerji:</span>
+            <span>Renewable Energy:</span>
             <span>${stats.renewableEnergyPercent.toFixed(1)}%</span>
           </div>
         </div>
         
-        <div class="resource-section-title" style="margin-top: 12px;">🗑️ Atık Yönetimi</div>
+        <div class="resource-section-title" style="margin-top: 12px;">🗑️ Waste Management</div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Toplam Atık:</span>
+            <span>Total Waste:</span>
             <span style="color: ${stats.totalWaste > 80 ? '#f44336' : stats.totalWaste > 50 ? '#FF9800' : '#4CAF50'};">
               ${stats.totalWaste.toFixed(1)} / 100
             </span>
@@ -1542,53 +1557,53 @@ export class GameUI {
             </div>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Tekstil Atığı:</span>
+            <span>Textile Waste:</span>
             <span>${stats.textileWaste.toFixed(1)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>E-Atık:</span>
+            <span>E-Waste:</span>
             <span>${stats.eWaste.toFixed(1)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Hurda Metal:</span>
+            <span>Scrap Metal:</span>
             <span>${stats.scrapMetal.toFixed(1)}</span>
           </div>
         </div>
         
-        <div class="resource-section-title" style="margin-top: 12px;">⚡ Enerji</div>
+        <div class="resource-section-title" style="margin-top: 12px;">⚡ Energy</div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Üretim:</span>
+            <span>Production:</span>
             <span style="color: #4CAF50;">${stats.energyProduction.toFixed(1)} ⚡/s</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Tüketim:</span>
+            <span>Consumption:</span>
             <span style="color: #f44336;">${stats.energyConsumption.toFixed(1)} ⚡/s</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <span>Denge:</span>
+            <span>Balance:</span>
             <span style="color: ${stats.energyBalance >= 0 ? '#4CAF50' : '#f44336'};">
               ${stats.energyBalance >= 0 ? '+' : ''}${stats.energyBalance.toFixed(1)} ⚡/s
             </span>
           </div>
         </div>
         
-        <div class="resource-section-title" style="margin-top: 12px;">🏗️ Binalar</div>
+        <div class="resource-section-title" style="margin-top: 12px;">🏗️ Buildings</div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Toplam Bina:</span>
+            <span>Total Buildings:</span>
             <span>${stats.totalBuildings}</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Fabrikalar:</span>
+            <span>Factories:</span>
             <span>${stats.factories}</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Enerji Üretimi:</span>
+            <span>Energy Production:</span>
             <span>${stats.energyBuildings}</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Geri Dönüşüm:</span>
+            <span>Recycling:</span>
             <span>${stats.recyclingCenters}</span>
           </div>
         </div>
@@ -1675,7 +1690,7 @@ export class GameUI {
    */
   openResearchPanel() {
     this.closeAllPanels();
-    const panel = this.getOrCreatePanel('research-panel', '🧠 Araştırma & Teknoloji');
+    const panel = this.getOrCreatePanel('research-panel', '🧠 Research & Tech');
     panel.style.width = '400px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
@@ -1684,9 +1699,9 @@ export class GameUI {
 
     content.innerHTML = `
       <div style="padding: 8px; max-height: 600px; overflow-y: auto;">
-        <div class="resource-section-title">📚 Teknoloji Ağacı</div>
+        <div class="resource-section-title">📚 Technology Tree</div>
         <div style="padding: 8px; color: #888; font-size: 0.9em; margin-bottom: 12px;">
-          Seviye: ${level} / 10
+          Level: ${level} / 10
         </div>
         
         <div id="research-tree" style="padding: 8px;">
@@ -1707,15 +1722,15 @@ export class GameUI {
    */
   generateResearchTree(level) {
     const researches = [
-      { id: 'recycling-efficiency-1', name: 'Gelişmiş Geri Dönüşüm', level: 2, desc: '+10% geri dönüşüm verimliliği', unlocked: level >= 2 },
-      { id: 'energy-optimization-1', name: 'Enerji Optimizasyonu', level: 3, desc: '-15% enerji tüketimi', unlocked: level >= 3 },
-      { id: 'waste-reduction-1', name: 'Atık Azaltma', level: 4, desc: '-20% atık üretimi', unlocked: level >= 4 },
-      { id: 'renewable-energy-1', name: 'Yenilenebilir Enerji+', level: 5, desc: '+25% enerji üretimi', unlocked: level >= 5 },
-      { id: 'circular-design-1', name: 'Döngüsel Tasarım', level: 6, desc: '+15% Circular Score', unlocked: level >= 6 },
-      { id: 'advanced-recycling', name: 'İleri Geri Dönüşüm', level: 7, desc: '+20% geri dönüşüm verimliliği', unlocked: level >= 7 },
-      { id: 'zero-waste', name: 'Sıfır Atık Hedefi', level: 8, desc: '-30% atık üretimi', unlocked: level >= 8 },
-      { id: 'green-tech', name: 'Yeşil Teknoloji', level: 9, desc: '+30% enerji üretimi, +20% Circular Score', unlocked: level >= 9 },
-      { id: 'circular-master', name: 'Döngüsel Ustası', level: 10, desc: '+50% Circular Score bonusu', unlocked: level >= 10 }
+      { id: 'recycling-efficiency-1', name: 'Advanced Recycling', level: 2, desc: '+10% recycling efficiency', unlocked: level >= 2 },
+      { id: 'energy-optimization-1', name: 'Energy Optimization', level: 3, desc: '-15% energy consumption', unlocked: level >= 3 },
+      { id: 'waste-reduction-1', name: 'Waste Reduction', level: 4, desc: '-20% waste production', unlocked: level >= 4 },
+      { id: 'renewable-energy-1', name: 'Renewable Energy+', level: 5, desc: '+25% energy production', unlocked: level >= 5 },
+      { id: 'circular-design-1', name: 'Circular Design', level: 6, desc: '+15% Circular Score', unlocked: level >= 6 },
+      { id: 'advanced-recycling', name: 'Advanced Recycling II', level: 7, desc: '+20% recycling efficiency', unlocked: level >= 7 },
+      { id: 'zero-waste', name: 'Zero Waste Goal', level: 8, desc: '-30% waste production', unlocked: level >= 8 },
+      { id: 'green-tech', name: 'Green Tech', level: 9, desc: '+30% energy production, +20% Circular Score', unlocked: level >= 9 },
+      { id: 'circular-master', name: 'Circular Master', level: 10, desc: '+50% Circular Score bonus', unlocked: level >= 10 }
     ];
 
     let html = '';
@@ -1728,7 +1743,7 @@ export class GameUI {
             <span style="color: ${isUnlocked ? '#4CAF50' : '#888'}; font-weight: bold;">
               ${isUnlocked ? '✓' : '🔒'} ${research.name}
             </span>
-            <span style="color: #888; font-size: 0.85em;">Seviye ${research.level}</span>
+            <span style="color: #888; font-size: 0.85em;">Level ${research.level}</span>
           </div>
           <div style="color: #aaa; font-size: 0.9em;">${research.desc}</div>
         </div>
@@ -1837,29 +1852,29 @@ export class GameUI {
     if (!selectFrom || !selectTo) return;
 
     const resourceNames = {
-      'raw-fabric': '🧵 Ham Kumaş',
-      'raw-plastic': '🧴 Ham Plastik',
-      'raw-metal': '🔩 Ham Metal',
-      'raw-electronics': '💻 Elektronik',
-      'raw-glass': '🪟 Ham Cam',
-      'clothing': '👔 Giyim',
-      'sports-gear': '👟 Spor Ekipmanı',
-      'smartphone': '📱 Akıllı Telefon',
-      'laptop': '💻 Dizüstü Bilgisayar',
-      'steel-beam': '🔧 Çelik Kiriş',
-      'steel-structure': '🏗️ Çelik Yapı',
-      'electric-car': '🚗 Elektrikli Araba',
-      'electric-bike': '🚲 Elektrikli Bisiklet',
-      'fertilizer': '🌱 Gübre',
-      'compost': '🍂 Kompost',
-      'recycled-fabric': '♻️🧵 Geri Dönüşümlü Kumaş',
-      'recycled-metal': '♻️🔩 Geri Dönüşümlü Metal',
-      'recycled-plastic': '♻️🧴 Geri Dönüşümlü Plastik',
-      'recycled-electronics': '♻️💻 Geri Dönüşümlü Elektronik'
+      'raw-fabric': '🧵 Raw Fabric',
+      'raw-plastic': '🧴 Raw Plastic',
+      'raw-metal': '🔩 Raw Metal',
+      'raw-electronics': '💻 Electronics',
+      'raw-glass': '🪟 Raw Glass',
+      'clothing': '👔 Clothing',
+      'sports-gear': '👟 Sports Gear',
+      'smartphone': '📱 Smartphone',
+      'laptop': '💻 Laptop',
+      'steel-beam': '🔧 Steel Beam',
+      'steel-structure': '🏗️ Steel Structure',
+      'electric-car': '🚗 Electric Car',
+      'electric-bike': '🚲 Electric Bike',
+      'fertilizer': '🌱 Fertilizer',
+      'compost': '🍂 Compost',
+      'recycled-fabric': '♻️🧵 Recycled Fabric',
+      'recycled-metal': '♻️🔩 Recycled Metal',
+      'recycled-plastic': '♻️🧴 Recycled Plastic',
+      'recycled-electronics': '♻️💻 Recycled Electronics'
     };
 
     [selectFrom, selectTo].forEach(select => {
-      select.innerHTML = '<option value="">Kaynak seçin...</option>';
+      select.innerHTML = '<option value="">Select resource...</option>';
       Object.entries(resources).forEach(([type, amount]) => {
         // Don't allow trading waste or recycled materials
         if (type.includes('waste') || type.includes('recycled')) {
@@ -1884,25 +1899,25 @@ export class GameUI {
     const toAmount = parseInt(document.getElementById('trade-amount-to')?.value || 0);
 
     if (!fromType || !toType || fromAmount <= 0 || toAmount <= 0) {
-      alert('Lütfen tüm alanları doldurun!');
+      alert('Please fill in all fields!');
       return;
     }
 
     if (!window.resourceManager) {
-      alert('Kaynak yöneticisi bulunamadı!');
+      alert('Resource manager not found!');
       return;
     }
 
     // Check if player has enough resources
     if (window.resourceManager.getResource(fromType) < fromAmount) {
-      alert('Yeterli kaynağınız yok!');
+      alert("You don't have enough resources!");
       return;
     }
 
     // Prevent trading waste or recycled materials (they should be used in production/recycling)
     if (fromType.includes('waste') || fromType.includes('recycled') ||
       toType.includes('waste') || toType.includes('recycled')) {
-      alert('Atık ve geri dönüşümlü malzemeler takas edilemez! Bunları üretim ve geri dönüşümde kullanın.');
+      alert('Waste and recycled materials cannot be traded! Use them in production and recycling.');
       return;
     }
 
@@ -1911,7 +1926,7 @@ export class GameUI {
     window.resourceManager.addResource(toType, toAmount);
 
     this.updateResources(window.resourceManager);
-    this.showNotification('✅ Takas Tamamlandı', `${fromAmount} ${fromType} → ${toAmount} ${toType}`, 'success');
+    this.showNotification('✅ Trade Completed', `${fromAmount} ${fromType} → ${toAmount} ${toType}`, 'success');
     this.closePanel('trade-panel');
   }
 
@@ -1920,15 +1935,15 @@ export class GameUI {
    */
   saveGame() {
     if (!window.saveSystem) {
-      this.showNotification('Hata', 'Kayıt sistemi yüklenemedi', 'error');
+      this.showNotification('Error', 'Save system could not be loaded', 'error');
       return;
     }
 
     const success = window.saveSystem.saveGame();
     if (success) {
-      this.showNotification('✅ Oyun Kaydedildi', 'Oyununuz başarıyla kaydedildi', 'success');
+      this.showNotification('✅ Game Saved', 'Your game has been saved successfully', 'success');
     } else {
-      this.showNotification('❌ Hata', 'Oyun kaydedilemedi', 'error');
+      this.showNotification('❌ Error', 'Game could not be saved', 'error');
     }
   }
 
@@ -1937,23 +1952,23 @@ export class GameUI {
    */
   loadGame() {
     if (!window.saveSystem) {
-      this.showNotification('Hata', 'Kayıt sistemi yüklenemedi', 'error');
+      this.showNotification('Error', 'Save system could not be loaded', 'error');
       return;
     }
 
     if (!window.saveSystem.hasSaveData()) {
-      this.showNotification('Bilgi', 'Kayıtlı oyun bulunamadı', 'info');
+      this.showNotification('Information', 'No saved game found', 'info');
       return;
     }
 
     // Confirm load
-    if (confirm('Kayıtlı oyunu yüklemek istediğinize emin misiniz? Mevcut oyun kaybolacak.')) {
+    if (confirm('Are you sure you want to load the saved game? The current game will be lost.')) {
       const saveData = window.saveSystem.loadGame();
       if (saveData) {
         // Reload page to reconstruct city
         location.reload();
       } else {
-        this.showNotification('❌ Hata', 'Oyun yüklenemedi', 'error');
+        this.showNotification('❌ Error', 'Game could not be loaded', 'error');
       }
     }
   }
@@ -2057,21 +2072,21 @@ export class GameUI {
           <div class="level-up-description">${levelInfo.description}</div>
           
           <div class="level-up-section">
-            <h3>Yeni Özellikler</h3>
+            <h3>New Features</h3>
             <ul class="level-up-features">
               ${featuresHTML}
             </ul>
           </div>
           
           <div class="level-up-section">
-            <h3>Yapılması Gerekenler</h3>
+            <h3>Things To Do</h3>
             <ul class="level-up-tips">
               ${tipsHTML}
             </ul>
           </div>
         </div>
         <div class="level-up-modal-footer">
-          <button class="level-up-modal-button" onclick="window.ui.closeLevelUpModal()">Devam Et</button>
+          <button class="level-up-modal-button" onclick="window.ui.closeLevelUpModal()">Continue</button>
         </div>
       </div>
     `;
@@ -2170,8 +2185,8 @@ export class GameUI {
     // Show alarm if critical waste detected (only if count > 0)
     if (criticalWasteCount > 0 && (!this._lastCriticalAlarm || Date.now() - this._lastCriticalAlarm > 10000)) {
       this.showNotification(
-        'Kritik Atık Uyarısı!',
-        `${criticalWasteCount} binada atık seviyesi kritik! Geri dönüşüm yapın.`,
+        'Critical Waste Warning!',
+        `Critical waste levels in ${criticalWasteCount} buildings! Please recycle.`,
         'error'
       );
       this._lastCriticalAlarm = Date.now();
@@ -2185,8 +2200,8 @@ export class GameUI {
       const pollutionLevel = window.globalPollution.getLevel();
       if (pollutionLevel === 'maximum' && (!this._lastPollutionAlarm || Date.now() - this._lastPollutionAlarm > 30000)) {
         this.showNotification(
-          '🌍 Şehir Kirliliği Maksimum!',
-          'Şehir kirliliği kritik seviyede! Acil önlem alın.',
+          '🌍 City Pollution Maximum!',
+          'City pollution is at critical levels! Take immediate action.',
           'error'
         );
         this._lastPollutionAlarm = Date.now();
@@ -2235,9 +2250,9 @@ export class GameUI {
         nextBtn.style.display = 'block';
         // Change button text for last step
         if (step.id === 9) {
-          nextBtn.textContent = "Tutorial'ı Bitir";
+          nextBtn.textContent = "Finish Tutorial";
         } else {
-          nextBtn.textContent = 'Sonraki ➜';
+          nextBtn.textContent = 'Next ➜';
         }
       }
     }
@@ -2253,10 +2268,10 @@ export class GameUI {
 
   restartTutorial() {
     if (window.tutorialState) {
-      if (confirm('Tutorial\'ı en baştan başlatmak istediğinize emin misiniz?')) {
+      if (confirm('Are you sure you want to restart the tutorial from the beginning?')) {
         this.closeAllPanels();
         window.tutorialState.reset();
-        this.showNotification('Tutorial', 'Tutorial yeniden başlatıldı.', 'success');
+        this.showNotification('Tutorial', 'Tutorial restarted.', 'success');
       }
     }
   }
