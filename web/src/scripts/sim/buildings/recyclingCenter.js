@@ -332,8 +332,8 @@ export class RecyclingCenter extends Building {
       // Not enough money - show notification
       if (window.ui) {
         window.ui.showNotification(
-          '💰 Yetersiz Para',
-          `Yükseltme için ${upgradeCost.toLocaleString()} 💰 gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()} 💰`,
+          '💰 Insufficient Funds',
+          `Upgrade requires ${upgradeCost.toLocaleString()} 💰. Your current funds: ${window.gameState.money.toLocaleString()} 💰`,
           'error'
         );
       }
@@ -429,7 +429,7 @@ export class RecyclingCenter extends Building {
    */
   startRecycling() {
     if (!this.power.isFullyPowered) {
-      console.warn("Geri dönüşüm için enerji gerekli!");
+      console.warn("Energy required for recycling!");
       return false;
     }
 
@@ -439,7 +439,7 @@ export class RecyclingCenter extends Building {
 
     // Consume energy
     if (!window.gameState.consumeEnergy(this.energyConsumption)) {
-      console.warn("Yetersiz enerji!");
+      console.warn("Insufficient energy!");
       return false;
     }
 
@@ -463,12 +463,10 @@ export class RecyclingCenter extends Building {
     html += `
       <div class="info-heading">
         <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-        Geri Dönüşüm Merkezi
-      </div>
-      <span class="info-label">Seviye </span>
+      <span class="info-label">Level </span>
       <span class="info-value">${this.level}/${this.maxLevel}</span>
       <br>
-      <span class="info-label">Verimlilik </span>
+      <span class="info-label">Efficiency </span>
       <span class="info-value" style="${boostActive ? 'color: #4CAF50; font-weight: bold;' : ''}">
         ${(currentEfficiency * 100).toFixed(0)}%
         ${boostActive ? ` (+${(this.boostEfficiencyBonus * 100).toFixed(0)}% boost)` : ''}
@@ -477,36 +475,36 @@ export class RecyclingCenter extends Building {
       ${boostActive ? `
         <span class="info-label" style="color: #4CAF50;">
           <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-          Boost Aktif
+          Boost Active
         </span>
-        <span class="info-value" style="color: #4CAF50;">${boostTimeLeft}s kaldı</span>
+        <span class="info-value" style="color: #4CAF50;">${boostTimeLeft}s left</span>
         <br>
       ` : ''}
-      <span class="info-label">Enerji </span>
+      <span class="info-label">Energy </span>
       <span class="info-value">${this.power.isFullyPowered ? this.power.required : 0}/${this.power.required} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
       <br>
-      <span class="info-label">Otomatik Geri Dönüşüm </span>
-      <span class="info-value">${this.autoRecycling ? '✅ Aktif' : '❌ Kapalı'}</span>
+      <span class="info-label">Auto-Recycling </span>
+      <span class="info-value">${this.autoRecycling ? '✅ Active' : '❌ Disabled'}</span>
       <br>
-      <span class="info-label">Otomatik Hız </span>
-      <span class="info-value">${this.autoRecyclingRate} atık/tick</span>
+      <span class="info-label">Auto Rate </span>
+      <span class="info-value">${this.autoRecyclingRate} waste/tick</span>
       <br>
     `;
 
     // Show current waste processing (Global + Local)
     if (window.resourceManager) {
-      html += `<div class="info-heading">🌍 Global Atık (Şehir Deposu)</div>`;
+      html += `<div class="info-heading">🌍 Global Waste (City Storage)</div>`;
       let hasGlobalWaste = false;
       Object.entries(this.wasteRecipes).forEach(([wasteType, recycledType]) => {
         const wasteAmount = window.resourceManager.getResource(wasteType);
         if (wasteAmount > 0) {
           hasGlobalWaste = true;
           const resourceNames = {
-            'textile-waste': 'Tekstil Atığı',
-            'e-waste': 'E-Atık',
-            'scrap-metal': 'Hurda Metal',
-            'plastic-waste': 'Plastik Atık',
-            'organic-waste': 'Organik Atık'
+            'textile-waste': 'Textile Waste',
+            'e-waste': 'E-Waste',
+            'scrap-metal': 'Scrap Metal',
+            'plastic-waste': 'Plastic Waste',
+            'organic-waste': 'Organic Waste'
           };
           html += `
             <div style="padding: 4px 8px; margin: 2px 0; background-color: #22294160; border-radius: 4px;">
@@ -517,22 +515,22 @@ export class RecyclingCenter extends Building {
         }
       });
       if (!hasGlobalWaste) {
-        html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Global atık yok</div>`;
+        html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">No global waste</div>`;
       }
 
       // Show local waste from buildings
-      html += `<div class="info-heading" style="margin-top: 12px;">🏭 Binalardaki Atık (Local)</div>`;
+      html += `<div class="info-heading" style="margin-top: 12px;">🏭 Local Waste in Buildings</div>`;
       const localWasteCounts = this.getLocalWasteCounts();
       let hasLocalWaste = false;
       Object.entries(localWasteCounts).forEach(([wasteType, amount]) => {
         if (amount > 0) {
           hasLocalWaste = true;
           const resourceNames = {
-            'textile-waste': 'Tekstil Atığı',
-            'e-waste': 'E-Atık',
-            'scrap-metal': 'Hurda Metal',
-            'plastic-waste': 'Plastik Atık',
-            'organic-waste': 'Organik Atık'
+            'textile-waste': 'Textile Waste',
+            'e-waste': 'E-Waste',
+            'scrap-metal': 'Scrap Metal',
+            'plastic-waste': 'Plastic Waste',
+            'organic-waste': 'Organic Waste'
           };
           const color = amount > 80 ? '#f44336' : amount > 50 ? '#FF9800' : '#4CAF50';
           html += `
@@ -544,7 +542,7 @@ export class RecyclingCenter extends Building {
         }
       });
       if (!hasLocalWaste) {
-        html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Binalarda işlenecek atık yok</div>`;
+        html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">No local waste to process</div>`;
       }
     }
 
@@ -565,7 +563,7 @@ export class RecyclingCenter extends Building {
           style="width: 100%; ${!canRecycle ? 'opacity: 0.5; cursor: not-allowed;' : ''}; display: flex; align-items: center; justify-content: center; gap: 8px;"
           ${!canRecycle ? 'disabled' : ''}>
           <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-          Manuel Geri Dönüşüm
+          Manual Recycling
         </button>
       </div>
     `;
@@ -577,7 +575,7 @@ export class RecyclingCenter extends Building {
         <div style="padding: 8px; margin-top: 4px;">
           <button class="action-button" onclick="window.game?.upgradeFactory(${this.x}, ${this.y})" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-            Yükselt (${upgradeCost.toLocaleString()} birim)
+            Upgrade (${upgradeCost.toLocaleString()} units)
           </button>
         </div>
       `;

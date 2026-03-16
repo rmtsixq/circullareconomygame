@@ -411,10 +411,10 @@
         <!-- LEVEL -->
         <div class="dev-section">
           <div class="dev-section-title" onclick="devPanel.toggleSection(this)">
-            🎮 Level & İlerleme <span>▼</span>
+            🎮 Level & Progress <span>▼</span>
           </div>
           <div class="dev-section-content">
-            <div style="margin-bottom: 6px; font-size: 11px; color: #888;">Seviye seç (skorlar otomatik ayarlanır):</div>
+            <div style="margin-bottom: 6px; font-size: 11px; color: #888;">Select level (scores set automatically):</div>
             <div class="dev-level-btns" id="dev-level-btns">
               <div class="dev-level-btn" onclick="devPanel.setLevel(1)">1</div>
               <div class="dev-level-btn" onclick="devPanel.setLevel(2)">2</div>
@@ -429,35 +429,35 @@
         <!-- SCORES -->
         <div class="dev-section">
           <div class="dev-section-title" onclick="devPanel.toggleSection(this)">
-            📊 Skorlar <span>▼</span>
+            📊 Scores <span>▼</span>
           </div>
           <div class="dev-section-content">
             <div class="dev-row">
-              <span class="dev-label">💚 Refah</span>
+              <span class="dev-label">💚 Wellbeing</span>
               <input type="range" class="dev-slider" min="0" max="100" value="50" 
                 oninput="devPanel.setScore('wellbeing', this.value)" id="dev-slider-wellbeing">
               <span class="dev-slider-val" id="dev-val-wellbeing">50</span>
             </div>
             <div class="dev-row">
-              <span class="dev-label">🎓 Eğitim</span>
+              <span class="dev-label">🎓 Education</span>
               <input type="range" class="dev-slider" min="0" max="100" value="30" 
                 oninput="devPanel.setScore('education', this.value)" id="dev-slider-education">
               <span class="dev-slider-val" id="dev-val-education">30</span>
             </div>
             <div class="dev-row">
-              <span class="dev-label">🏥 Sağlık</span>
+              <span class="dev-label">🏥 Health</span>
               <input type="range" class="dev-slider" min="0" max="100" value="70" 
                 oninput="devPanel.setScore('health', this.value)" id="dev-slider-health">
               <span class="dev-slider-val" id="dev-val-health">70</span>
             </div>
             <div class="dev-row">
-              <span class="dev-label">♻️ Sürd.</span>
+              <span class="dev-label">♻️ Sust.</span>
               <input type="range" class="dev-slider" min="0" max="100" value="0" 
                 oninput="devPanel.setScore('sustainability', this.value)" id="dev-slider-sustainability">
               <span class="dev-slider-val" id="dev-val-sustainability">0</span>
             </div>
             <div class="dev-row">
-              <span class="dev-label">☁️ Kirlilik</span>
+              <span class="dev-label">☁️ Pollution</span>
               <input type="range" class="dev-slider" min="0" max="100" value="0" 
                 oninput="devPanel.setPollution(this.value)" id="dev-slider-pollution">
               <span class="dev-slider-val" id="dev-val-pollution">0</span>
@@ -468,27 +468,27 @@
         <!-- ECONOMY -->
         <div class="dev-section">
           <div class="dev-section-title" onclick="devPanel.toggleSection(this)">
-            💰 Ekonomi & Kaynaklar <span>▼</span>
+            💰 Economy & Resources <span>▼</span>
           </div>
           <div class="dev-section-content">
             <div class="dev-row">
-              <span class="dev-label">💰 Para</span>
+              <span class="dev-label">💰 Money</span>
               <input type="number" class="dev-input" value="500000" id="dev-money" 
                 onchange="devPanel.setMoney(this.value)">
               <button class="dev-btn" onclick="devPanel.setMoney(9999999)" style="flex:0">MAX</button>
             </div>
             <div class="dev-row">
-              <span class="dev-label">⚡ Enerji</span>
+              <span class="dev-label">⚡ Energy</span>
               <input type="number" class="dev-input" value="0" id="dev-energy" 
                 onchange="devPanel.setEnergy(this.value)">
               <button class="dev-btn" onclick="devPanel.setEnergy(9999)" style="flex:0">MAX</button>
             </div>
             <div style="margin-top: 6px">
               <div class="dev-quick-grid">
-                <button class="dev-btn success" onclick="dev.fillResources()">📦 Hammadde Doldur</button>
-                <button class="dev-btn" onclick="devPanel.addAllWaste()">🗑️ Atık Ekle (+50)</button>
-                <button class="dev-btn" onclick="devPanel.clearWaste()">✨ Atık Temizle</button>
-                <button class="dev-btn" onclick="devPanel.addRecycled()">♻️ Geri Dön. +50</button>
+                <button class="dev-btn success" onclick="dev.fillResources()">📦 Fill Resources</button>
+                <button class="dev-btn" onclick="devPanel.addAllWaste()">🗑️ Add Waste (+50)</button>
+                <button class="dev-btn" onclick="devPanel.clearWaste()">✨ Clear Waste</button>
+                <button class="dev-btn" onclick="devPanel.addRecycled()">♻️ Recycled +50</button>
               </div>
             </div>
           </div>
@@ -497,24 +497,24 @@
         <!-- TOGGLES -->
         <div class="dev-section">
           <div class="dev-section-title" onclick="devPanel.toggleSection(this)">
-            ⚙️ Ayarlar <span>▼</span>
+            ⚙️ Settings <span>▼</span>
           </div>
           <div class="dev-section-content">
             <div class="dev-toggle">
               <input type="checkbox" id="dev-freebuild" checked onchange="dev.freeBuild = this.checked">
-              <label for="dev-freebuild">🆓 Ücretsiz İnşaat</label>
+              <label for="dev-freebuild">🆓 Free Construction</label>
             </div>
             <div class="dev-toggle">
               <input type="checkbox" id="dev-freeze-scores" onchange="devPanel.freezeScores = this.checked">
-              <label for="dev-freeze-scores">🧊 Skorları Dondur</label>
+              <label for="dev-freeze-scores">🧊 Freeze Scores</label>
             </div>
             <div class="dev-row">
-              <span class="dev-label">⏱️ Sim Hızı</span>
+              <span class="dev-label">⏱️ Sim Speed</span>
               <select class="dev-input" onchange="devPanel.setSimSpeed(this.value)" style="width: auto; flex: 1;">
-                <option value="5000">0.5x Yavaş</option>
+                <option value="5000">0.5x Slow</option>
                 <option value="2500" selected>1x Normal</option>
-                <option value="1000">2.5x Hızlı</option>
-                <option value="500">5x Çok Hızlı</option>
+                <option value="1000">2.5x Fast</option>
+                <option value="500">5x Very Fast</option>
                 <option value="200">12x Turbo</option>
               </select>
             </div>
@@ -524,16 +524,16 @@
         <!-- QUICK ACTIONS -->
         <div class="dev-section">
           <div class="dev-section-title" onclick="devPanel.toggleSection(this)">
-            ⚡ Hızlı Aksiyonlar <span>▼</span>
+            ⚡ Quick Actions <span>▼</span>
           </div>
           <div class="dev-section-content">
             <div class="dev-quick-grid">
-              <button class="dev-btn success" onclick="dev.unlockAll()">🔓 Hepsini Aç</button>
-              <button class="dev-btn" onclick="dev.skipTutorial()">⏭️ Tutorial Atla</button>
-              <button class="dev-btn danger" onclick="dev.clearMap()">💥 Haritayı Temizle</button>
-              <button class="dev-btn" onclick="dev.getState()">📋 State Logla</button>
-              <button class="dev-btn" onclick="dev.listBuildings()">🏗️ Bina Listele</button>
-              <button class="dev-btn" onclick="devPanel.refreshUI()">🔄 UI Yenile</button>
+              <button class="dev-btn success" onclick="dev.unlockAll()">🔓 Unlock All</button>
+              <button class="dev-btn" onclick="dev.skipTutorial()">⏭️ Skip Tutorial</button>
+              <button class="dev-btn danger" onclick="dev.clearMap()">💥 Clear Map</button>
+              <button class="dev-btn" onclick="dev.getState()">📋 Log State</button>
+              <button class="dev-btn" onclick="dev.listBuildings()">🏗️ List Buildings</button>
+              <button class="dev-btn" onclick="devPanel.refreshUI()">🔄 Refresh UI</button>
             </div>
           </div>
         </div>
@@ -541,24 +541,24 @@
         <!-- QUICK BUILD -->
         <div class="dev-section">
           <div class="dev-section-title" onclick="devPanel.toggleSection(this)">
-            🏗️ Hızlı Bina Yerleştir <span>▸</span>
+            🏗️ Quick Build <span>▸</span>
           </div>
           <div class="dev-section-content collapsed">
-            <div style="margin-bottom:6px; font-size:11px; color:#888;">Tıkla → haritada istediğin yere koy</div>
+            <div style="margin-bottom:6px; font-size:11px; color:#888;">Click → place anywhere on the map</div>
             <div class="dev-quick-grid">
-              <button class="dev-btn" onclick="devPanel.selectTool('residential')">🏠 Konut</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('commercial')">🏪 Ticari</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('textile-factory')">🧵 Tekstil F.</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('technology-factory')">💻 Teknoloji F.</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('steel-factory')">🔩 Çelik F.</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('automotive-factory')">🚗 Otomotiv F.</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('recycling-center')">♻️ Geri Dönüşüm</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('residential')">🏠 Residential</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('commercial')">🏪 Commercial</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('textile-factory')">🧵 Textile F.</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('technology-factory')">💻 Tech F.</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('steel-factory')">🔩 Steel F.</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('automotive-factory')">🚗 Auto F.</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('recycling-center')">♻️ Recycling</button>
               <button class="dev-btn" onclick="devPanel.selectTool('solar-panel')">☀️ Solar</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('wind-turbine')">🌬️ Rüzgar</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('hydro-plant')">💧 Hidro</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('waste-to-energy')">⚡ Atık→Enerji</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('farming')">🌾 Tarım</button>
-              <button class="dev-btn" onclick="devPanel.selectTool('road')">🛣️ Yol</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('wind-turbine')">🌬️ Wind</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('hydro-plant')">💧 Hydro</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('waste-to-energy')">⚡ Waste→Energy</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('farming')">🌾 Farming</button>
+              <button class="dev-btn" onclick="devPanel.selectTool('road')">🛣️ Road</button>
             </div>
           </div>
         </div>

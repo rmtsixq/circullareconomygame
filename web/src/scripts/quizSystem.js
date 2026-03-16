@@ -6,59 +6,59 @@ export class QuizSystem {
   constructor() {
     this.questions = [
       {
-        text: 'Aşağıdakilerden hangisi lineer ekonomi modelini tanımlar?',
+        text: 'Which of the following describes the linear economy model?',
         options: [
-          'Al - Yap - At',
-          'Al - Yap - Geri Dönüştür',
-          'Azalt - Yeniden Kullan - Geri Dönüştür',
-          'Yap - At - Al'
+          'Take - Make - Waste',
+          'Take - Make - Recycle',
+          'Reduce - Reuse - Recycle',
+          'Make - Waste - Take'
         ],
         correctIndex: 0,
-        explanation: 'Lineer ekonomi kaynakları çıkarır, ürün yapar ve sonunda çöpe atar (Al-Yap-At). Circular ekonomi ise bunu döngüsel hale getirmeye çalışır.'
+        explanation: 'Linear economy extracts resources, makes products, and ultimately throws them away (Take-Make-Waste). Circular economy tries to make this cyclical.'
       },
       {
-        text: '3R kuralı aşağıdakilerden hangisini simgeler?',
+        text: 'What does the 3R rule stand for?',
         options: [
           'Read, Write, Run',
-          'Reduce, Reuse, Recycle (Azalt, Yeniden Kullan, Geri Dönüştür)',
+          'Reduce, Reuse, Recycle',
           'Remove, Replace, Repair',
           'Respect, Reflect, React'
         ],
         correctIndex: 1,
-        explanation: '3R: Reduce (tüketimi azalt), Reuse (yeniden kullan), Recycle (geri dönüştür) circular ekonominin temelidir.'
+        explanation: '3R: Reduce (consumption), Reuse (use again), Recycle (convert waste into material) are the foundations of circular economy.'
       },
       {
-        text: 'Endüstriyel Simbiyoz nedir?',
+        text: 'What is Industrial Symbiosis?',
         options: [
-          'Fabrikaların aynı yerde olması',
-          'Bir fabrikanın atığının diğerinin hammaddesi olması',
-          'Fabrikaların işçileri paylaşması',
-          'Sadece yenilenebilir enerji kullanılması'
+          'Factories being in the same location',
+          'One factory\'s waste being another\'s raw material',
+          'Factories sharing workers',
+          'Only using renewable energy'
         ],
         correctIndex: 1,
-        explanation: 'Endüstriyel Simbiyoz, tıpkı doğadaki gibi bir tesisin/sektörün atığının (veya yan ürününün) başka bir tesisin hammaddesi olmasıdır.'
+        explanation: 'Industrial Symbiosis is when the waste (or byproduct) of one facility/sector becomes the raw material for another, just like in nature.'
       },
       {
-        text: 'Döngüsel ekonominin temel amacı nedir?',
+        text: 'What is the primary goal of circular economy?',
         options: [
-          'Sonsuz büyüme sağlamak',
-          'Daha çok ucuz ürün üretmek',
-          'Atığı ortadan kaldırmak ve kaynakları sürekli kullanımda tutmak',
-          'Sadece plastik kullanımını yasaklamak'
+          'Providing infinite growth',
+          'Producing more cheap products',
+          'Eliminating waste and keeping resources in continuous use',
+          'Only banning plastic use'
         ],
         correctIndex: 2,
-        explanation: 'Döngüsel ekonominin temel amacı atık ve kirliliği tasarımla ortadan kaldırmak ve malzemeleri en yüksek değerde döngüde tutmaktır.'
+        explanation: 'The primary goal of circular economy is to eliminate waste and pollution by design and keep materials in the cycle at their highest value.'
       },
       {
-        text: 'Planlı eskitme (planned obsolescence) nedir?',
+        text: 'What is planned obsolescence?',
         options: [
-          'Ürünlerin uzun süre dayanacak şekilde tasarlanması',
-          'Ürünlerin bilerek kısa ömürlü tasarlanıp yenisine ihtiyaç duyulması',
-          'Eski ürünlerin müzelere konulması',
-          'Fabrikaların planlı olarak kapatılması'
+          'Designing products to last a long time',
+          'Designing products to be short-lived so a new one is needed',
+          'Putting old products in museums',
+          'Planned closure of factories'
         ],
         correctIndex: 1,
-        explanation: 'Planlı eskitme, lineer ekonominin tüketimi canlı tutmak için ürünleri bilinçli olarak kısa ömürlü tasarlamasıdır.'
+        explanation: 'Planned obsolescence is when the linear economy deliberately designs products to be short-lived to keep consumption alive.'
       }
     ];
 
@@ -113,8 +113,8 @@ export class QuizSystem {
 
       if (window.ui) {
         window.ui.showNotification(
-          '✅ Doğru Cevap!', 
-          `Tebrikler! ${this.currentQuestion.explanation}<br><br><b>Ödül:</b> +Eğitim, +Refah, +Sürdürülebilirlik, +500💰, +20 XP`, 
+          '✅ Correct Answer!', 
+          `Congratulations! ${this.currentQuestion.explanation}<br><br><b>Reward:</b> +Education, +Wellbeing, +Sustainability, +500💰, +20 XP`, 
           'success'
         );
       }
@@ -123,8 +123,8 @@ export class QuizSystem {
       
       if (window.ui) {
         window.ui.showNotification(
-          '❌ Yanlış Cevap', 
-          `Öğrenme fırsatı: ${this.currentQuestion.explanation}`, 
+          '❌ Incorrect Answer', 
+          `Learning opportunity: ${this.currentQuestion.explanation}`, 
           'info'
         );
       }

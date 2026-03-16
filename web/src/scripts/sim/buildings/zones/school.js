@@ -3,8 +3,8 @@ import { Building } from '../building.js';
 import { BuildingType } from '../buildingType.js';
 
 /**
- * School (Okul) - Eğitim binası
- * Eğitim puanına katkı sağlar, iş gücü oluşturur
+ * School - Education building
+ * Contributes to education score, creates workforce
  */
 export class School extends Building {
   type = BuildingType.school;
@@ -14,7 +14,7 @@ export class School extends Building {
 
   constructor(x, y) {
     super(x, y);
-    this.name = 'Okul';
+    this.name = 'School';
 
     // Jobs module
     this.jobs = {
@@ -40,7 +40,7 @@ export class School extends Building {
     const cost = this.getUpgradeCost();
     if (window.gameState && !window.gameState.spendMoney(cost)) {
       if (window.ui) {
-        window.ui.showNotification('💰 Yetersiz Para', `Yükseltme için ${cost.toLocaleString()} 💰 gerekiyor.`, 'error');
+        window.ui.showNotification('💰 Insufficient Funds', `Upgrade requires ${cost.toLocaleString()} 💰.`, 'error');
       }
       return false;
     }
@@ -88,19 +88,19 @@ export class School extends Building {
           ${this.name}
         </div>
         <div class="info-section">
-          <span class="info-label">Seviye </span>
+          <span class="info-label">Level </span>
           <span class="info-value">${this.level}/${this.maxLevel}</span>
           <br>
-          <span class="info-label">Çalışanlar </span>
+          <span class="info-label">Workers </span>
           <span class="info-value">${workerCount}/${this.jobs.maxWorkers}</span>
           <br>
-          <span class="info-label">Eğitim Katkısı </span>
+          <span class="info-label">Education Contribution </span>
           <span class="info-value" style="color: #4CAF50;">+${5 + (this.level - 1) * 3}</span>
         </div>
         ${canUpgrade ? `
           <div style="padding: 8px; margin-top: 8px;">
             <button class="action-button" onclick="window.game.upgradeFactory(${this.x}, ${this.y})" style="width: 100%;">
-              ⬆️ Yükselt (${this.getUpgradeCost().toLocaleString()} 💰)
+              ⬆️ Upgrade (${this.getUpgradeCost().toLocaleString()} 💰)
             </button>
           </div>
         ` : ''}

@@ -278,8 +278,8 @@ export class CommercialZone extends Zone {
       // Not enough money - show notification
       if (window.ui) {
         window.ui.showNotification(
-          'Yetersiz Para',
-          `Yükseltme için ${upgradeCost.toLocaleString()} birim gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()}`,
+          'Insufficient Funds',
+          `Upgrade requires ${upgradeCost.toLocaleString()} units. Your current funds: ${window.gameState.money.toLocaleString()}`,
           'error'
         );
       }
@@ -325,16 +325,16 @@ export class CommercialZone extends Zone {
         <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Eco Shop
       </div>
-      <span class="info-label">Seviye </span>
+      <span class="info-label">Level </span>
       <span class="info-value">${this.level}/${this.maxLevel}</span>
       <br>
-      <span class="info-label">Satış Hızı </span>
-      <span class="info-value">${(this.salesRate * 100).toFixed(0)}% ürün/tick</span>
+      <span class="info-label">Sales Rate </span>
+      <span class="info-value">${(this.salesRate * 100).toFixed(0)}% product/tick</span>
       <br>
-      <span class="info-label">Alış Hızı </span>
-      <span class="info-value">${(this.purchaseRate * 100).toFixed(0)}% ürün/tick</span>
+      <span class="info-label">Purchase Rate </span>
+      <span class="info-value">${(this.purchaseRate * 100).toFixed(0)}% product/tick</span>
       <br>
-      <span class="info-label">Envanter </span>
+      <span class="info-label">Inventory </span>
       <span class="info-value">${this.totalInventory}/${this.maxInventory}</span>
       <br>
     `;
@@ -345,30 +345,30 @@ export class CommercialZone extends Zone {
       html += `
         <div class="info-heading" style="margin-top: 12px;">
           <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-          Stok
+          Stock
         </div>`;
       Object.entries(this.inventory).forEach(([product, amount]) => {
         if (amount > 0) {
           const price = this.productPrices[product] || 0;
           const productNames = {
-            'clothing': 'Kıyafet',
-            'smartphone': 'Telefon',
+            'clothing': 'Clothing',
+            'smartphone': 'Phone',
             'laptop': 'Laptop',
-            'steel-beam': 'Çelik Kiriş',
-            'steel-structure': 'Çelik Yapı',
-            'electric-car': 'Elektrikli Araba',
-            'electric-bike': 'Elektrikli Bisiklet'
+            'steel-beam': 'Steel Beam',
+            'steel-structure': 'Steel Structure',
+            'electric-car': 'Electric Car',
+            'electric-bike': 'Electric Bike'
           };
           html += `
             <div style="padding: 4px 8px; margin: 2px 0; background-color: #22294160; border-radius: 4px;">
               <span class="info-label">${productNames[product] || product}</span>
-              <span class="info-value">${amount}x (${price.toLocaleString()} 💰/adet)</span>
+              <span class="info-value">${amount}x (${price.toLocaleString()} 💰/unit)</span>
             </div>
           `;
         }
       });
     } else {
-      html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Envanter boş - Ürün bekleniyor</div>`;
+      html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Inventory empty - Waiting for products</div>`;
     }
 
     html += this.jobs.toHTML();
@@ -380,11 +380,11 @@ export class CommercialZone extends Zone {
       html += `
         <div class="info-heading" style="margin-top: 12px;">
           <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-          Atık Durumu
+          Waste Status
         </div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Atık Seviyesi:</span>
+            <span>Waste Level:</span>
             <span style="color: ${wasteColor}; font-weight: bold;">${this.waste.amount.toFixed(1)} / ${this.waste.maxCapacity}</span>
           </div>
           <div style="background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 4px;">
@@ -401,7 +401,7 @@ export class CommercialZone extends Zone {
         <div style="padding: 8px; margin-top: 8px;">
           <button class="action-button" onclick="window.game?.upgradeFactory(${this.x}, ${this.y})" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-            Yükselt (${upgradeCost.toLocaleString()} birim)
+            Upgrade (${upgradeCost.toLocaleString()} units)
           </button>
         </div>
       `;

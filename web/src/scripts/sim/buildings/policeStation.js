@@ -65,7 +65,7 @@ export class PoliceStation extends Building {
     super(x, y);
     this.x = x;
     this.y = y;
-    this.name = 'Polis Merkezi';
+    this.name = 'Police Station';
     this.hideTerrain = true;
     this.roadAccess.enabled = true;
 
@@ -279,20 +279,20 @@ export class PoliceStation extends Building {
           ${this.name}
         </div>
         <div class="info-section">
-          <span class="info-label">Seviye </span>
+          <span class="info-label">Level </span>
           <span class="info-value">${this.level}/${this.maxLevel}</span>
           <br>
-          <span class="info-label">Enerji Tüketimi </span>
+          <span class="info-label">Energy Consumption </span>
           <span class="info-value">${this.energyConsumption} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>/tick</span>
           <br>
-          <span class="info-label">Aktif Polis Araçları </span>
+          <span class="info-label">Active Police Vehicles </span>
           <span class="info-value">${this.activeVehicles}/${this.vehiclesByLevel[this.level]}</span>
         </div>
         ${canUpgrade ? `
           <div style="padding: 8px; margin-top: 8px;">
             <button class="action-button" onclick="window.game.selectedObject.building.upgrade(); window.ui.refreshInfoPanel();" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
               <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-              Yükselt (${upgradeCost.toLocaleString()} birim)
+              Upgrade (${upgradeCost.toLocaleString()} units)
             </button>
           </div>
         ` : ''}

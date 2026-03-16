@@ -62,8 +62,8 @@ export class WindTurbine extends Building {
       // Not enough money - show notification
       if (window.ui) {
         window.ui.showNotification(
-          'Yetersiz Para',
-          `Yükseltme için ${upgradeCost.toLocaleString()} birim gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()}`,
+          'Insufficient Funds',
+          `Upgrade requires ${upgradeCost.toLocaleString()} units. Your current funds: ${window.gameState.money.toLocaleString()}`,
           'error'
         );
       }
@@ -154,12 +154,12 @@ export class WindTurbine extends Building {
     html += `
       <div class="info-heading">
         <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Z"/><path d="M12 12c0 2.2 1.8 4 4 4s4-1.8 4-4-1.8-4-4-4-4 1.8-4 4Z"/><path d="M12 12c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4Z"/><path d="M12 2v10"/><path d="M12 12v10"/><path d="M12 12H2"/><path d="M22 12H12"/></svg>
-        Rüzgar Türbini
+        Wind Turbine
       </div>
-      <span class="info-label">Seviye </span>
+      <span class="info-label">Level </span>
       <span class="info-value">${this.level}/${this.maxLevel}</span>
       <br>
-      <span class="info-label">Enerji Üretimi </span>
+      <span class="info-label">Energy Production </span>
       <span class="info-value">${this.energyProduction} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>/tick</span>
       <br>
     `;
@@ -171,7 +171,7 @@ export class WindTurbine extends Building {
         <div style="padding: 8px; margin-top: 8px;">
           <button class="action-button" onclick="window.game?.upgradeFactory(${this.x}, ${this.y})" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-            Yükselt (${upgradeCost.toLocaleString()} birim)
+            Upgrade (${upgradeCost.toLocaleString()} units)
           </button>
         </div>
       `;

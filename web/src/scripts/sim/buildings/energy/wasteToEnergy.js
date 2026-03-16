@@ -55,7 +55,7 @@ export class WasteToEnergyPlant extends Building {
 
   constructor(x = 0, y = 0) {
     super(x, y);
-    this.name = 'Atıktan Enerji Tesisi';
+    this.name = 'Waste-to-Energy Plant';
     // Plant consumes some energy for operation
     this.power.required = 5;
   }
@@ -102,8 +102,8 @@ export class WasteToEnergyPlant extends Building {
       // Not enough money - show notification
       if (window.ui) {
         window.ui.showNotification(
-          'Yetersiz Para',
-          `Yükseltme için ${upgradeCost.toLocaleString()} birim gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()}`,
+          'Insufficient Funds',
+          `Upgrade requires ${upgradeCost.toLocaleString()} units. Your current funds: ${window.gameState.money.toLocaleString()}`,
           'error'
         );
       }
@@ -254,29 +254,29 @@ export class WasteToEnergyPlant extends Building {
     }
 
     html += `
-      < div class="info-heading" >
+      <div class="info-heading">
         <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" /><path d="M21 16v5H16" /><path d="M11 20H4v-5" /></svg>
-        Atıktan Enerji Tesisi
-      </div >
-      <span class="info-label">Seviye </span>
+        Waste-to-Energy Plant
+      </div>
+      <span class="info-label">Level </span>
       <span class="info-value">${this.level}/${this.maxLevel}</span>
       <br>
-      <span class="info-label">Enerji </span>
+      <span class="info-label">Energy </span>
       <span class="info-value">${this.power.isFullyPowered ? this.power.required : 0}/${this.power.required} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
       <br>
-      <span class="info-label">Atık Tüketimi </span>
-      <span class="info-value">${this.wasteConsumption} atık/döngü</span>
+      <span class="info-label">Waste Consumption </span>
+      <span class="info-value">${this.wasteConsumption} waste/cycle</span>
       <br>
-      <span class="info-label">Enerji Üretimi </span>
-      <span class="info-value">${this.energyProduction} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>/döngü</span>
+      <span class="info-label">Energy Production </span>
+      <span class="info-value">${this.energyProduction} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>/cycle</span>
       <br>
-      <span class="info-label">Enerji/Atık Oranı </span>
-      <span class="info-value">${this.energyPerWaste} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>/atık</span>
+      <span class="info-label">Energy/Waste Ratio </span>
+      <span class="info-value">${this.energyPerWaste} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>/waste</span>
       <br>
-      <span class="info-label">Mevcut Atık </span>
+      <span class="info-label">Available Waste </span>
       <span class="info-value">${totalWasteAvailable.toLocaleString()}</span>
       <br>
-      <span class="info-label">İşlem İlerlemesi </span>
+      <span class="info-label">Process Progress </span>
       <span class="info-value">${(this.processingProgress * 100).toFixed(0)}%</span>
       <br>
     `;
@@ -288,7 +288,7 @@ export class WasteToEnergyPlant extends Building {
         <div style="padding: 8px; margin-top: 8px;">
           <button class="action-button" onclick="window.game?.upgradeFactory(${this.x}, ${this.y})" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-            Yükselt (${upgradeCost.toLocaleString()} birim)
+            Upgrade (${upgradeCost.toLocaleString()} units)
           </button>
         </div>
       `;

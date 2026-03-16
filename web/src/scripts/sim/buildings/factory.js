@@ -329,8 +329,8 @@ export class Factory extends Building {
       // Not enough money - show notification
       if (window.ui) {
         window.ui.showNotification(
-          '💰 Yetersiz Para',
-          `Yükseltme için ${upgradeCost.toLocaleString()} 💰 gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()} 💰`,
+          '💰 Insufficient Funds',
+          `Upgrade requires ${upgradeCost.toLocaleString()} 💰. Your current funds: ${window.gameState.money.toLocaleString()} 💰`,
           'error'
         );
       }
@@ -653,7 +653,7 @@ export class Factory extends Building {
           // Check if we have resources for this recipe
           if (window.resourceManager && window.resourceManager.hasResources(recipe.inputs)) {
             // We can produce this recipe, so production should start
-            html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Otomatik üretim başlatılacak...</div>`;
+            html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Automatic production will start...</div>`;
             break;
           } else {
             // Missing resources for this recipe
@@ -682,7 +682,7 @@ export class Factory extends Building {
       // Show warning if no resources available
       if (canProduceAny && missingResources.length > 0) {
         html += `<div style="padding: 8px; margin-top: 8px; background-color: #ff980020; border-left: 3px solid #ff9800; border-radius: 4px;">`;
-        html += `<div style="color: #ff9800; font-weight: bold; margin-bottom: 4px;">⚠️ Ham Madde Eksik!</div>`;
+        html += `<div style="color: #ff9800; font-weight: bold; margin-bottom: 4px;">⚠️ Missing Raw Materials!</div>`;
         missingResources.forEach(({ recipe, missing }) => {
           html += `<div style="color: #ccc; font-size: 0.9em; margin: 4px 0;">`;
           html += `<strong>${recipe}:</strong><br>`;
@@ -693,7 +693,7 @@ export class Factory extends Building {
         });
         html += `</div>`;
       } else if (!canProduceAny) {
-        html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Fabrika seviyesi yetersiz veya tarife yok.</div>`;
+        html += `<div style="padding: 8px; color: #888; font-size: 0.9em;">Factory level insufficient or no recipe available.</div>`;
       }
     }
 
@@ -705,18 +705,18 @@ export class Factory extends Building {
       const wasteLevel = this.waste.getLevel();
       const wasteColor = wasteLevel >= 95 ? '#f44336' : wasteLevel >= 80 ? '#FF9800' : '#4CAF50';
       html += `
-        <div class="info-heading" style="margin-top: 12px;">🗑️ Atık Durumu</div>
+        <div class="info-heading" style="margin-top: 12px;">🗑️ Waste Status</div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Atık Seviyesi:</span>
+            <span>Waste Level:</span>
             <span style="color: ${wasteColor}; font-weight: bold;">${this.waste.amount.toFixed(1)} / ${this.waste.maxCapacity}</span>
           </div>
           <div style="background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 4px;">
             <div style="background: ${wasteColor}; height: 100%; width: ${wasteLevel}%; transition: width 0.3s;"></div>
           </div>
-          ${wasteLevel >= 95 ? '<div style="color: #f44336; font-size: 0.9em;">⚠️ Kritik! Bina durdu.</div>' : ''}
-          ${wasteLevel >= 80 && wasteLevel < 95 ? '<div style="color: #FF9800; font-size: 0.9em;">⚠️ Uyarı! Üretim -50%</div>' : ''}
-          ${wasteLevel >= 80 && wasteLevel < 95 ? '<div style="color: #FF9800; font-size: 0.9em;">⚠️ Uyarı! Üretim -20%</div>' : ''}
+          ${wasteLevel >= 95 ? '<div style="color: #f44336; font-size: 0.9em;">⚠️ Critical! Building stopped.</div>' : ''}
+          ${wasteLevel >= 80 && wasteLevel < 95 ? '<div style="color: #FF9800; font-size: 0.9em;">⚠️ Warning! Production -50%</div>' : ''}
+          ${wasteLevel >= 80 && wasteLevel < 95 ? '<div style="color: #FF9800; font-size: 0.9em;">⚠️ Warning! Production -20%</div>' : ''}
         </div>
       `;
     }
@@ -728,7 +728,7 @@ export class Factory extends Building {
         <div style="padding: 8px; margin-top: 8px;">
           <button class="action-button" onclick="window.game?.upgradeFactory(${this.x}, ${this.y})" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-            Yükselt (${upgradeCost.toLocaleString()} birim)
+            Upgrade (${upgradeCost.toLocaleString()} units)
           </button>
         </div>
       `;

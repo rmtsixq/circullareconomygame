@@ -1283,3 +1283,253 @@ h1 {
     transform: translateY(0);
   }
 }
+
+/* --- MOBILE OPTIMIZATION --- */
+@media (max-width: 768px) {
+  /* Title Bar adjustments */
+  #title-bar {
+    height: 44px;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+  .title-bar-left-items {
+    padding-left: 4px;
+  }
+
+  .tb-sep {
+    margin: 0 6px;
+  }
+
+  .title-bar-center-items {
+    font-size: 1.2em;
+    display: none; /* Hide city name in title bar on small mobile if needed, or make it smaller */
+  }
+
+  #city-name {
+    display: none;
+  }
+
+  /* Scores Bar adjustments */
+  #scores-bar {
+    top: 44px;
+    height: 32px;
+    gap: 12px;
+    padding: 0 8px;
+    overflow-x: auto;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .score-item {
+    font-size: 0.7em;
+  }
+
+  .score-bar-bg {
+    width: 40px;
+  }
+
+  /* Floating UI Toolbar - Bottom Mobile Menu */
+  #ui-toolbar {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-width: 100%;
+    max-height: 72px;
+    height: 72px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 2000;
+    gap: 12px;
+  }
+
+  .ui-button {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 12px;
+  }
+
+  .toolbar-svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Info Panel - Mobile Slide-up */
+  #info-panel {
+    top: auto!important;
+    bottom: 72px!important;
+    left: 0!important;
+    right: 0!important;
+    width: 100%!important;
+    max-height: 35vh!important;
+    border-radius: 20px 20px 0 0!important;
+    background: rgba(15, 20, 30, 0.95)!important;
+    backdrop-filter: blur(15px)!important;
+    border-top: 2px solid rgba(255, 255, 255, 0.1)!important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5)!important;
+    padding-bottom: 20px!important;
+    visibility: visible!important;
+    display: block!important;
+    animation: slideUpMobile 0.4s ease-out;
+  }
+
+  @keyframes slideUpMobile {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .info-heading {
+    border-radius: 10px 10px 0 0;
+    margin-top: 0;
+    padding: 10px;
+  }
+
+  /* Floating Resource Panel */
+  #resource-panel {
+    top: 85px!important;
+    bottom: auto!important;
+    left: 10px!important;
+    right: 10px!important;
+    width: auto!important;
+    max-width: none!important;
+    max-height: 60vh!important;
+    transform: none!important;
+  }
+
+  /* Hide instructions on mobile */
+  #instructions {
+    display: none;
+  }
+
+  /* Increase tap targets for lists */
+  .info-citizen {
+    padding: 10px 20px;
+  }
+
+  .action-button {
+    padding: 12px 16px;
+    font-size: 1.1em;
+    width: 100%;
+    margin: 8px 0;
+  }
+
+  /* Welcome Screen mobile refinements */
+  .welcome-title {
+    font-size: 2.5em;
+  }
+
+  .welcome-input {
+    font-size: 1em;
+    padding: 15px;
+  }
+
+  .welcome-button {
+    padding: 15px;
+    font-size: 1em;
+  }
+
+  /* Tutorial Panel Mobile adjustment - Floating Card + Collapsible */
+  .tutorial-panel {
+    bottom: 85px!important; /* Elevated above toolbar */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 92% !important;
+    max-width: 400px !important;
+    top: auto!important;
+    height: auto!important;
+    padding: 10px 35px 10px 12px!important;
+    max-height: 160px!important;
+    z-index: 2500!important;
+    overflow-y: visible!important;
+    border-radius: 16px!important;
+    box-sizing: border-box!important;
+    background: rgba(15, 20, 30, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(76, 175, 80, 0.4) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .tutorial-panel.minimized {
+    max-height: 44px!important;
+    padding-bottom: 5px!important;
+  }
+
+  .tutorial-collapse-btn {
+    position: absolute;
+    top: -16px; /* Push it slightly outside the card */
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    background: rgba(20, 25, 35, 0.95);
+    border: 1px solid rgba(76, 175, 80, 0.6);
+    border-radius: 50%;
+    color: #4CAF50 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 12px rgba(76, 175, 80, 0.2);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .tutorial-collapse-btn:active {
+    background: rgba(76, 175, 80, 0.25);
+    transform: scale(0.9);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .tutorial-collapse-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #4CAF50 !important;
+    stroke-width: 2.5 !important;
+    fill: none !important;
+    pointer-events: none;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .tutorial-title {
+    font-size: 14px!important;
+    margin-bottom: 4px!important;
+    font-weight: 800!important;
+    max-width: calc(100% - 40px);
+  }
+
+  .tutorial-text {
+    font-size: 11px!important;
+    line-height: 1.3!important;
+    margin-bottom: 6px!important;
+    opacity: 0.9;
+  }
+
+  .tutorial-footer {
+    margin-top: 6px!important;
+    padding-top: 6px!important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1)!important;
+  }
+
+  .tutorial-next-button {
+    padding: 6px 16px!important;
+    font-size: 12px!important;
+    border-radius: 8px!important;
+    height: 32px!important;
+  }
+}
+
+
+
+

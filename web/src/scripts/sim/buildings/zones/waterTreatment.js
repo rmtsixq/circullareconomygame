@@ -3,9 +3,9 @@ import { Building } from '../building.js';
 import { BuildingType } from '../buildingType.js';
 
 /**
- * Water Treatment Plant (Su Arıtma Tesisi)
- * Atık suyu arıtarak tekrar kullanılabilir su üretir
- * Circular economy su döngüsü bileşeni
+ * Water Treatment Plant
+ * Treats wastewater to produce reusable water
+ * Circular economy water cycle component
  */
 export class WaterTreatmentPlant extends Building {
   type = BuildingType.waterTreatment;
@@ -28,7 +28,7 @@ export class WaterTreatmentPlant extends Building {
 
   constructor(x, y) {
     super(x, y);
-    this.name = 'Su Arıtma Tesisi';
+    this.name = 'Water Treatment Plant';
 
     this.jobs = {
       maxWorkers: 6,
@@ -72,7 +72,7 @@ export class WaterTreatmentPlant extends Building {
     const cost = this.getUpgradeCost();
     if (window.gameState && !window.gameState.spendMoney(cost)) {
       if (window.ui) {
-        window.ui.showNotification('💰 Yetersiz Para', `Yükseltme için ${cost.toLocaleString()} 💰 gerekiyor.`, 'error');
+        window.ui.showNotification('💰 Insufficient Funds', `Upgrade requires ${cost.toLocaleString()} 💰.`, 'error');
       }
       return false;
     }
@@ -119,22 +119,22 @@ export class WaterTreatmentPlant extends Building {
           ${this.name}
         </div>
         <div class="info-section">
-          <span class="info-label">Seviye </span>
+          <span class="info-label">Level </span>
           <span class="info-value">${this.level}/${this.maxLevel}</span>
           <br>
-          <span class="info-label">Çalışanlar </span>
+          <span class="info-label">Workers </span>
           <span class="info-value">${workerCount}/${this.jobs.maxWorkers}</span>
           <br>
-          <span class="info-label">Arıtma Kapasitesi </span>
-          <span class="info-value" style="color: #03A9F4;">${capacity} birim/döngü</span>
+          <span class="info-label">Treatment Capacity </span>
+          <span class="info-value" style="color: #03A9F4;">${capacity} units/tick</span>
           <br>
-          <span class="info-label">Dönüşüm Oranı </span>
+          <span class="info-label">Conversion Rate </span>
           <span class="info-value" style="color: #00BCD4;">${rate}%</span>
         </div>
         ${canUpgrade ? `
           <div style="padding: 8px; margin-top: 8px;">
             <button class="action-button" onclick="window.game.upgradeFactory(${this.x}, ${this.y})" style="width: 100%;">
-              ⬆️ Yükselt (${this.getUpgradeCost().toLocaleString()} 💰)
+              ⬆️ Upgrade (${this.getUpgradeCost().toLocaleString()} 💰)
             </button>
           </div>
         ` : ''}

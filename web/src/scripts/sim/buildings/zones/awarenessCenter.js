@@ -3,8 +3,8 @@ import { Building } from '../building.js';
 import { BuildingType } from '../buildingType.js';
 
 /**
- * Awareness Center (Circular Farkındalık Merkezi)
- * Eğitim + sürdürülebilirlik katkısı, geri dönüşüm verimini artırır
+ * Awareness Center (Circular Awareness Center)
+ * Education + sustainability contribution, increases recycling efficiency
  */
 export class AwarenessCenter extends Building {
   type = BuildingType.awarenessCenter;
@@ -14,7 +14,7 @@ export class AwarenessCenter extends Building {
 
   constructor(x, y) {
     super(x, y);
-    this.name = 'Circular Farkındalık Merkezi';
+    this.name = 'Circular Awareness Center';
 
     this.jobs = {
       maxWorkers: 5,
@@ -39,7 +39,7 @@ export class AwarenessCenter extends Building {
     const cost = this.getUpgradeCost();
     if (window.gameState && !window.gameState.spendMoney(cost)) {
       if (window.ui) {
-        window.ui.showNotification('💰 Yetersiz Para', `Yükseltme için ${cost.toLocaleString()} 💰 gerekiyor.`, 'error');
+        window.ui.showNotification('💰 Insufficient Funds', `Upgrade requires ${cost.toLocaleString()} 💰.`, 'error');
       }
       return false;
     }
@@ -92,22 +92,22 @@ export class AwarenessCenter extends Building {
           ${this.name}
         </div>
         <div class="info-section">
-          <span class="info-label">Seviye </span>
+          <span class="info-label">Level </span>
           <span class="info-value">${this.level}/${this.maxLevel}</span>
           <br>
-          <span class="info-label">Çalışanlar </span>
+          <span class="info-label">Workers </span>
           <span class="info-value">${workerCount}/${this.jobs.maxWorkers}</span>
           <br>
-          <span class="info-label">Eğitim Katkısı </span>
+          <span class="info-label">Education Contribution </span>
           <span class="info-value" style="color: #2196F3;">+${4 + (this.level - 1) * 2}</span>
           <br>
-          <span class="info-label">Geri Dönüşüm Boost </span>
+          <span class="info-label">Recycling Boost </span>
           <span class="info-value" style="color: #8BC34A;">x${this.getRecyclingBoost().toFixed(1)}</span>
         </div>
         ${canUpgrade ? `
           <div style="padding: 8px; margin-top: 8px;">
             <button class="action-button" onclick="window.game.upgradeFactory(${this.x}, ${this.y})" style="width: 100%;">
-              ⬆️ Yükselt (${this.getUpgradeCost().toLocaleString()} 💰)
+              ⬆️ Upgrade (${this.getUpgradeCost().toLocaleString()} 💰)
             </button>
           </div>
         ` : ''}

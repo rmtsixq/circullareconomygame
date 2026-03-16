@@ -3,9 +3,9 @@ import { Building } from './building.js';
 import { BuildingType } from './buildingType.js';
 
 /**
- * MRF - Material Recovery Facility (Atık Toplama ve Ayrıştırma Tesisi)
- * Karışık atığı alır, plastik/metal/cam/organik olarak ayrıştırır
- * MRF yoksa geri dönüşüm verimi %20'ye düşer (GDD kuralı)
+ * MRF - Material Recovery Facility (Waste Sorting Facility)
+ * Takes mixed waste, sorts into plastic/metal/glass/organic
+ * If no MRF exists, recycling efficiency drops to 20%
  */
 export class MRF extends Building {
   type = BuildingType.mrf;
@@ -31,7 +31,7 @@ export class MRF extends Building {
 
   constructor(x, y) {
     super(x, y);
-    this.name = 'Atık Ayrıştırma Tesisi (MRF)';
+    this.name = 'Material Recovery Facility (MRF)';
 
     this.jobs = {
       maxWorkers: 8,
@@ -105,7 +105,7 @@ export class MRF extends Building {
     const cost = this.getUpgradeCost();
     if (window.gameState && !window.gameState.spendMoney(cost)) {
       if (window.ui) {
-        window.ui.showNotification('💰 Yetersiz Para', `Yükseltme için ${cost.toLocaleString()} 💰 gerekiyor.`, 'error');
+        window.ui.showNotification('💰 Insufficient Funds', `Upgrade requires ${cost.toLocaleString()} 💰.`, 'error');
       }
       return false;
     }
@@ -186,22 +186,22 @@ export class MRF extends Building {
           ${this.name}
         </div>
         <div class="info-section">
-          <span class="info-label">Seviye </span>
+          <span class="info-label">Level </span>
           <span class="info-value">${this.level}/${this.maxLevel}</span>
           <br>
-          <span class="info-label">Çalışanlar </span>
+          <span class="info-label">Workers </span>
           <span class="info-value">${workerCount}/${this.jobs.maxWorkers}</span>
           <br>
-          <span class="info-label">Ayrıştırma Verimi </span>
+          <span class="info-label">Sorting Efficiency </span>
           <span class="info-value" style="color: #FF9800;">${eff}%</span>
           <br>
-          <span class="info-label">İşlem Hızı </span>
-          <span class="info-value">${this.processRate * this.level} birim/döngü</span>
+          <span class="info-label">Process Speed </span>
+          <span class="info-value">${this.processRate * this.level} units/tick</span>
         </div>
         ${canUpgrade ? `
           <div style="padding: 8px; margin-top: 8px;">
             <button class="action-button" onclick="window.game.upgradeFactory(${this.x}, ${this.y})" style="width: 100%;">
-              ⬆️ Yükselt (${this.getUpgradeCost().toLocaleString()} 💰)
+              ⬆️ Upgrade (${this.getUpgradeCost().toLocaleString()} 💰)
             </button>
           </div>
         ` : ''}

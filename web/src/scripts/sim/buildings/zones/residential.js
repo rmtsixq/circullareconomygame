@@ -138,34 +138,34 @@ export class ResidentialZone extends Zone {
       const levelUnlocks = window.levelUnlocks;
 
       html += `
-        <div class="info-heading">Oyuncu Evi (HQ)</div>
+        <div class="info-heading">Player House (HQ)</div>
         <div style="padding: 8px; color: #ffdd88; font-size: 0.9em; margin-bottom: 8px;">
-          Şehir yönetim merkezi. Kaldırılamaz.
+          City management center. Cannot be removed.
         </div>
         <div style="padding: 8px;">
           ${levelUnlocks && levelUnlocks.isUnlocked('inventory-panel', level) ? `
           <button class="action-button" onclick="ui.openInventoryPanel()" style="width: 100%; margin-bottom: 4px;">
-            Envanter
+            Inventory
           </button>
           ` : ''}
           ${levelUnlocks && levelUnlocks.isUnlocked('material-shop', level) ? `
           <button class="action-button" onclick="ui.openMaterialShop()" style="width: 100%; margin-bottom: 4px;">
-            Ham Madde Satın Al
+            Buy Raw Materials
           </button>
           ` : ''}
           ${levelUnlocks && levelUnlocks.isUnlocked('hq-policy-panel', level) ? `
           <button class="action-button" onclick="ui.openSettingsPanel()" style="width: 100%; margin-bottom: 4px;">
-            Şehir Politikaları
+            City Policies
           </button>
           ` : ''}
           ${levelUnlocks && levelUnlocks.isUnlocked('hq-energy-management', level) ? `
           <button class="action-button" onclick="ui.openEnergyManagementPanel()" style="width: 100%; margin-bottom: 4px;">
-            Enerji Yönetimi
+            Energy Management
           </button>
           ` : ''}
           ${levelUnlocks && levelUnlocks.isUnlocked('hq-statistics', level) ? `
           <button class="action-button" onclick="ui.openStatisticsPanel()" style="width: 100%; margin-bottom: 4px;">
-            Şehir İstatistikleri
+            City Statistics
           </button>
           ` : ''}
           ${levelUnlocks && levelUnlocks.isUnlocked('hq-trade', level) ? `
@@ -173,22 +173,22 @@ export class ResidentialZone extends Zone {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 1em; height: 1em; vertical-align: -0.125em; margin-right: 0.25em;">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v2h-2zm0 4h2v6h-2zm-3-1h2v2H8zm0 4h2v2H8zm8-4h-2v2h2zm0 4h-2v2h2z"/>
             </svg>
-            Dış Ticaret (Export)
+            Foreign Trade (Export)
           </button>
           ` : ''}
           ${levelUnlocks && levelUnlocks.isUnlocked('hq-research', level) ? `
           <button class="action-button" onclick="ui.openResearchPanel()" style="width: 100%; margin-bottom: 4px;">
-            Araştırma & Teknoloji
+            Research & Technology
           </button>
           ` : ''}
           <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
             <button class="action-button" onclick="ui.saveGame()" style="width: 100%; margin-bottom: 4px; background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%); display: flex; align-items: center; justify-content: center; gap: 8px;">
               <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-              Oyunu Kaydet
+              Save Game
             </button>
             <button class="action-button" onclick="ui.loadGame()" style="width: 100%; background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); display: flex; align-items: center; justify-content: center; gap: 8px;">
               <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-              Oyunu Yükle
+              Load Game
             </button>
           </div>
         </div>

@@ -28,6 +28,12 @@ export class InputManager {
     window.ui.gameWindow.addEventListener('mouseup', this.#onMouseUp.bind(this), false);
     window.ui.gameWindow.addEventListener('mousemove', this.#onMouseMove.bind(this), false);
     window.ui.gameWindow.addEventListener('contextmenu', (event) => event.preventDefault(), false);
+
+    // Touch events
+    window.ui.gameWindow.addEventListener('touchstart', this.#onTouchStart.bind(this), { passive: false });
+    window.ui.gameWindow.addEventListener('touchmove', this.#onTouchMove.bind(this), { passive: false });
+    window.ui.gameWindow.addEventListener('touchend', this.#onTouchEnd.bind(this), { passive: false });
+    window.ui.gameWindow.addEventListener('touchcancel', this.#onTouchEnd.bind(this), { passive: false });
   }
 
   /**
@@ -72,5 +78,53 @@ export class InputManager {
     this.isMiddleMouseDown = event.buttons & 4;
     this.mouse.x = event.clientX;
     this.mouse.y = event.clientY;
+  }
+
+  /**
+   * Event handler for 'touchstart' event
+   * @param {TouchEvent} event 
+   */
+  #onTouchStart(event) {
+    // Only handle touch if inside game window
+    if (event.touches.length > 0) {
+      if (event.touches.length === 1) {
+        this.isLeftMouseDown = true;
+      } else if (event.touches.length === 2) {
+        this.isRightMouseDown = true;
+      }
+      this.mouse.x = event.touches[0].clientX;
+      this.mouse.y = event.touches[0].clientY;
+    }
+  }
+
+  /**
+   * Event handler for 'touchmove' event
+   * @param {TouchEvent} event 
+   */
+  #onTouchMove(event) {
+    if (event.touches.length > 0) {
+      this.mouse.x = event.touches[0].clientX;
+      this.mouse.y = event.touches[0].clientY;
+      
+      // Prevent scrolling while interacting with the game
+      if (event.touches.length <= 2) {
+        event.preventDefault();
+      }
+    }
+  }
+
+  /**
+   * Event handler for 'touchend' event
+   * @param {TouchEvent} event 
+   */
+  #onTouchEnd(event) {
+    if (event.touches.length === 0) {
+      this.isLeftMouseDown = false;
+      this.isRightMouseDown = false;
+    } else if (event.touches.length === 1) {
+      // If we went from 2 to 1 touch, stop "right click"
+      this.isRightMouseDown = false;
+      this.isLeftMouseDown = true;
+    }
   }
 }

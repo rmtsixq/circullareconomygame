@@ -523,18 +523,18 @@ export class Citizen {
       } else if (this.workplace.type) {
         // Map building types to readable names
         const typeNames = {
-          'textile-factory': 'Tekstil Fabrikası',
-          'technology-factory': 'Teknoloji Fabrikası',
-          'steel-factory': 'Çelik Fabrikası',
-          'automotive-factory': 'Otomotiv Fabrikası',
-          'commercial': 'Ticari Bina',
-          'industrial': 'Endüstriyel Bina',
-          'recycling-center': 'Geri Dönüşüm Merkezi',
-          'farming': 'Tarım Alanı'
+          'textile-factory': 'Textile Factory',
+          'technology-factory': 'Technology Factory',
+          'steel-factory': 'Steel Factory',
+          'automotive-factory': 'Automotive Factory',
+          'commercial': 'Commercial Building',
+          'industrial': 'Industrial Building',
+          'recycling-center': 'Recycling Center',
+          'farming': 'Farming Area'
         };
         workplaceName = typeNames[this.workplace.type] || this.workplace.type;
       } else {
-        workplaceName = 'Bilinmeyen İş Yeri';
+        workplaceName = 'Unknown Workplace';
       }
       workplaceInfo = `
           <span>
@@ -559,18 +559,18 @@ export class Citizen {
         <span class="info-citizen-details" style="margin-bottom: 4px;">
           <span>
             <img class="info-citizen-icon" src="icons/calendar.png">
-            ${this.age} yaş
+            ${this.age} years old
           </span>
           ${workplaceInfo}
         </span>
         <div class="info-citizen-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.8em; opacity: 0.9;">
-          <div title="Refah/Gelir">💰 ${Math.round(this.income)}</div>
-          <div title="Eğitim">🎓 ${Math.round(this.education)}</div>
-          <div title="Sağlık">🏥 ${Math.round(this.health)}</div>
-          <div title="Eko-Bilinç">♻️ ${Math.round(this.awareness)}</div>
+          <div title="Wellbeing/Income">💰 ${Math.round(this.income)}</div>
+          <div title="Education">🎓 ${Math.round(this.education)}</div>
+          <div title="Health">🏥 ${Math.round(this.health)}</div>
+          <div title="Eco-Awareness">♻️ ${Math.round(this.awareness)}</div>
         </div>
         <div style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2px;">
-          <span style="font-size: 0.8em;">Yaşam Kalitesi:</span>
+          <span style="font-size: 0.8em;">Life Quality:</span>
           <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.3); border-radius: 2px; margin-top: 2px;">
             <div style="width: ${this.lifeQuality}%; height: 100%; background: #4CAF50; border-radius: 2px;"></div>
           </div>

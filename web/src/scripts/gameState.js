@@ -13,11 +13,11 @@ export class GameState {
     this.circularScore = 0;
 
     // City Indices (0-100) - from ScoringSystem
-    this.wellbeing = 50;       // 🟢 Refah
-    this.education = 30;       // 🎓 Eğitim
-    this.health = 70;          // 🏥 Sağlık
-    this.sustainability = 0;   // ♻️ Sürdürülebilirlik
-    this.managementScore = 0;  // ⭐ Yönetim Puanı
+    this.wellbeing = 50;       // 🟢 Wellbeing
+    this.education = 30;       // 🎓 Education
+    this.health = 70;          // 🏥 Health
+    this.sustainability = 0;   // ♻️ Sustainability
+    this.managementScore = 0;  // ⭐ Management Score
 
     /**
      * Total city population

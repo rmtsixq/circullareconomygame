@@ -1129,6 +1129,11 @@ export class GameUI {
 
     if (!factoriesEl || !recyclingEl || !commercialEl) return;
 
+    // Ensure they don't block scroll on mobile
+    factoriesEl.addEventListener('touchstart', (e) => e.stopPropagation(), {passive: true});
+    recyclingEl.addEventListener('touchstart', (e) => e.stopPropagation(), {passive: true});
+    commercialEl.addEventListener('touchstart', (e) => e.stopPropagation(), {passive: true});
+
     let factories = parseInt(factoriesEl.value) || 0;
     let recycling = parseInt(recyclingEl.value) || 0;
     let commercial = parseInt(commercialEl.value) || 0;
@@ -1982,19 +1987,22 @@ export class GameUI {
     const borderColor = type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3';
     const textColor = type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3';
 
+    const isMobile = window.innerWidth <= 768;
+
     notification.style.cssText = `
       position: fixed;
-      top: 80px;
-      right: 20px;
+      top: ${isMobile ? '10px' : '80px'};
+      right: ${isMobile ? '10px' : '20px'};
+      left: ${isMobile ? '10px' : 'auto'};
       background: ${bgColor};
       border: 1px solid ${borderColor};
       border-radius: 8px;
       padding: 12px 16px;
-      min-width: 300px;
-      max-width: 400px;
+      min-width: ${isMobile ? 'auto' : '300px'};
+      max-width: ${isMobile ? 'calc(100% - 20px)' : '400px'};
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       z-index: 10000;
-      animation: slideIn 0.3s ease-out;
+      animation: ${isMobile ? 'fadeIn' : 'slideIn'} 0.3s ease-out;
     `;
 
     notification.innerHTML = `
@@ -2049,6 +2057,8 @@ export class GameUI {
       modal.className = 'level-up-modal-overlay';
       document.body.appendChild(modal);
     }
+
+    const isMobile = window.innerWidth <= 768;
 
     // Build features HTML
     const featuresHTML = levelInfo.features.map(feature =>
@@ -2223,6 +2233,27 @@ export class GameUI {
     const panel = document.getElementById('tutorial-panel');
     if (panel) {
       panel.style.display = 'none';
+      panel.classList.remove('minimized');
+      const collapseBtn = document.getElementById('tutorial-collapse-btn');
+      if (collapseBtn) {
+        collapseBtn.style.transform = '';
+      }
+    }
+  }
+
+  toggleTutorialMinimize() {
+    const panel = document.getElementById('tutorial-panel');
+    const body = document.getElementById('tutorial-body-collapse');
+    const btn = document.getElementById('tutorial-collapse-btn');
+    if (!panel || !body) return;
+
+    panel.classList.toggle('minimized');
+    if (panel.classList.contains('minimized')) {
+      body.style.display = 'none';
+      if (btn) btn.style.transform = 'rotate(180deg)';
+    } else {
+      body.style.display = 'block';
+      if (btn) btn.style.transform = 'rotate(0deg)';
     }
   }
 

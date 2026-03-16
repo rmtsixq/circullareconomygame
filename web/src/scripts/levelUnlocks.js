@@ -27,7 +27,7 @@ export class LevelUnlocks {
    * @type {Object}
    */
   static unlockLevels = {
-    // Seviye 1 - Temel Kurulum (Başlangıç)
+    // Level 1 - Basic Setup (Start)
     'player-house': 1,
     'energy-pool': 1,
     'solar-panel': 1,
@@ -46,7 +46,7 @@ export class LevelUnlocks {
     'school': 2,
     'hospital': 2,
 
-    // Seviye 3 - Geri Dönüşüm (Sürdürülebilirlik > 40)
+    // Level 3 - Recycling (Sustainability > 40)
     'recycling-center': 3,
     'local-waste': 3,
     'waste-color-system': 3,
@@ -59,20 +59,20 @@ export class LevelUnlocks {
     'mrf': 3,
     'water-treatment': 3,
 
-    // Seviye 4 - Temiz Enerji & Kriz (Emisyon / Çevre Odaklı)
+    // Level 4 - Clean Energy & Crisis (Emission / Environment Focused)
     'wind-turbine': 4,
     'waste-to-energy': 4,
     'global-pollution': 4,
     'energy-priority': 4,
 
-    // Seviye 5 - Teknoloji & Sembiyez (Sürdürülebilirlik > 70)
+    // Level 5 - Technology & Symbiosis (Sustainability > 70)
     'technology-factory': 5,
     'farming-area': 5,
     'hydro-plant': 5,
     'industrial-symbiosis': 5,
     'residential-level-3': 5,
 
-    // Seviye 6 - Net Sıfır Şehir (Refah > 75 & Sağlık > 70)
+    // Level 6 - Net Zero City (Wellbeing > 75 & Health > 70)
     'steel-factory': 6,
     'automotive-factory': 6,
     'net-zero-bonus': 6,
@@ -135,102 +135,102 @@ export class LevelUnlocks {
   static getLevelInfo(level) {
     const levelInfo = {
       1: {
-        title: 'Temel Kurulum',
-        description: 'Şehir kurulumuna başladınız! Temel sistemleri ve vatandaş ihtiyaçlarını öğrenin.',
+        title: 'Basic Setup',
+        description: 'You have started building your city! Learn the basic systems and citizen needs.',
         features: [
-          'Konut (Level 1)',
+          'Residence (Level 1)',
           'Solar Panel',
-          'Tekstil Fabrikası',
-          'Ham Madde Satın Alma',
-          'Para & Enerji Havuzu',
-          'Vatandaş İndeksleri'
+          'Textile Factory',
+          'Purchase Raw Materials',
+          'Money & Energy Pool',
+          'Citizen Indices'
         ],
         tips: [
-          'Ev yerleştirerek nüfusu artırın',
-          'Solar panel kurarak şehrin enerji ihtiyacını karşılayın',
-          'Vatandaşların sağlık ve refah durumunu takip edin'
+          'Increase population by placing houses',
+          'Meet city energy needs by building solar panels',
+          'Monitor citizen health and wellbeing'
         ]
       },
       2: {
-        title: 'Sanayi ve Refah',
-        description: 'Refah seviyesi 50\'yi geçti! Sanayiye ilk adımı atın.',
+        title: 'Industry and Welfare',
+        description: 'Wellbeing has passed 50! Take the first step into industry.',
         features: [
-          'Konut (Level 2)',
-          'Üretim Kuyruğu',
-          'Otomatik Satın Alma'
+          'Residence (Level 2)',
+          'Production Queue',
+          'Auto-Purchase'
         ],
         tips: [
-          'Üretim yapıp satarak gelirinizi artırın',
-          'İşsizliği azaltarak vatandaş refahını yükseltin',
-          'Sanayiyle gelen atıklara dikkat etmeye başlayın'
+          'Increase income by producing and selling goods',
+          'Boost citizen welfare by reducing unemployment',
+          'Start paying attention to waste from industry'
         ]
       },
       3: {
-        title: 'Geri Dönüşüm ve Tasarruf',
-        description: 'Sürdürülebilirlik 40\'ı geçti! Atık yönetimini profesyonelleştirin.',
+        title: 'Recycling and Savings',
+        description: 'Sustainability has passed 40! Professionalize waste management.',
         features: [
-          'Geri Dönüşüm Tesisi',
-          'Geri Dönüştürülmüş Hammadde',
-          'Şehir Politikaları (HQ)',
-          'Atık Takip Sistemi'
+          'Recycling Center',
+          'Recycled Raw Materials',
+          'City Policies (HQ)',
+          'Waste Tracking System'
         ],
         tips: [
-          'Atıkları geri dönüştürerek hammadde tasarrufu yapın',
-          'Circular Score değerini yükselterek bonuslar kazanın',
-          'Şehir politikalarıyla verimliliği optimize edin'
+          'Save raw materials by recycling waste',
+          'Earn bonuses by increasing your Circular Score',
+          'Optimize efficiency with city policies'
         ]
       },
       4: {
-        title: 'Temiz Enerji ve Kriz',
-        description: 'Çevresel baskılar artıyor. Rüzgar gücünü kullanın.',
+        title: 'Clean Energy and Crisis',
+        description: 'Environmental pressures are rising. Use wind power.',
         features: [
-          'Rüzgar Türbini',
-          'Atıktan Enerji Tesisi',
-          'Global Kirlilik Takibi',
-          'Enerji Öncelik Sistemi'
+          'Wind Turbine',
+          'Waste-to-Energy Plant',
+          'Global Pollution Tracking',
+          'Energy Priority System'
         ],
         tips: [
-          'Rüzgar gücüyle temiz enerji kapasitenizi artırın',
-          'Kirlilik sağlık indeksini düşürmeden önlem alın',
-          'Atıkları enerjiye çevirerek çifte avantaj sağlayın'
+          'Increase clean energy capacity with wind power',
+          'Take precautions before pollution drops health index',
+          'Get double benefit by turning waste into energy'
         ]
       },
       5: {
-        title: 'İleri Teknoloji ve Simbiyoz',
-        description: 'Sürdürülebilirlik 70\'i geçti! Şehri teknolojiyle donatın.',
+        title: 'High Tech and Symbiosis',
+        description: 'Sustainability has passed 70! Equip the city with technology.',
         features: [
-          'Teknoloji Fabrikası',
-          'Tarımsal Alanlar',
-          'Hidroelektrik Santrali',
-          'Endüstriyel Simbiyoz',
-          'Konut (Level 3)'
+          'Technology Factory',
+          'Agricultural Areas',
+          'Hydroelectric Plant',
+          'Industrial Symbiosis',
+          'Residence (Level 3)'
         ],
         tips: [
-          'Endüstriyel simbiyoz ile kaynak paylaşımını aktifleştirin',
-          'Tarımsal alanlarla gıda/organik ihtiyacı karşılayın',
-          'İleri teknoloji ürünleriyle yüksek kar elde edin'
+          'Enable resource sharing with industrial symbiosis',
+          'Meet food/organic needs with agricultural areas',
+          'Earn high profits with high-tech products'
         ]
       },
       6: {
-        title: 'Net Sıfır Şehir',
-        description: 'Ustalık seviyesindesiniz! Dünyanın en yaşanabilir şehrini kurdunuz.',
+        title: 'Net Zero City',
+        description: 'You are at the mastery level! You built the world\'s most livable city.',
         features: [
-          'Çelik Fabrikası',
-          'Otomotiv Fabrikası',
-          'Net Sıfır Bonusları',
-          'Başarımlar'
+          'Steel Factory',
+          'Automotive Factory',
+          'Net Zero Bonuses',
+          'Achievements'
         ],
         tips: [
-          'Karbon ayak izinizi sıfırlamaya çalışın',
-          'En gelişmiş sanayi ürünlerini ihraç edin',
-          'Vatandaş mutluluğunu maksimumda tutun'
+          'Try to zero out your carbon footprint',
+          'Export the most advanced industrial products',
+          'Keep citizen happiness at maximum'
         ]
       }
     };
 
     return levelInfo[level] || {
       title: `Level ${level}`,
-      description: 'Yeni seviyeye ulaştınız!',
+      description: 'You have reached a new level!',
       features: [],
       tips: []
     };

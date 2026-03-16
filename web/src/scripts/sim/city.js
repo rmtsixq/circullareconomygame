@@ -149,8 +149,8 @@ export class City extends THREE.Group {
         if (!window.tutorialState.isActionAllowed(buildingType)) {
           if (window.ui) {
             window.ui.showNotification(
-              '🔒 Kilitli',
-              'Bu aksiyon tutorial sırasında kilitli.',
+              '🔒 Locked',
+              'This action is locked during the tutorial.',
               'warning'
             );
           }
@@ -179,8 +179,8 @@ export class City extends THREE.Group {
         if (feature && !window.levelUnlocks.isUnlocked(feature, level)) {
           if (window.ui) {
             window.ui.showNotification(
-              '🔒 Kilitli',
-              `Bu bina Seviye ${window.levelUnlocks.getUnlockLevel(feature)}'te açılacak.`,
+              '🔒 Locked',
+              `This building will unlock at Level ${window.levelUnlocks.getUnlockLevel(feature)}.`,
               'error'
             );
           }
@@ -202,8 +202,8 @@ export class City extends THREE.Group {
         if (!window.gameState.spendMoney(cost)) {
           if (window.ui) {
             window.ui.showNotification(
-              '💰 Yetersiz Para',
-              `Bu binayı inşa etmek için ${cost.toLocaleString()} 💰 gerekiyor. Mevcut paranız: ${window.gameState.money.toLocaleString()} 💰`,
+              '💰 Insufficient Funds',
+              `Building this requires ${cost.toLocaleString()} 💰. Your current funds: ${window.gameState.money.toLocaleString()} 💰`,
               'error'
             );
           }
@@ -263,7 +263,7 @@ export class City extends THREE.Group {
     if (tile.building) {
       // Prevent bulldozing player house
       if (tile.building.isPlayerHouse) {
-        console.log("Oyuncu evi kaldırılamaz!");
+        console.log("Player house cannot be removed!");
         return;
       }
 

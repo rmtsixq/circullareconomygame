@@ -177,15 +177,15 @@ export class FarmingArea extends Zone {
     html += `
       <div class="info-heading">
         <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20V5.5a2.5 2.5 0 1 0-5 0V17"/><path d="M14 20v-9.5a2.5 2.5 0 1 1 5 0V17"/></svg>
-        Tarım Alanı
+        Farming Area
       </div>
-      <span class="info-label">Seviye </span>
+      <span class="info-label">Level </span>
       <span class="info-value">${this.development.level}/${this.development.maxLevel}</span>
       <br>
-      <span class="info-label">Durum </span>
-      <span class="info-value">${this.development.state === 'developed' ? 'Aktif' : this.development.state === 'under-construction' ? 'İnşaat' : 'Gelişmemiş'}</span>
+      <span class="info-label">Status </span>
+      <span class="info-value">${this.development.state === 'developed' ? 'Active' : this.development.state === 'under-construction' ? 'Construction' : 'Undeveloped'}</span>
       <br>
-      <span class="info-label">Enerji </span>
+      <span class="info-label">Energy </span>
       <span class="info-value">${this.power.isFullyPowered ? this.power.required : 0}/${this.power.required} <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
       <br>
     `;
@@ -193,15 +193,15 @@ export class FarmingArea extends Zone {
     if (this.development.state === 'developed' && this.power.isFullyPowered) {
       const progressPercent = (this.productionProgress * 100).toFixed(0);
       html += `
-        <span class="info-label">Üretim İlerlemesi </span>
+        <span class="info-label">Production Progress </span>
         <span class="info-value">${progressPercent}%</span>
         <br>
-        <span class="info-label">Üretim Hızı </span>
+        <span class="info-label">Production Speed </span>
         <span class="info-value">${(this.productionRate * 100).toFixed(1)}%/tick</span>
         <br>
-        <span class="info-label">Üretilen Ürünler </span>
+        <span class="info-label">Products Produced </span>
         <span class="info-value">
-          ${this.development.level === 1 ? 'Gübre' : this.development.level === 2 ? 'Gübre, Kompost' : 'Gübre, Kompost (daha fazla)'}
+          ${this.development.level === 1 ? 'Fertilizer' : this.development.level === 2 ? 'Fertilizer, Compost' : 'Fertilizer, Compost (more)'}
         </span>
         <br>
       `;
@@ -214,11 +214,11 @@ export class FarmingArea extends Zone {
       html += `
         <div class="info-heading" style="margin-top: 12px;">
           <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>
-          Atık Durumu
+          Waste Status
         </div>
         <div style="padding: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-            <span>Atık Seviyesi:</span>
+            <span>Waste Level:</span>
             <span style="color: ${wasteColor}; font-weight: bold;">${this.waste.amount.toFixed(1)} / ${this.waste.maxCapacity}</span>
           </div>
           <div style="background: #333; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 4px;">

@@ -3,8 +3,8 @@ import { Building } from '../building.js';
 import { BuildingType } from '../buildingType.js';
 
 /**
- * Park (Yeşil Alan) - Refah ve sağlık katkısı
- * Düşük maliyetli, kirlilik offseti sağlar
+ * Park (Green Space) - Wellbeing and health contribution
+ * Low cost, provides pollution offset
  */
 export class Park extends Building {
   type = BuildingType.park;
@@ -14,7 +14,7 @@ export class Park extends Building {
 
   constructor(x, y) {
     super(x, y);
-    this.name = 'Park / Yeşil Alan';
+    this.name = 'Park / Green Space';
   }
 
   getBaseCost() {
@@ -40,11 +40,11 @@ export class Park extends Building {
           ${this.name}
         </div>
         <div class="info-section">
-          <span class="info-label">Etki </span>
-          <span class="info-value" style="color: #8BC34A;">Refah ↑, Sağlık ↑, Kirlilik ↓</span>
+          <span class="info-label">Effect </span>
+          <span class="info-value" style="color: #8BC34A;">Wellbeing ↑, Health ↑, Pollution ↓</span>
           <br>
-          <span class="info-label">Enerji </span>
-          <span class="info-value">Gerektirmez</span>
+          <span class="info-label">Energy </span>
+          <span class="info-value">Not Required</span>
         </div>
       </div>
     `;

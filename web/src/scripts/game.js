@@ -154,7 +154,7 @@ export class Game {
         // Mark it as player house
         const playerHouseTile = this.city.getTile(centerX, centerY);
         if (playerHouseTile && playerHouseTile.building) {
-          playerHouseTile.building.name = "Oyuncu Evi";
+          playerHouseTile.building.name = "Player House";
           playerHouseTile.building.isPlayerHouse = true;
         }
       }
@@ -412,8 +412,8 @@ export class Game {
         if (!window.tutorialState.isActionAllowed('upgrade')) {
           if (window.ui) {
             window.ui.showNotification(
-              '🔒 Kilitli',
-              'Bu aksiyon tutorial sırasında kilitli.',
+              '🔒 Locked',
+              'This action is locked during the tutorial.',
               'warning'
             );
           }
@@ -430,7 +430,7 @@ export class Game {
         }
         window.ui.updateGameState(window.gameState);
       } else {
-        console.warn("Yükseltme başarısız!");
+        console.warn("Upgrade failed!");
       }
     }
   }
@@ -456,13 +456,13 @@ export class Game {
           window.ui.updateGameState(window.gameState);
           window.ui.updateResources(window.resourceManager);
         } else {
-          console.warn("Geri dönüşüm başarısız! (Enerji yetersiz veya başka bir sorun)");
+          console.warn("Recycling failed! (Insufficient energy or other issue)");
         }
       } else {
-        console.warn("Geri dönüşüm metodu bulunamadı!");
+        console.warn("Recycling method not found!");
       }
     } else {
-      console.warn("Geri dönüşüm merkezi bulunamadı!");
+      console.warn("Recycling center not found!");
     }
   }
 
@@ -551,11 +551,11 @@ function initWelcomeScreen() {
         const loadButton = document.createElement('button');
         loadButton.id = 'load-game-button';
         loadButton.className = 'welcome-button';
-        loadButton.textContent = '📂 Kayıtlı Oyunu Yükle';
+        loadButton.textContent = '📂 Load Saved Game';
         loadButton.style.marginTop = '12px';
         loadButton.style.background = 'linear-gradient(135deg, #4a90e2 0%, #357abd 100%)';
         loadButton.onclick = () => {
-          if (confirm('Kayıtlı oyunu yüklemek istediğinize emin misiniz?')) {
+          if (confirm('Are you sure you want to load the saved game?')) {
             welcomeScreen.style.display = 'none';
             rootWindow.style.display = 'block';
             window.game = new Game(null, 'My City'); // City name will be loaded from save

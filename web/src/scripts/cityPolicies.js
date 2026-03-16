@@ -24,23 +24,23 @@ export class CityPolicies {
     this.autoSave = true;
     this.autoSaveInterval = 30; // seconds
     
-    // 1️⃣ ÜRETİM ÖNCELİK POLİTİKASI (Level 6+)
+    // 1️⃣ PRODUCTION PRIORITY POLICY (Level 6+)
     this.productionMode = 'balanced'; // 'balanced', 'economy', 'environment'
     
-    // 2️⃣ OTOMATİK SATIŞ POLİTİKASI
+    // 2️⃣ AUTO-SELL POLICY
     this.salesPolicy = 'auto'; // 'auto', 'store', 'smart'
     
-    // 3️⃣ VERGİ & TİCARET AYARI
+    // 3️⃣ TAX & TRADE SETTING
     this.taxPolicy = 'medium'; // 'low', 'medium', 'high'
     
-    // 4️⃣ İŞ GÜCÜ DAĞITIMI (0-100, toplam 100 olmalı)
+    // 4️⃣ WORKFORCE DISTRIBUTION (total must be 100)
     this.workforceDistribution = {
-      factories: 60,      // Fabrikalar
-      recycling: 20,     // Geri Dönüşüm
-      commercial: 20     // Ticaret
+      factories: 60,      // Factories
+      recycling: 20,     // Recycling
+      commercial: 20     // Trade
     };
     
-    // 5️⃣ ENERJİ TİCARET MODU
+    // 5️⃣ ENERGY TRADE MODE
     this.energyTradeMode = 'none'; // 'none', 'sell', 'store'
   }
 
@@ -86,15 +86,15 @@ export class CityPolicies {
     switch (this.productionMode) {
       case 'economy':
         return {
-          speed: 1.2,        // +20% üretim hızı
-          waste: 1.25,       // +25% atık
-          circularScore: -0.1 // -10% Circular Score tick başına
+          speed: 1.2,        // +20% production speed
+          waste: 1.25,       // +25% waste
+          circularScore: -0.1 // -10% Circular Score per tick
         };
       case 'environment':
         return {
-          speed: 0.85,       // -15% üretim hızı
-          waste: 0.7,        // -30% atık
-          circularScore: 0.1 // +10% Circular Score bonusu
+          speed: 0.85,       // -15% production speed
+          waste: 0.7,        // -30% waste
+          circularScore: 0.1 // +10% Circular Score bonus
         };
       case 'balanced':
       default:
@@ -114,15 +114,15 @@ export class CityPolicies {
     switch (this.taxPolicy) {
       case 'low':
         return {
-          money: 0,         // Normal para
-          population: 1.1,  // +10% nüfus artışı
-          waste: 1.0        // Normal atık
+          money: 0,         // Normal money
+          population: 1.1,  // +10% population growth
+          waste: 1.0        // Normal waste
         };
       case 'high':
         return {
-          money: 1.25,      // +25% para
-          population: 0,    // Nüfus artmaz
-          waste: 1.15       // +15% atık
+          money: 1.25,      // +25% money
+          population: 0,    // No population growth
+          waste: 1.15       // +15% waste
         };
       case 'medium':
       default:
