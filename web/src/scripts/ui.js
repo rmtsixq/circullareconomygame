@@ -75,13 +75,24 @@ export class GameUI {
    * Toggles the pause state of the game
    */
   togglePause() {
-    this.isPaused = !this.isPaused;
+    this.setPaused(!this.isPaused);
+  }
+
+  /**
+   * Explictly set the pause state
+   * @param {boolean} isPaused 
+   */
+  setPaused(isPaused) {
+    this.isPaused = isPaused;
+    const pauseIcon = document.getElementById('pause-button-icon');
+    const pausedText = document.getElementById('paused-text');
+    
     if (this.isPaused) {
-      document.getElementById('pause-button-icon').src = playIconUrl;
-      document.getElementById('paused-text').style.visibility = 'visible';
+      if (pauseIcon) pauseIcon.src = playIconUrl;
+      if (pausedText) pausedText.style.visibility = 'visible';
     } else {
-      document.getElementById('pause-button-icon').src = pauseIconUrl;
-      document.getElementById('paused-text').style.visibility = 'hidden';
+      if (pauseIcon) pauseIcon.src = pauseIconUrl;
+      if (pausedText) pausedText.style.visibility = 'hidden';
     }
   }
 
@@ -352,6 +363,57 @@ export class GameUI {
   }
 
   /**
+   * Toggle the entire Objectives Panel visibility (Toolbar button)
+   */
+  toggleObjectivesPanel() {
+    const panel = document.getElementById('objectives-panel');
+    const button = document.getElementById('button-objectives');
+    if (panel) {
+      const isHidden = panel.style.display === 'none';
+      panel.style.display = isHidden ? 'block' : 'none';
+      if (button) {
+        if (isHidden) button.classList.add('selected');
+        else button.classList.remove('selected');
+      }
+    }
+  }
+
+  /**
+   * Minimize/Expand Objectives Panel content (Panel header button)
+   */
+  minimizeObjectivesPanel() {
+    const content = document.getElementById('objectives-content');
+    const btn = document.getElementById('objectives-toggle-btn');
+    if (content && btn) {
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        btn.textContent = '➖';
+      } else {
+        content.style.display = 'none';
+        btn.textContent = '➕';
+      }
+    }
+  }
+
+  /**
+   * Toggle Help Modal
+   */
+  toggleHelpModal() {
+    const modal = document.getElementById('help-modal');
+    if (modal) {
+      const isOpening = modal.style.display === 'none';
+      modal.style.display = isOpening ? 'flex' : 'none';
+      
+      // Auto-pause when opening, auto-resume when closing
+      if (isOpening) {
+        this.setPaused(true);
+      } else {
+        this.setPaused(false);
+      }
+    }
+  }
+
+  /**
    * Toggle resource panel visibility
    */
   toggleResourcePanel() {
@@ -477,7 +539,7 @@ export class GameUI {
   openTradePanel() {
     this.closeAllPanels();
     const panel = this.getOrCreatePanel('trade-panel', 'Trade & Market');
-    panel.style.width = '400px';
+    panel.style.width = '420px';
     const content = panel.querySelector('.panel-content') || document.createElement('div');
     content.className = 'panel-content';
     content.innerHTML = `
@@ -486,24 +548,28 @@ export class GameUI {
           <svg class="info-svg" style="margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg>
           Resource Trade
         </div>
-        <div style="padding: 8px; color: #888; font-size: 0.9em; margin-bottom: 12px;">
-          Trade your resources with each other
+        <div style="padding: 6px 8px; color: #888; font-size: 0.85em; margin-bottom: 10px; background: rgba(255,255,255,0.04); border-radius: 4px; border-left: 2px solid #FF9800;">
+          Exchange rate includes a 20% conversion fee.
         </div>
         <div style="padding: 8px;">
-          <div class="resource-section-title">Resource to Trade</div>
-          <select id="trade-resource-from" class="trade-select" style="width: 100%; padding: 4px; margin-bottom: 8px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;">
+          <div class="resource-section-title">Give</div>
+          <select id="trade-resource-from" class="trade-select" style="width: 100%; padding: 8px; margin-bottom: 6px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px; font-size: 0.95em;" onchange="window.ui.updateTradePreview()">
             <option value="">Select resource...</option>
           </select>
-          <input type="number" id="trade-amount-from" placeholder="Amount" min="1" 
-            style="width: 100%; padding: 4px; margin-bottom: 8px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;">
-          <div style="text-align: center; margin: 8px 0; font-size: 1.5em;">⇄</div>
-          <div class="resource-section-title">Resource to Receive</div>
-          <select id="trade-resource-to" class="trade-select" style="width: 100%; padding: 4px; margin-bottom: 8px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;">
+          <input type="number" id="trade-amount-from" placeholder="Amount" min="1"
+            style="width: 100%; padding: 8px; margin-bottom: 6px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px; font-size: 0.95em;"
+            oninput="window.ui.updateTradePreview()">
+          <div style="text-align: center; margin: 8px 0; font-size: 1.2em; color: #888;">&#8644;</div>
+          <div class="resource-section-title">Receive</div>
+          <select id="trade-resource-to" class="trade-select" style="width: 100%; padding: 8px; margin-bottom: 6px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px; font-size: 0.95em;" onchange="window.ui.updateTradePreview()">
             <option value="">Select resource...</option>
           </select>
-          <input type="number" id="trade-amount-to" placeholder="Amount" min="1" 
-            style="width: 100%; padding: 4px; margin-bottom: 8px; background: #1e2331; color: white; border: 1px solid #333; border-radius: 4px;">
-          <button class="action-button" onclick="ui.executeTrade()" style="width: 100%; margin-top: 8px;">
+          <div id="trade-preview" style="padding: 10px; margin: 8px 0; background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 6px; display: none;">
+            <div style="font-size: 0.85em; color: #aaa;">You will receive:</div>
+            <div id="trade-preview-amount" style="font-size: 1.3em; font-weight: bold; color: #4CAF50; margin-top: 4px;">0</div>
+            <div id="trade-preview-rate" style="font-size: 0.8em; color: #888; margin-top: 2px;"></div>
+          </div>
+          <button class="action-button" onclick="window.ui.executeTrade()" style="width: 100%; margin-top: 8px; font-size: 1em;">
             Execute Trade
           </button>
         </div>
@@ -534,7 +600,7 @@ export class GameUI {
   }
 
   /**
-   * Update market buy/sell lists
+   * Update market buy/sell lists using Market system prices
    */
   updateMarketLists() {
     if (!window.resourceManager) return;
@@ -544,22 +610,26 @@ export class GameUI {
 
     if (!sellList || !buyList) return;
 
-    // Sell list - show resources player can sell
+    // Sell list - use Market system prices
     sellList.innerHTML = '';
-    const sellableResources = {
-      'clothing': { price: 50, name: 'Clothing' },
-      'smartphone': { price: 200, name: 'Smartphone' },
-      'laptop': { price: 500, name: 'Laptop' },
-      'steel-beam': { price: 100, name: 'Steel Beam' },
-      'electric-car': { price: 5000, name: 'Electric Car' },
-      'recycled-fabric': { price: 30, name: 'Recycled Fabric' },
-      'recycled-metal': { price: 40, name: 'Recycled Metal' },
-      'recycled-plastic': { price: 25, name: 'Recycled Plastic' }
+    const sellableProducts = {
+      'clothing': 'Clothing',
+      'sports-gear': 'Sports Gear',
+      'smartphone': 'Smartphone',
+      'laptop': 'Laptop',
+      'steel-beam': 'Steel Beam',
+      'steel-structure': 'Steel Structure',
+      'electric-bike': 'Electric Bike',
+      'electric-car': 'Electric Car',
+      'recycled-fabric': 'Recycled Fabric',
+      'recycled-metal': 'Recycled Metal',
+      'recycled-plastic': 'Recycled Plastic'
     };
 
-    Object.entries(sellableResources).forEach(([resource, info]) => {
+    Object.entries(sellableProducts).forEach(([resource, name]) => {
       const amount = window.resourceManager.getResource(resource);
       if (amount > 0) {
+        const price = window.market ? window.market.getProductPrice(resource) : 0;
         const item = document.createElement('div');
         item.className = 'resource-item';
         item.style.display = 'flex';
@@ -570,10 +640,10 @@ export class GameUI {
         item.style.backgroundColor = '#22294160';
         item.style.borderRadius = '4px';
         item.innerHTML = `
-          <span>${info.name}: ${amount.toFixed(1)}</span>
+          <span>${name}: ${amount.toFixed(1)}</span>
           <div>
-            <span style="color: #4CAF50; margin-right: 8px;">${info.price} credits/unit</span>
-            <button class="action-button" onclick="ui.sellResource('${resource}', 1)" style="padding: 2px 8px; font-size: 0.85em;">
+            <span style="color: #4CAF50; margin-right: 8px;">${Math.round(price)} credits/unit</span>
+            <button class="action-button" onclick="window.ui.sellResource('${resource}', 1)" style="padding: 2px 8px; font-size: 0.85em;">
               Sell
             </button>
           </div>
@@ -586,19 +656,18 @@ export class GameUI {
       sellList.innerHTML = '<div style="padding: 8px; color: #888; font-size: 0.9em;">No products to sell</div>';
     }
 
-    // Buy list - show resources player can buy
+    // Buy list - use Market system prices
     buyList.innerHTML = '';
-    const buyableResources = {
-      'raw-fabric': { price: 20, name: 'Raw Fabric' },
-      'raw-plastic': { price: 15, name: 'Raw Plastic' },
-      'raw-metal': { price: 25, name: 'Raw Metal' },
-      'raw-electronics': { price: 30, name: 'Raw Electronics' },
-      'textile-waste': { price: 5, name: 'Textile Waste' },
-      'e-waste': { price: 8, name: 'E-Waste' },
-      'scrap-metal': { price: 10, name: 'Scrap Metal' }
+    const buyableMaterials = {
+      'raw-fabric': 'Raw Fabric',
+      'raw-plastic': 'Raw Plastic',
+      'raw-metal': 'Raw Metal',
+      'raw-electronics': 'Raw Electronics',
+      'raw-glass': 'Raw Glass'
     };
 
-    Object.entries(buyableResources).forEach(([resource, info]) => {
+    Object.entries(buyableMaterials).forEach(([resource, name]) => {
+      const price = window.market ? window.market.getMaterialPrice(resource) : 0;
       const item = document.createElement('div');
       item.className = 'resource-item';
       item.style.display = 'flex';
@@ -609,10 +678,10 @@ export class GameUI {
       item.style.backgroundColor = '#22294160';
       item.style.borderRadius = '4px';
       item.innerHTML = `
-          <span>${info.name}</span>
+          <span>${name}</span>
           <div>
-            <span style="color: #2196F3; margin-right: 8px;">${info.price} credits/unit</span>
-            <button class="action-button" onclick="ui.buyResource('${resource}', 1)" style="padding: 2px 8px; font-size: 0.85em;">
+            <span style="color: #2196F3; margin-right: 8px;">${Math.round(price)} credits/unit</span>
+            <button class="action-button" onclick="window.ui.buyResource('${resource}', 1)" style="padding: 2px 8px; font-size: 0.85em;">
               Buy
             </button>
           </div>
@@ -622,23 +691,12 @@ export class GameUI {
   }
 
   /**
-   * Sell resource to market
+   * Sell resource to market using Market system prices
    */
   sellResource(resourceType, amount) {
-    if (!window.resourceManager || !window.gameState) return;
+    if (!window.resourceManager || !window.gameState || !window.market) return;
 
-    const prices = {
-      'clothing': 50,
-      'smartphone': 200,
-      'laptop': 500,
-      'steel-beam': 100,
-      'electric-car': 5000,
-      'recycled-fabric': 30,
-      'recycled-metal': 40,
-      'recycled-plastic': 25
-    };
-
-    const price = prices[resourceType];
+    const price = window.market.getProductPrice(resourceType);
     if (!price) return;
 
     const available = window.resourceManager.getResource(resourceType);
@@ -654,22 +712,12 @@ export class GameUI {
   }
 
   /**
-   * Buy resource from market
+   * Buy resource from market - using Market system prices
    */
   buyResource(resourceType, amount) {
-    if (!window.resourceManager || !window.gameState) return;
+    if (!window.resourceManager || !window.gameState || !window.market) return;
 
-    const prices = {
-      'raw-fabric': 20,
-      'raw-plastic': 15,
-      'raw-metal': 25,
-      'raw-electronics': 30,
-      'textile-waste': 5,
-      'e-waste': 8,
-      'scrap-metal': 10
-    };
-
-    const price = prices[resourceType];
+    const price = window.market.getMaterialPrice(resourceType);
     if (!price) return;
 
     const totalCost = amount * price;
@@ -680,7 +728,7 @@ export class GameUI {
       this.updateResources(window.resourceManager);
       this.updateGameState(window.gameState);
     } else {
-      console.warn('Insufficient funds!');
+      this.showNotification('Insufficient Funds', 'Not enough money to complete purchase.', 'warning');
     }
   }
 
@@ -1845,8 +1893,29 @@ export class GameUI {
   }
 
   /**
-   * Populate trade select dropdowns
+   * Trade resource values for exchange rate calculation
    */
+  getTradeResourceValues() {
+    return {
+      'raw-fabric': 10,
+      'raw-plastic': 8,
+      'raw-metal': 15,
+      'raw-electronics': 20,
+      'raw-glass': 6,
+      'water': 2,
+      'clothing': 80,
+      'sports-gear': 120,
+      'smartphone': 200,
+      'laptop': 400,
+      'steel-beam': 150,
+      'steel-structure': 250,
+      'electric-bike': 350,
+      'electric-car': 500,
+      'fertilizer': 40,
+      'compost': 25
+    };
+  }
+
   populateTradeSelects() {
     if (!window.resourceManager) return;
 
@@ -1857,82 +1926,152 @@ export class GameUI {
     if (!selectFrom || !selectTo) return;
 
     const resourceNames = {
-      'raw-fabric': '🧵 Raw Fabric',
-      'raw-plastic': '🧴 Raw Plastic',
-      'raw-metal': '🔩 Raw Metal',
-      'raw-electronics': '💻 Electronics',
-      'raw-glass': '🪟 Raw Glass',
-      'clothing': '👔 Clothing',
-      'sports-gear': '👟 Sports Gear',
-      'smartphone': '📱 Smartphone',
-      'laptop': '💻 Laptop',
-      'steel-beam': '🔧 Steel Beam',
-      'steel-structure': '🏗️ Steel Structure',
-      'electric-car': '🚗 Electric Car',
-      'electric-bike': '🚲 Electric Bike',
-      'fertilizer': '🌱 Fertilizer',
-      'compost': '🍂 Compost',
-      'recycled-fabric': '♻️🧵 Recycled Fabric',
-      'recycled-metal': '♻️🔩 Recycled Metal',
-      'recycled-plastic': '♻️🧴 Recycled Plastic',
-      'recycled-electronics': '♻️💻 Recycled Electronics'
+      'raw-fabric': 'Raw Fabric',
+      'raw-plastic': 'Raw Plastic',
+      'raw-metal': 'Raw Metal',
+      'raw-electronics': 'Electronics',
+      'raw-glass': 'Raw Glass',
+      'clothing': 'Clothing',
+      'sports-gear': 'Sports Gear',
+      'smartphone': 'Smartphone',
+      'laptop': 'Laptop',
+      'steel-beam': 'Steel Beam',
+      'steel-structure': 'Steel Structure',
+      'electric-car': 'Electric Car',
+      'electric-bike': 'Electric Bike',
+      'fertilizer': 'Fertilizer',
+      'compost': 'Compost'
     };
+
+    const tradeValues = this.getTradeResourceValues();
 
     [selectFrom, selectTo].forEach(select => {
       select.innerHTML = '<option value="">Select resource...</option>';
       Object.entries(resources).forEach(([type, amount]) => {
-        // Don't allow trading waste or recycled materials
-        if (type.includes('waste') || type.includes('recycled')) {
+        if (type.includes('waste') || type.includes('recycled') || type === 'wastewater') {
           return;
         }
+        if (!tradeValues[type]) return;
 
+        const val = tradeValues[type];
         const option = document.createElement('option');
         option.value = type;
-        option.textContent = `${resourceNames[type] || type} (${amount})`;
+        option.textContent = `${resourceNames[type] || type} (${Math.floor(amount)}) [val: ${val}]`;
         select.appendChild(option);
       });
     });
   }
 
   /**
-   * Execute trade
+   * Update trade preview showing how much the player will receive
+   */
+  updateTradePreview() {
+    const fromType = document.getElementById('trade-resource-from')?.value;
+    const fromAmount = parseFloat(document.getElementById('trade-amount-from')?.value || 0);
+    const toType = document.getElementById('trade-resource-to')?.value;
+    const previewDiv = document.getElementById('trade-preview');
+    const previewAmount = document.getElementById('trade-preview-amount');
+    const previewRate = document.getElementById('trade-preview-rate');
+
+    if (!previewDiv || !previewAmount || !previewRate) return;
+
+    if (!fromType || !toType || fromAmount <= 0) {
+      previewDiv.style.display = 'none';
+      return;
+    }
+
+    const tradeValues = this.getTradeResourceValues();
+    const fromValue = tradeValues[fromType] || 0;
+    const toValue = tradeValues[toType] || 0;
+
+    if (fromValue === 0 || toValue === 0) {
+      previewDiv.style.display = 'none';
+      return;
+    }
+
+    const TRADE_FEE = 0.80;
+    const receivedAmount = Math.floor(fromAmount * fromValue / toValue * TRADE_FEE * 100) / 100;
+    const rate = (fromValue / toValue * TRADE_FEE);
+
+    previewDiv.style.display = 'block';
+
+    if (receivedAmount <= 0) {
+      previewAmount.style.color = '#f44336';
+      previewAmount.textContent = 'Not enough to trade';
+    } else {
+      previewAmount.style.color = '#4CAF50';
+      previewAmount.textContent = `${receivedAmount} units`;
+    }
+
+    const resourceNames = {
+      'raw-fabric': 'Raw Fabric', 'raw-plastic': 'Raw Plastic', 'raw-metal': 'Raw Metal',
+      'raw-electronics': 'Electronics', 'raw-glass': 'Raw Glass', 'clothing': 'Clothing',
+      'sports-gear': 'Sports Gear', 'smartphone': 'Smartphone', 'laptop': 'Laptop',
+      'steel-beam': 'Steel Beam', 'steel-structure': 'Steel Structure',
+      'electric-car': 'Electric Car', 'electric-bike': 'Electric Bike',
+      'fertilizer': 'Fertilizer', 'compost': 'Compost'
+    };
+    previewRate.textContent = `Rate: 1 ${resourceNames[fromType] || fromType} = ${rate.toFixed(2)} ${resourceNames[toType] || toType} (20% fee)`;
+  }
+
+  /**
+   * Execute trade with balanced exchange rates
    */
   executeTrade() {
     const fromType = document.getElementById('trade-resource-from')?.value;
-    const fromAmount = parseInt(document.getElementById('trade-amount-from')?.value || 0);
+    const fromAmount = parseFloat(document.getElementById('trade-amount-from')?.value || 0);
     const toType = document.getElementById('trade-resource-to')?.value;
-    const toAmount = parseInt(document.getElementById('trade-amount-to')?.value || 0);
 
-    if (!fromType || !toType || fromAmount <= 0 || toAmount <= 0) {
-      alert('Please fill in all fields!');
+    if (!fromType || !toType || fromAmount <= 0) {
+      this.showNotification('Trade Error', 'Please fill in all fields.', 'warning');
+      return;
+    }
+
+    if (fromType === toType) {
+      this.showNotification('Trade Error', 'Cannot trade a resource with itself.', 'warning');
       return;
     }
 
     if (!window.resourceManager) {
-      alert('Resource manager not found!');
+      this.showNotification('Trade Error', 'Resource manager not found.', 'error');
       return;
     }
 
-    // Check if player has enough resources
     if (window.resourceManager.getResource(fromType) < fromAmount) {
-      alert("You don't have enough resources!");
+      this.showNotification('Trade Error', 'Not enough resources.', 'warning');
       return;
     }
 
-    // Prevent trading waste or recycled materials (they should be used in production/recycling)
     if (fromType.includes('waste') || fromType.includes('recycled') ||
       toType.includes('waste') || toType.includes('recycled')) {
-      alert('Waste and recycled materials cannot be traded! Use them in production and recycling.');
+      this.showNotification('Trade Error', 'Waste and recycled materials cannot be traded.', 'warning');
       return;
     }
 
-    // Execute trade (for now, just swap - later will be with NPCs or other players)
+    const tradeValues = this.getTradeResourceValues();
+    const fromValue = tradeValues[fromType] || 0;
+    const toValue = tradeValues[toType] || 0;
+
+    if (fromValue === 0 || toValue === 0) {
+      this.showNotification('Trade Error', 'This resource cannot be traded.', 'warning');
+      return;
+    }
+
+    const TRADE_FEE = 0.80;
+    const receivedAmount = Math.floor(fromAmount * fromValue / toValue * TRADE_FEE * 100) / 100;
+
+    if (receivedAmount <= 0) {
+      this.showNotification('Trade Error', 'Trade amount is too small.', 'warning');
+      return;
+    }
+
     window.resourceManager.removeResource(fromType, fromAmount);
-    window.resourceManager.addResource(toType, toAmount);
+    window.resourceManager.addResource(toType, receivedAmount);
 
     this.updateResources(window.resourceManager);
-    this.showNotification('✅ Trade Completed', `${fromAmount} ${fromType} → ${toAmount} ${toType}`, 'success');
-    this.closePanel('trade-panel');
+    this.showNotification('Trade Completed', `${fromAmount} ${fromType} traded for ${receivedAmount} ${toType}`, 'success');
+    this.populateTradeSelects();
+    this.updateTradePreview();
   }
 
   /**
@@ -2126,19 +2265,8 @@ export class GameUI {
     }
   }
 
-  /**
-   * Update toolbar button visibility based on current level
-   */
-  updateToolbarVisibility() {
-    if (!window.gameState || !window.levelUnlocks) {
-      return;
-    }
-
-    const level = window.gameState.level;
-
-    // Button unlock mappings
-    // Button unlock mappings
-    const buttonUnlocks = {
+  get buttonUnlocks() {
+    return {
       'button-residential': 'residential-level-1',
       'button-commercial': 'commercial-zone', // Level 2
       'button-farming': 'farming-area', // Level 5
@@ -2159,9 +2287,21 @@ export class GameUI {
       'button-mrf': 'mrf', // Level 3
       'button-water-treatment': 'water-treatment' // Level 3
     };
+  }
+
+  /**
+   * Update toolbar button visibility based on current level
+   */
+  updateToolbarVisibility() {
+    if (!window.gameState || !window.levelUnlocks) {
+      return;
+    }
+
+    const level = window.gameState.level;
+    const unlocks = this.buttonUnlocks;
 
     // Update each button
-    Object.entries(buttonUnlocks).forEach(([buttonId, feature]) => {
+    Object.entries(unlocks).forEach(([buttonId, feature]) => {
       const button = document.getElementById(buttonId);
       if (button) {
         const isUnlocked = window.levelUnlocks.isUnlocked(feature, level);
@@ -2347,8 +2487,21 @@ export class GameUI {
    */
   unlockToolbar() {
     const toolbarButtons = document.querySelectorAll('#ui-toolbar .ui-button');
+    const unlocks = this.buttonUnlocks;
+    const level = window.gameState?.level || 1;
 
     toolbarButtons.forEach(button => {
+      // If the button has a level requirement, enforce it!
+      if (unlocks[button.id] && window.levelUnlocks) {
+        const isUnlocked = window.levelUnlocks.isUnlocked(unlocks[button.id], level);
+        if (!isUnlocked) {
+          button.style.display = 'none';
+          return; // Skip unlocking, it should remain hidden
+        }
+        // Ensure it's visible if unlocked
+        button.style.display = 'flex';
+      }
+
       button.disabled = false;
       button.style.opacity = '1';
       button.style.cursor = 'pointer';
@@ -2418,7 +2571,11 @@ window.ui = new GameUI();
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     window.ui.initResourcePanelDrag();
+    const objectivesPanel = document.getElementById('objectives-panel');
+    if (objectivesPanel) window.ui.initPanelDrag(objectivesPanel);
   });
 } else {
   window.ui.initResourcePanelDrag();
+  const objectivesPanel = document.getElementById('objectives-panel');
+  if (objectivesPanel) window.ui.initPanelDrag(objectivesPanel);
 }

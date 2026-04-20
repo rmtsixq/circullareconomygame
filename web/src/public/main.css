@@ -474,6 +474,33 @@ h1 {
   overflow-y: auto;
 }
 
+.floating-panel h2, 
+.floating-panel h3, 
+.floating-panel h4, 
+.floating-panel p, 
+.floating-panel li, 
+.floating-panel td {
+  color: #ffffff !important;
+}
+
+/* OBJECTIVES PANEL */
+#objectives-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 16px;
+  width: 280px;
+  z-index: 95;
+  background-color: rgba(10, 15, 30, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+#objectives-panel .panel-header {
+  cursor: move;
+  user-select: none;
+}
+
 #resource-panel {
   top: 96px;
   left: 16px;
@@ -1789,6 +1816,208 @@ h1 {
 
   .scenario-card-title {
     font-size: 15px;
+  }
+
+  /* --- SCENARIO OBJECTIVES HUD - Mobile --- */
+  .scenario-objectives-panel {
+    bottom: 80px !important;
+    right: 8px !important;
+    left: 8px !important;
+    max-width: none !important;
+    min-width: unset !important;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .scenario-objectives-header {
+    padding: 8px 12px;
+  }
+
+  .scenario-objectives-body {
+    padding: 6px 12px 10px 12px;
+  }
+
+  /* --- FLOATING PANELS - Mobile (trade, market, etc.) --- */
+  .floating-panel {
+    top: auto !important;
+    bottom: 76px !important;
+    left: 6px !important;
+    right: 6px !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: unset !important;
+    max-height: 55vh !important;
+    border-radius: 16px 16px 0 0 !important;
+    transform: none !important;
+    z-index: 2100 !important;
+  }
+
+  .panel-header {
+    padding: 10px 14px;
+    font-size: 1em;
+    border-radius: 16px 16px 0 0;
+    cursor: default;
+  }
+
+  .panel-content {
+    padding: 6px;
+    padding-bottom: 16px;
+  }
+
+  /* Trade panel mobile adjustments */
+  .trade-select {
+    font-size: 14px !important;
+    padding: 10px !important;
+    -webkit-appearance: none;
+  }
+
+  /* Score bar mobile - hide labels, keep compact */
+  .score-label {
+    display: none;
+  }
+
+  .score-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .score-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .score-val {
+    font-size: 0.8em;
+    min-width: 18px;
+  }
+
+  .score-bar-bg {
+    width: 30px;
+    height: 8px;
+  }
+
+  /* Level-up modal mobile */
+  .level-up-modal {
+    width: 95% !important;
+    max-height: 85vh;
+    border-radius: 16px;
+  }
+
+  .level-up-modal-header {
+    padding: 16px 20px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .level-up-modal-header h2 {
+    font-size: 22px;
+  }
+
+  .level-up-modal-content {
+    padding: 16px 20px;
+  }
+
+  .level-up-modal-close {
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+    border-radius: 10px;
+  }
+
+  /* Version text - hide on mobile */
+  #version {
+    display: none;
+  }
+
+  /* Safe area insets for notch devices */
+  #title-bar {
+    padding-top: env(safe-area-inset-top, 0px);
+    height: calc(44px + env(safe-area-inset-top, 0px));
+  }
+
+  #ui-toolbar {
+    padding-bottom: env(safe-area-inset-bottom, 4px) !important;
+  }
+}
+
+/* Extra small screens (phones in portrait) */
+@media (max-width: 480px) {
+  #title-bar {
+    height: 40px;
+    padding: 0 6px;
+    font-size: 12px;
+  }
+
+  .title-bar-left-items {
+    padding-left: 2px;
+    gap: 0;
+  }
+
+  .tb-sep {
+    margin: 0 4px;
+    font-size: 10px;
+  }
+
+  .stat-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  #scores-bar {
+    top: 40px;
+    height: 28px;
+    gap: 6px;
+    padding: 0 4px;
+  }
+
+  #ui-toolbar {
+    top: auto;
+    bottom: 0;
+    max-height: 64px !important;
+    height: 64px !important;
+    padding: 4px 8px !important;
+    gap: 8px !important;
+  }
+
+  .ui-button {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    border-radius: 10px;
+  }
+
+  .toolbar-svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .floating-panel {
+    bottom: 68px !important;
+    max-height: 50vh !important;
+  }
+
+  .scenario-objectives-panel {
+    bottom: 72px !important;
+  }
+
+  .tutorial-panel {
+    bottom: 72px !important;
+    max-height: 140px !important;
+    padding: 8px 30px 8px 10px !important;
+  }
+
+  /* Welcome screen extra small */
+  .welcome-title {
+    font-size: 2em !important;
+    margin-bottom: 30px !important;
+  }
+
+  .welcome-form {
+    padding: 20px 15px !important;
+  }
+
+  .welcome-subtitle {
+    font-size: 1em !important;
   }
 }
 

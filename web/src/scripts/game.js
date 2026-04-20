@@ -179,8 +179,8 @@ export class Game {
         }
       }, 2000); // Update every 2 seconds
 
-      // Simulation runs every 2.5 seconds (slower pace)
-      setInterval(this.simulate.bind(this), 2500);
+      // Simulation runs every 4.5 seconds (slower pace)
+      setInterval(this.simulate.bind(this), 4500);
 
       // Auto-save mechanism
       if (window.cityPolicies && window.cityPolicies.autoSave) {
@@ -346,7 +346,7 @@ export class Game {
 
     // Process UI quiz system (random quizzes)
     if (window.quizSystem) {
-      window.quizSystem.process(this.currentTick);
+      window.quizSystem.simulate(this.city, this.currentTick);
     }
 
     // Process scenario conditions if a scenario is active

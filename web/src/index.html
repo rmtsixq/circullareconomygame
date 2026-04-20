@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>CircularWorld</title>
   <link rel="stylesheet" href="/main.css">
   <script type="module" src="./scripts/gameState.js"></script>
@@ -365,6 +365,13 @@
             <rect x="14" y="4" width="4" height="16" />
           </svg>
         </button>
+        <button id='button-objectives' class="ui-button" onclick="ui.toggleObjectivesPanel()" title="Scenario Objectives">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toolbar-svg">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+          </svg>
+        </button>
         <button id='button-resources' class="ui-button" onclick="ui.toggleResourcePanel()" title="Resources">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round" class="toolbar-svg">
@@ -375,6 +382,29 @@
             <path d="M12 22V12" />
           </svg>
         </button>
+        <button id='button-help' class="ui-button" onclick="ui.toggleHelpModal()" title="Help & Info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toolbar-svg">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <path d="M12 17h.01"></path>
+          </svg>
+        </button>
+      </div>
+      <div id="objectives-panel" class="container floating-panel" style="display: none;">
+        <div class="panel-header" style="justify-content: space-between;">
+          <h3 style="margin: 0;">🎯 Scenario Objectives</h3>
+          <button id="objectives-toggle-btn" class="ui-button" onclick="ui.minimizeObjectivesPanel()" style="min-width: 32px; padding: 4px; margin: 0; align-self: center;">➖</button>
+        </div>
+        <div id="objectives-content">
+          <div class="objective-section">
+            <h4 style="margin: 8px 0 4px 0; color: #4CAF50;">Win Conditions</h4>
+            <ul id="objectives-aim-list" style="margin: 0; padding-left: 20px; font-size: 0.9em; line-height: 1.4;"></ul>
+          </div>
+          <div class="objective-section" style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+            <h4 style="margin: 0 0 4px 0; color: #2196F3;">Tips & Strategy</h4>
+            <ul id="objectives-tips-list" style="margin: 0; padding-left: 20px; font-size: 0.9em; line-height: 1.4; color: #ccc;"></ul>
+          </div>
+        </div>
       </div>
       <div id="info-panel" class="container">
       </div>
@@ -537,6 +567,79 @@
           <span id="scenario-objectives-toggle">▼</span>
         </div>
         <div id="scenario-objectives-body" class="scenario-objectives-body"></div>
+      </div>
+
+      <!-- Help & Info Modal -->
+      <div id="help-modal" class="level-up-modal-overlay" style="display: none;">
+        <div class="level-up-modal" style="max-width: 700px; max-height: 80vh; overflow-y: auto; color: #fff;">
+          <h2 style="text-align: center; margin-bottom: 16px; color: #fff;">📖 Game Guide</h2>
+          <div style="margin-bottom: 20px;">
+            <h3 style="color: #4CAF50; margin-bottom: 8px;">🏗️ Building Tools</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Residential</td><td style="padding: 6px; color: #ddd;">Houses citizens. Needs road + power. Generates waste.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg> Commercial</td><td style="padding: 6px; color: #ddd;">Shops that boost Wellbeing and income.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.8A7 7 0 0 1 11 20z"/><path d="M11 20V10"/></svg> Farming</td><td style="padding: 6px; color: #ddd;">Organic goods. Great for Sustainability and Health.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M22 20H2v-7l5-4 5 4 5-4 5 4z"/></svg> Textile Factory</td><td style="padding: 6px; color: #ddd;">Clothing from raw fabric. Pollutes slightly.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/></svg> Tech Factory</td><td style="padding: 6px; color: #ddd;">Electronics. High income, some pollution.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M2 20h20"/><path d="M5 20V8l7 4V8l7 4v8"/></svg> Steel Factory</td><td style="padding: 6px; color: #ddd;">Heavy industry. Big money, heavy pollution.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg> Automotive</td><td style="padding: 6px; color: #ddd;">Vehicles. High income. Needs steel + electronics.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Recycling Center</td><td style="padding: 6px; color: #ddd;">Waste to recycled materials. Massive Sustainability!</td></tr>
+            </table>
+          </div>
+          <div style="margin-bottom: 20px;">
+            <h3 style="color: #2196F3; margin-bottom: 8px;">⚡ Energy &amp; Infrastructure</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M2 12h2"/><path d="M20 12h2"/></svg> Solar Panel</td><td style="padding: 6px; color: #ddd;">Clean energy. Boosts Sustainability. No pollution.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Z"/><path d="M12 12c0 2.2 1.8 4 4 4s4-1.8 4-4-1.8-4-4-4-4 1.8-4 4Z"/><path d="M12 12c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4Z"/></svg> Wind Turbine</td><td style="padding: 6px; color: #ddd;">Best clean energy. Highest Sustainability boost.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M2 6c.6.5 1.2 1 2.5 1C5.8 7 7 6 8.5 6s2.7 1 4 1 2.7-1 4-1 2.7 1 4 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 1.3 0 2.5-1 4-1s2.7 1 4 1 2.7-1 4-1 2.7 1 4 1"/></svg> Hydro Plant</td><td style="padding: 6px; color: #ddd;">Powerful renewable. Good Wellbeing + Sustainability.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg> Waste-to-Energy</td><td style="padding: 6px; color: #ddd;">Burns waste for power. Slightly hurts Health.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/></svg> Road</td><td style="padding: 6px; color: #ddd;">Connects buildings. Required for buildings to function!</td></tr>
+            </table>
+          </div>
+          <div style="margin-bottom: 20px;">
+            <h3 style="color: #E91E63; margin-bottom: 8px;">🏛️ Public Services</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg> Park</td><td style="padding: 6px; color: #ddd;">Small Wellbeing and Health boost. Cheap.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3.333 3 10.667 3 14 0v-5"/></svg> School</td><td style="padding: 6px; color: #ddd;">Major Education boost. Better economy.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.505 4.045 3 5.5L12 21z"/></svg> Hospital</td><td style="padding: 6px; color: #ddd;">Big Health boost. Essential for citizens.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Awareness Center</td><td style="padding: 6px; color: #ddd;">Education + Sustainability. Circular economy.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg> MRF</td><td style="padding: 6px; color: #ddd;">Sorts waste for recycling. Big Sustainability.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg> Water Treatment</td><td style="padding: 6px; color: #ddd;">Cleans wastewater. Boosts Sustainability.</td></tr>
+            </table>
+          </div>
+          <div style="margin-bottom: 20px;">
+            <h3 style="color: #FF9800; margin-bottom: 8px;">📊 Score System</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #4CAF50;">Wellbeing</td><td style="padding: 6px; color: #ddd;">Citizen happiness. Commercial zones, parks, employment.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #2196F3;">Education</td><td style="padding: 6px; color: #ddd;">Knowledge level. Schools and awareness centers.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #E91E63;">Health</td><td style="padding: 6px; color: #ddd;">Public health. Hospitals help, factories hurt.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #8BC34A;">Sustainability</td><td style="padding: 6px; color: #ddd;">How green. Recycling, renewables boost. Factories decrease.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #FFD700;">Management Score</td><td style="padding: 6px; color: #ddd;">Average of all four. Key metric for winning!</td></tr>
+            </table>
+          </div>
+          <div style="margin-bottom: 20px;">
+            <h3 style="color: #9C27B0; margin-bottom: 8px;">🔧 Toolbar Buttons</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="m13 13 6 6"/></svg> Select</td><td style="padding: 6px; color: #ddd;">Click buildings to view info and upgrade.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Bulldoze</td><td style="padding: 6px; color: #ddd;">Demolish buildings. No refunds!</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause</td><td style="padding: 6px; color: #ddd;">Pause simulation. Plan without pressure.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Objectives</td><td style="padding: 6px; color: #ddd;">Toggle scenario objectives &amp; tips panel.</td></tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><td style="padding: 6px; font-weight: bold; color: #fff; white-space: nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:middle;margin-right:4px;"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg> Resources</td><td style="padding: 6px; color: #ddd;">View raw materials, products, waste and trade.</td></tr>
+            </table>
+          </div>
+          <div style="margin-bottom: 16px; padding: 12px; background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 8px;">
+            <h3 style="color: #4CAF50; margin: 0 0 8px 0;">💡 Key Tips</h3>
+            <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; line-height: 1.6; color: #ddd;">
+              <li>Buildings need <strong style="color:#fff;">road access</strong> AND <strong style="color:#fff;">energy</strong> to develop.</li>
+              <li>Factories produce goods but also <strong style="color:#fff;">pollution and waste</strong>.</li>
+              <li>Use <strong style="color:#fff;">Recycling Centers</strong> to turn waste into recycled materials.</li>
+              <li>Balance economy (factories) with environment (renewables, recycling).</li>
+              <li>The <strong style="color:#fff;">Management Score</strong> is the average of all four scores.</li>
+              <li>Click a building to see details and <strong style="color:#fff;">upgrade</strong> it for better output.</li>
+            </ul>
+          </div>
+          <button class="action-button" onclick="ui.toggleHelpModal()" style="width: 100%; margin-top: 8px; font-size: 1em;">Close</button>
+        </div>
       </div>
 
     </div>

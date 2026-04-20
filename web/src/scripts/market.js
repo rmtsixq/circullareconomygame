@@ -122,6 +122,24 @@ export class Market {
   }
   
   /**
+   * Get current price for a product
+   * @param {string} productType
+   * @returns {number} Current price or 0 if not found
+   */
+  getProductPrice(productType) {
+    return this.productPrices[productType] || 0;
+  }
+  
+  /**
+   * Get current price for a raw material
+   * @param {string} materialType
+   * @returns {number} Current price or 0 if not found
+   */
+  getMaterialPrice(materialType) {
+    return this.rawMaterialPrices[materialType] || 0;
+  }
+  
+  /**
    * Update market prices (fluctuation)
    * @param {number} currentTick 
    */

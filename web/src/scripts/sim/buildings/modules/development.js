@@ -83,14 +83,18 @@ export class DevelopmentModule extends SimModule {
 
     switch (this.state) {
       case DevelopmentState.undeveloped:
-        if (this.#checkDevelopmentCriteria() &&
-          Math.random() < config.modules.development.redevelopChance) {
-          this.state = DevelopmentState.underConstruction;
-          this.#constructionCounter = 0;
+        if (this.#checkDevelopmentCriteria()) {
+          const isTutorial = window.tutorialState && window.tutorialState.isActive;
+          if (isTutorial || Math.random() < config.modules.development.redevelopChance) {
+            this.state = isTutorial ? DevelopmentState.developed : DevelopmentState.underConstruction;
+            this.#constructionCounter = 0;
+            if (this.state === DevelopmentState.developed) this.level = 1;
+          }
         }
         break;
       case DevelopmentState.underConstruction:
-        if (++this.#constructionCounter === config.modules.development.constructionTime) {
+        const buildTime = (window.tutorialState && window.tutorialState.isActive) ? 0 : config.modules.development.constructionTime;
+        if (++this.#constructionCounter >= buildTime) {
           this.state = DevelopmentState.developed;
           this.level = 1;
           this.#constructionCounter = 0;

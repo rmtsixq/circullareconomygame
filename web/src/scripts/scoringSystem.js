@@ -25,13 +25,13 @@ export class ScoringSystem {
     this.buildingContributions = {
       // Residential buildings
       'residential': {
-        wellbeing: { base: 2, perLevel: 1 },
-        health: { base: -0.5, perLevel: 0.2 },  // More houses = slight health pressure unless managed
+        wellbeing: { base: 0.5, perLevel: 0.5 },
+        health: { base: -0.2, perLevel: 0.1 }, 
       },
       // Commercial buildings (AVM)
       'commercial': {
-        wellbeing: { base: 3, perLevel: 1.5 },
-        health: { base: -0.3, perLevel: 0.1 },
+        wellbeing: { base: 1, perLevel: 0.5 },
+        health: { base: -0.1, perLevel: 0.1 },
       },
       // Farming
       'farming': {
@@ -41,29 +41,29 @@ export class ScoringSystem {
       },
       // Textile Factory
       'textile-factory': {
-        wellbeing: { base: 3, perLevel: 2 },      // Employment, income
-        health: { base: -2, perLevel: -0.5 },      // Pollution
-        sustainability: { base: -3, perLevel: 0 },  // Linear production
+        wellbeing: { base: 0.5, perLevel: 0.5 },
+        health: { base: -1, perLevel: -0.5 },
+        sustainability: { base: -1.5, perLevel: 0 },
       },
       // Technology Factory
       'technology-factory': {
-        wellbeing: { base: 4, perLevel: 2 },
-        education: { base: 2, perLevel: 1 },
-        health: { base: -1.5, perLevel: -0.3 },
-        sustainability: { base: -2, perLevel: 0 },
+        wellbeing: { base: 1, perLevel: 0.5 },
+        education: { base: 0.5, perLevel: 0.5 },
+        health: { base: -0.8, perLevel: -0.3 },
+        sustainability: { base: -1, perLevel: 0 },
       },
       // Steel Factory
       'steel-factory': {
-        wellbeing: { base: 3, perLevel: 1.5 },
-        health: { base: -3, perLevel: -1 },         // Heavy pollution
-        sustainability: { base: -4, perLevel: 0 },
+        wellbeing: { base: 0.5, perLevel: 0.5 },
+        health: { base: -1.5, perLevel: -1 },
+        sustainability: { base: -2, perLevel: 0 },
       },
       // Automotive Factory
       'automotive-factory': {
-        wellbeing: { base: 5, perLevel: 2 },
-        education: { base: 1, perLevel: 0.5 },
-        health: { base: -2, perLevel: -0.5 },
-        sustainability: { base: -3, perLevel: 0 },
+        wellbeing: { base: 1, perLevel: 0.5 },
+        education: { base: 0.5, perLevel: 0.2 },
+        health: { base: -1, perLevel: -0.5 },
+        sustainability: { base: -1.5, perLevel: 0 },
       },
       // Recycling Center
       'recycling-center': {
@@ -81,9 +81,9 @@ export class ScoringSystem {
       },
       // Park
       'park': {
-        wellbeing: { base: 2, perLevel: 0 },
-        health: { base: 1, perLevel: 0 },
-        sustainability: { base: 1, perLevel: 0 },
+        wellbeing: { base: 0.5, perLevel: 0 },
+        health: { base: 0.2, perLevel: 0 },
+        sustainability: { base: 0.2, perLevel: 0 },
       },
       // Awareness Center
       'awareness-center': {

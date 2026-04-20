@@ -196,6 +196,31 @@ export class ResidentialZone extends Zone {
     }
 
     html += this.residents.toHTML();
+    
+    // Add waste info if there is any waste accumulated
+    if (this.waste && this.waste.amount > 0) {
+      const wastePercent = Math.round((this.waste.amount / this.waste.maxCapacity) * 100);
+      const riskColor = wastePercent > 80 ? '#f44336' : (wastePercent > 50 ? '#FF9800' : '#8BC34A');
+      html += `
+        <div class="info-section" style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="info-label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+                <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Accumulated Waste
+            </span>
+            <span class="info-value" style="color: ${riskColor}; font-weight: bold;">
+              ${Math.round(this.waste.amount)} / ${this.waste.maxCapacity}
+            </span>
+          </div>
+          <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.3); border-radius: 2px; margin-top: 4px; overflow: hidden;">
+            <div style="width: ${wastePercent}%; height: 100%; background: ${riskColor};"></div>
+          </div>
+        </div>
+      `;
+    }
+    
     return html;
   }
 }

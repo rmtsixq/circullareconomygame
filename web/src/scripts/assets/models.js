@@ -453,8 +453,8 @@ export default {
   },
   "park-1": {
     "type": "zone",
-    "filename": "tile-park.glb",
-    "scale": 1
+    "filename": "tree-forest.glb",
+    "scale": 1.5
   },
   "awareness-center-1": {
     "type": "zone",

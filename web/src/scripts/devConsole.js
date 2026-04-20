@@ -133,7 +133,10 @@
             window.ui.unlockToolbar();
           }
         }
-        console.log('Tutorial skipped!');
+        if (window.scenarioSystem) {
+          window.scenarioSystem.showScenarioSelection();
+        }
+        console.log('Tutorial skipped! Scenario selection opening.');
       },
       setPollution: (value) => {
         if (!window.globalPollution) return;
@@ -193,8 +196,41 @@
         console.log('Education:', window.gameState?.education);
         console.log('Health:', window.gameState?.health);
         console.log('Sustainability:', window.gameState?.sustainability);
-        console.log('Management:', window.gameState?.managementScore);
         console.log('Pollution:', window.globalPollution?.totalPollution);
+      },
+      exportScenarioData: () => {
+        if (!window.game || !window.game.city) return;
+        const city = window.game.city;
+        const buildings = [];
+        for (let x = 0; x < city.size; x++) {
+          for (let y = 0; y < city.size; y++) {
+            const tile = city.getTile(x, y);
+            if (tile && tile.building) {
+              const b = tile.building;
+              let bData = {
+                x: x,
+                y: y,
+                type: b.type
+              };
+              if (b.level && b.level > 1 && b.type !== 'road') {
+                bData.level = b.level;
+              }
+              if (b.isPlayerHouse) {
+                bData.isPlayerHouse = true;
+                bData.developmentState = 'developed';
+              } else if (b.development && b.development.state === 'developed') {
+                bData.developmentState = 'developed';
+              }
+              buildings.push(bData);
+            }
+          }
+        }
+        const dataStr = JSON.stringify(buildings, null, 2);
+        console.log("=== EXPORTED SCENARIO MAP DATA ===");
+        console.log(dataStr);
+        navigator.clipboard.writeText(dataStr);
+        alert("Map data copied to clipboard! Share this with your AI.");
+        return dataStr;
       }
     };
 
