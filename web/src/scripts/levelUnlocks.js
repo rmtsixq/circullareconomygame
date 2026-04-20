@@ -43,6 +43,7 @@ export class LevelUnlocks {
     'residential-level-2': 2,
     'production-queue': 2,
     'auto-buy': 2,
+    'commercial-zone': 2,
     'school': 2,
     'hospital': 2,
 

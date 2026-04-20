@@ -71,7 +71,7 @@ export class TutorialState {
     this.completedSteps.add(this.currentStep);
     this.currentStep++;
 
-    // If tutorial is complete, deactivate
+    // If tutorial is complete, show scenario selection
     if (this.currentStep >= this.steps.length) {
       this.isActive = false;
       if (window.ui) {
@@ -81,6 +81,13 @@ export class TutorialState {
       // Trigger any pending level ups now that tutorial is done
       if (window.gameState) {
         window.gameState.checkLevelUp();
+      }
+      // Show scenario selection screen
+      if (window.scenarioSystem) {
+        // Small delay to let the UI update
+        setTimeout(() => {
+          window.scenarioSystem.showScenarioSelection();
+        }, 500);
       }
     } else {
       // Initialize next step

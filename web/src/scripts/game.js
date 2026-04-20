@@ -339,6 +339,26 @@ export class Game {
       }
     }
 
+    // Check for level ups based on circular score and management score
+    if (window.gameState) {
+      window.gameState.checkLevelUp();
+    }
+
+    // Process UI quiz system (random quizzes)
+    if (window.quizSystem) {
+      window.quizSystem.process(this.currentTick);
+    }
+
+    // Process scenario conditions if a scenario is active
+    if (window.scenarioSystem && window.gameState && window.gameState.scenarioActive) {
+      window.scenarioSystem.checkConditions(this.currentTick);
+    }
+
+    // Generate waste for properties
+    if (this.currentTick % 10 === 0) {
+      this.city.generateWaste();
+    }
+
     // Calculate city scores every tick (full 5-index scoring)
     if (window.gameState) {
       window.gameState.calculateCircularScore();

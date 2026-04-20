@@ -17,6 +17,7 @@
   <script type="module" src="./scripts/market.js"></script>
   <script type="module" src="./scripts/tutorialState.js"></script>
   <script type="module" src="./scripts/saveSystem.js"></script>
+  <script type="module" src="./scripts/scenarioSystem.js"></script>
   <script type="module" src="./scripts/ui.js"></script>
   <script type="module" src="./scripts/game.js"></script>
   <script type="module" src="./scripts/devConsole.js"></script>
@@ -458,6 +459,84 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Scenario Selection Modal -->
+      <div id="scenario-modal" class="level-up-modal-overlay" style="display: none;">
+        <div class="scenario-selection-container">
+          <div class="scenario-selection-header">
+            <h2>Choose Your Scenario</h2>
+            <p>Each scenario has unique challenges and win conditions.</p>
+          </div>
+          <div class="scenario-cards">
+            <!-- The Waste Crisis -->
+            <div class="scenario-card" data-scenario="waste-crisis" onclick="window.scenarioSystem.selectScenario('waste-crisis')">
+              <div class="scenario-card-accent" style="background: linear-gradient(135deg, #880E4F, #E91E63);"></div>
+              <div class="scenario-card-icon"></div>
+              <h3 class="scenario-card-title">The Waste Crisis</h3>
+              <div class="scenario-card-difficulty">
+                <span class="scenario-star filled">★</span><span class="scenario-star filled">★</span><span class="scenario-star filled">★</span><span class="scenario-star">★</span>
+                <span class="scenario-difficulty-label">Hard</span>
+              </div>
+              <p class="scenario-card-desc">The previous administration left the city drowning in garbage. Factories are polluting and waste is everywhere.</p>
+              <div class="scenario-card-objectives">
+                <div class="scenario-objective-item">Sustainability &ge; 70</div>
+                <div class="scenario-objective-item">Health &ge; 70</div>
+                <div class="scenario-objective-item">3+ Recycling Centers</div>
+              </div>
+              <button class="scenario-card-btn" style="background: linear-gradient(135deg, #880E4F, #E91E63);">Start</button>
+            </div>
+
+            <!-- Resource Scarcity -->
+            <div class="scenario-card" data-scenario="resource-scarcity" onclick="window.scenarioSystem.selectScenario('resource-scarcity')">
+              <div class="scenario-card-accent" style="background: linear-gradient(135deg, #0D47A1, #2196F3);"></div>
+              <div class="scenario-card-icon"></div>
+              <h3 class="scenario-card-title">Resource Scarcity</h3>
+              <div class="scenario-card-difficulty">
+                <span class="scenario-star filled">★</span><span class="scenario-star filled">★</span><span class="scenario-star">★</span><span class="scenario-star">★</span>
+                <span class="scenario-difficulty-label">Medium</span>
+              </div>
+              <p class="scenario-card-desc">An island city with extremely limited natural resources. Teach the city to survive totally on recycled goods.</p>
+              <div class="scenario-card-objectives">
+                <div class="scenario-objective-item">Management &ge; 80</div>
+                <div class="scenario-objective-item">Money &ge; 500K</div>
+                <div class="scenario-objective-item">Zero Raw Input</div>
+              </div>
+              <button class="scenario-card-btn" style="background: linear-gradient(135deg, #0D47A1, #2196F3);">Start</button>
+            </div>
+
+            <!-- Industrial Transition -->
+            <div class="scenario-card" data-scenario="industrial-transition" onclick="window.scenarioSystem.selectScenario('industrial-transition')">
+              <div class="scenario-card-accent" style="background: linear-gradient(135deg, #E65100, #FF9800);"></div>
+              <div class="scenario-card-icon"></div>
+              <h3 class="scenario-card-title">Industrial Transition</h3>
+              <div class="scenario-card-difficulty">
+                <span class="scenario-star filled">★</span><span class="scenario-star filled">★</span><span class="scenario-star filled">★</span><span class="scenario-star filled">★</span>
+                <span class="scenario-difficulty-label">Very Hard</span>
+              </div>
+              <p class="scenario-card-desc">A rich but highly polluting industrial powerhouse. Transition to green energy without crashing the economy.</p>
+              <div class="scenario-card-objectives">
+                <div class="scenario-objective-item">Management &ge; 90</div>
+                <div class="scenario-objective-item">Sustainability &ge; 60</div>
+                <div class="scenario-objective-item">Health &ge; 60</div>
+              </div>
+              <button class="scenario-card-btn" style="background: linear-gradient(135deg, #E65100, #FF9800);">Start</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scenario Result Modal (win/lose) -->
+      <div id="scenario-result-modal" class="level-up-modal-overlay" style="display: none;"></div>
+
+      <!-- Scenario Objectives HUD -->
+      <div id="scenario-objectives" class="scenario-objectives-panel" style="display: none;">
+        <div class="scenario-objectives-header" onclick="window.ui.toggleScenarioObjectives()">
+          <span id="scenario-objectives-icon">🎯</span>
+          <span id="scenario-objectives-title">Objectives</span>
+          <span id="scenario-objectives-toggle">▼</span>
+        </div>
+        <div id="scenario-objectives-body" class="scenario-objectives-body"></div>
       </div>
 
     </div>

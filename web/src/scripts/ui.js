@@ -2137,22 +2137,27 @@ export class GameUI {
     const level = window.gameState.level;
 
     // Button unlock mappings
+    // Button unlock mappings
     const buttonUnlocks = {
-      'button-commercial': 'eco-shop', // Level 5
-      'button-farming': 'farming-area', // Level 7
-      'button-technology-factory': 'technology-factory', // Level 6
-      'button-steel-factory': 'steel-factory', // Level 8
-      'button-automotive-factory': 'automotive-factory', // Level 9
+      'button-residential': 'residential-level-1',
+      'button-commercial': 'commercial-zone', // Level 2
+      'button-farming': 'farming-area', // Level 5
+      'button-textile-factory': 'textile-factory', // Level 1
+      'button-technology-factory': 'technology-factory', // Level 5
+      'button-steel-factory': 'steel-factory', // Level 6
+      'button-automotive-factory': 'automotive-factory', // Level 6
       'button-recycling-center': 'recycling-center', // Level 3
-      'button-wind-turbine': 'wind-turbine', // Level 5
-      'button-hydro-plant': 'hydro-plant', // Level 7
-      'button-waste-to-energy': 'waste-to-energy', // Level 5
-      'button-park': 'park',
-      'button-school': 'school',
-      'button-hospital': 'hospital',
-      'button-awareness-center': 'awareness-center',
-      'button-mrf': 'mrf',
-      'button-water-treatment': 'water-treatment'
+      'button-solar-panel': 'solar-panel', // Level 1
+      'button-wind-turbine': 'wind-turbine', // Level 4
+      'button-hydro-plant': 'hydro-plant', // Level 5
+      'button-waste-to-energy': 'waste-to-energy', // Level 4
+      'button-road': 'road', // Level 1
+      'button-park': 'park', // Level 1
+      'button-school': 'school', // Level 2
+      'button-hospital': 'hospital', // Level 2
+      'button-awareness-center': 'awareness-center', // Level 3
+      'button-mrf': 'mrf', // Level 3
+      'button-water-treatment': 'water-treatment' // Level 3
     };
 
     // Update each button

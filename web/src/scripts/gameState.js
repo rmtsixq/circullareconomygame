@@ -24,6 +24,18 @@ export class GameState {
      * @type {number}
      */
     this.population = 0;
+
+    /**
+     * Active scenario ID (null if no scenario)
+     * @type {string|null}
+     */
+    this.scenarioId = null;
+
+    /**
+     * Whether a scenario is currently active
+     * @type {boolean}
+     */
+    this.scenarioActive = false;
   }
 
   /**
@@ -200,6 +212,8 @@ export class GameState {
     this.health = 70;
     this.sustainability = 0;
     this.managementScore = 0;
+    this.scenarioId = null;
+    this.scenarioActive = false;
     if (window.scoringSystem) {
       window.scoringSystem.reset();
     }

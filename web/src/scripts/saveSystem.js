@@ -27,7 +27,9 @@ export function saveGame() {
         energy: window.gameState.energy,
         level: window.gameState.level,
         xp: window.gameState.xp,
-        circularScore: window.gameState.circularScore
+        circularScore: window.gameState.circularScore,
+        scenarioId: window.gameState.scenarioId,
+        scenarioActive: window.gameState.scenarioActive
       },
       
       // Resources
@@ -143,6 +145,8 @@ export function loadGame() {
       window.gameState.level = saveData.gameState.level || 1;
       window.gameState.xp = saveData.gameState.xp || 0;
       window.gameState.circularScore = saveData.gameState.circularScore || 0;
+      window.gameState.scenarioId = saveData.gameState.scenarioId || null;
+      window.gameState.scenarioActive = saveData.gameState.scenarioActive || false;
       window.gameState.updateUI();
     }
 

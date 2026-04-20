@@ -1530,6 +1530,265 @@ h1 {
   }
 }
 
+/* ============================
+   SCENARIO SELECTION STYLES
+   ============================ */
 
+.scenario-selection-container {
+  width: 95%;
+  max-width: 960px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
+.scenario-selection-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.scenario-selection-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 8px 0;
+  font-family: 'Montserrat', 'Inter', 'Roboto', sans-serif;
+  letter-spacing: 0.3px;
+}
+
+.scenario-selection-header p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  margin: 0;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+}
+
+.scenario-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.scenario-card {
+  background: rgba(30, 35, 49, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.scenario-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.scenario-card-accent {
+  height: 4px;
+  width: 100%;
+}
+
+.scenario-card-icon {
+  font-size: 40px;
+  text-align: center;
+  margin: 20px 0 8px 0;
+  line-height: 1;
+}
+
+.scenario-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  margin: 0 16px 8px 16px;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  letter-spacing: 0.2px;
+}
+
+.scenario-card-difficulty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.scenario-star {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.scenario-star.filled {
+  color: #FFD700;
+}
+
+.scenario-difficulty-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.scenario-card-desc {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+  margin: 0 16px 14px 16px;
+  text-align: center;
+  flex: 1;
+  font-family: 'Inter', 'Roboto', sans-serif;
+}
+
+.scenario-card-objectives {
+  margin: 0 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scenario-objective-item {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: 'Inter', 'Roboto', sans-serif;
+}
+
+.scenario-card-btn {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 0 16px 16px 16px;
+  padding: 10px 0;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  letter-spacing: 0.3px;
+}
+
+.scenario-card-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.scenario-card-btn:active {
+  transform: scale(0.98);
+}
+
+/* Scenario Objectives HUD */
+.scenario-objectives-panel {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(20, 24, 36, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  z-index: 900;
+  min-width: 220px;
+  max-width: 280px;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.scenario-objectives-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.scenario-objectives-header:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px 12px 0 0;
+}
+
+#scenario-objectives-toggle {
+  margin-left: auto;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.scenario-objectives-body {
+  padding: 8px 14px 12px 14px;
+}
+
+.scenario-obj-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.scenario-obj-item:last-child {
+  border-bottom: none;
+}
+
+.scenario-obj-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.scenario-obj-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.scenario-obj-value.met {
+  color: #4CAF50;
+}
+
+.scenario-obj-value.not-met {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive scenario cards */
+@media (max-width: 768px) {
+  .scenario-cards {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .scenario-selection-container {
+    width: 92%;
+    padding: 16px;
+  }
+
+  .scenario-selection-header h2 {
+    font-size: 22px;
+  }
+
+  .scenario-card-icon {
+    font-size: 32px;
+    margin: 14px 0 6px 0;
+  }
+
+  .scenario-card-title {
+    font-size: 15px;
+  }
+}
 
